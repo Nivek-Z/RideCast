@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Run the preregistered, equal-budget v1/v2 demand-model acceptance study.
 
-The default invocation only prints the protocol. --run deliberately generates
-previously unseen final worlds, trains both models and reports held-out tests.
-Do not use final results to continue tuning. See docs/MODEL_QUALITY_PROTOCOL.md.
+The default invocation only prints the selected protocol. round1 reproduces the
+now-diagnostic first study; round2 is a fresh preregistered suite to run only
+after the second development freeze. Historical results are never overwritten.
+See docs/MODEL_QUALITY_PROTOCOL.md and MODEL_QUALITY_PROTOCOL_ROUND2.md.
 """
 
 from __future__ import annotations
@@ -26,6 +27,13 @@ PROTOCOL_VERSION = "quality-v1"
 FINAL_SEEDS = (101, 202, 303, 404, 505)
 START = "2026-03-01T00:00:00+08:00"
 DAYS = 45
+PROTOCOL_DEFINITIONS = {
+    "round1": {"version": PROTOCOL_VERSION, "seeds": FINAL_SEEDS, "start": START,
+               "event_date": "2026-04-12", "default_output": "var/quality/final-v1"},
+    "round2": {"version": "quality-round2", "seeds": (606, 707, 808, 909, 1001),
+               "start": "2026-06-01T00:00:00+08:00", "event_date": "2026-07-13",
+               "default_output": "var/quality/final-round2"},
+}
 CONFIG = {"lookback": 24, "horizon": 3, "units": 32, "batch_size": 128,
           "learning_rate": 0.001, "epochs": 30, "seed": 42, "tune": False}
 V2_OVERRIDES = {"loss": "poisson"}
@@ -35,32 +43,39 @@ KEYS = ["forecast_origin", "timestamp", "zone_id", "horizon"]
 BASELINES = ("last_value", "previous_day", "previous_week")
 
 
-def final_cases() -> list[dict]:
+def _definition(protocol: str) -> dict:
+    if protocol not in PROTOCOL_DEFINITIONS:
+        raise ValueError(f"Unknown quality protocol {protocol}; choose round1 or round2")
+    return PROTOCOL_DEFINITIONS[protocol]
+
+
+def final_cases(protocol: str = "round1") -> list[dict]:
+    definition = _definition(protocol)
     cases = []
-    for seed in FINAL_SEEDS:
+    for seed in definition["seeds"]:
         for scenario_name in ("normal", "pressure"):
             scenario = {}
             if scenario_name == "pressure":
                 scenario = {"rain_multiplier": 2, "traffic_multiplier": 1.3, "supply_multiplier": 0.8,
                             "events": [{"name": "预先公告的质量验收活动", "zone_id": "z_000",
-                                        "start": "2026-04-12T18:00:00+08:00",
-                                        "end": "2026-04-12T22:00:00+08:00", "intensity": 1.5}]}
+                                        "start": f"{definition['event_date']}T18:00:00+08:00",
+                                        "end": f"{definition['event_date']}T22:00:00+08:00", "intensity": 1.5}]}
             cases.append({"case_id": f"{scenario_name}_seed_{seed}", "seed": seed,
                           "scenario_name": scenario_name, "scenario": scenario,
-                          "start": START, "days": DAYS, "rows": 3, "cols": 3, "bucket_minutes": 60})
+                          "start": definition["start"], "days": DAYS, "rows": 3, "cols": 3, "bucket_minutes": 60})
     return cases
 
 
-def protocol_payload() -> dict:
-    return {"protocol_version": PROTOCOL_VERSION, "config": copy.deepcopy(CONFIG),
+def protocol_payload(protocol: str = "round1") -> dict:
+    return {"protocol_version": _definition(protocol)["version"], "config": copy.deepcopy(CONFIG),
             "v2_overrides": dict(V2_OVERRIDES), "quality_targets": dict(QUALITY_TARGETS),
             "v2_validation_policy": {"selection_fraction": 0.65, "calibration_fraction": 0.35,
                                      "neural_weights": [0, 0.25, 0.5, 0.75, 1]},
-            "cases": final_cases()}
+            "cases": final_cases(protocol)}
 
 
-def protocol_hash() -> str:
-    canonical = json.dumps(protocol_payload(), sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+def protocol_hash(protocol: str = "round1") -> str:
+    canonical = json.dumps(protocol_payload(protocol), sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
@@ -261,7 +276,8 @@ def _fingerprints() -> dict[str, str]:
     root = Path(__file__).resolve().parents[1]
     paths = [root / "src" / "ridecast" / name for name in (
         "simulation.py", "data.py", "features.py", "ml.py", "legacy_features.py", "legacy_ml.py", "seasonal.py")]
-    paths += [Path(__file__).resolve(), root / "docs" / "MODEL_QUALITY_PROTOCOL.md"]
+    paths += [Path(__file__).resolve(), root / "docs" / "MODEL_QUALITY_PROTOCOL.md",
+              root / "docs" / "MODEL_QUALITY_PROTOCOL_ROUND2.md"]
     return {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
             for path in paths if path.is_file()}
 
@@ -281,7 +297,7 @@ def _latency(forecast_function, model_dir, dataset_dir) -> dict:
 
 
 def render_markdown(report: dict) -> str:
-    lines = ["# 模型质量升级：独立预登记验收", "", f"协议 `{PROTOCOL_VERSION}`；运行时间 {report['created_at']}。",
+    lines = ["# 模型质量升级：独立预登记验收", "", f"协议 `{report['protocol_version']}`；运行时间 {report['created_at']}。",
              "", "所有case使用同一原始面板、同预测单元和相等最大30轮预算；每世界分别重训。"
              "结果是合成世界的时间留出评价，不是实际城市精度或零样本迁移保证。", "",
              "v2指实际服务的验证集选定神经/季节融合结果；纯神经网络指标单列，权重0时明确标为季节回退。", "",
@@ -319,7 +335,7 @@ def render_markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def run(output: Path) -> dict:
+def run(output: Path, protocol: str = "round1") -> dict:
     from ridecast import legacy_ml, ml
     from ridecast.data import write_dataset
     from ridecast.simulation import create_world, simulate
@@ -328,13 +344,16 @@ def run(output: Path) -> dict:
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError("Output must be a new or empty directory; never overwrite acceptance artifacts")
     output.mkdir(parents=True, exist_ok=True)
+    definition = _definition(protocol)
     fingerprints = _fingerprints()
-    report = {"schema_version": "1.0", "protocol_version": PROTOCOL_VERSION,
-              "protocol_sha256": protocol_hash(), "protocol": protocol_payload(),
+    report = {"schema_version": "1.0", "protocol_version": definition["version"], "evaluation_round": protocol,
+              "protocol_sha256": protocol_hash(protocol), "protocol": protocol_payload(protocol),
               "created_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(), "config": copy.deepcopy(CONFIG),
               "cases": [], "source_sha256_at_start": fingerprints,
-              "test_access_policy": "Final suite evaluated after development freeze; do not tune on these results"}
-    for specification in final_cases():
+              "test_access_policy": ("Historical failed acceptance suite; diagnostic/development after first access"
+                                     if protocol == "round1" else
+                                     "New round2 suite evaluated after second development freeze; do not tune on results")}
+    for specification in final_cases(protocol):
         case = {**specification, "status": "running"}
         started = time.perf_counter()
         root = output / specification["case_id"]
@@ -342,7 +361,8 @@ def run(output: Path) -> dict:
         print(f"[{specification['case_id']}] generating immutable observations", file=sys.stderr, flush=True)
         try:
             world = create_world(name="预登记质量验收城市", rows=3, cols=3, seed=specification["seed"])
-            panel, orders, data_meta = simulate(world, START, DAYS, specification["seed"], specification["scenario"])
+            panel, orders, data_meta = simulate(world, specification["start"], specification["days"],
+                                                specification["seed"], specification["scenario"])
             identity = hashlib.sha256(json.dumps(specification, sort_keys=True).encode()).hexdigest()[:16]
             dataset_dir = root / "dataset"
             manifest = write_dataset(dataset_dir, world, panel, orders, data_meta, f"d_{identity}")
@@ -411,19 +431,22 @@ def run(output: Path) -> dict:
 
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run", action="store_true", help="Run final suite only after model development is frozen")
-    parser.add_argument("--list-cases", action="store_true", help="Show preregistered cases without accessing their data")
-    parser.add_argument("--output", type=Path, default=Path("var/quality/final-v1"))
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--run", action="store_true", help="Run final suite only after model development is frozen")
+    action.add_argument("--list-cases", action="store_true", help="Show preregistered cases without accessing their data")
+    parser.add_argument("--protocol", choices=tuple(PROTOCOL_DEFINITIONS), default="round1")
+    parser.add_argument("--output", type=Path, help="New empty directory; defaults depend on protocol round")
     return parser
 
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
     if not args.run:
-        print(json.dumps({**protocol_payload(), "protocol_sha256": protocol_hash()},
+        print(json.dumps({**protocol_payload(args.protocol), "protocol_sha256": protocol_hash(args.protocol)},
                          ensure_ascii=False, indent=2, allow_nan=False))
         return 0
-    report = run(args.output)
+    output = args.output or Path(_definition(args.protocol)["default_output"])
+    report = run(output, args.protocol)
     print(json.dumps(report["summary"], ensure_ascii=False, allow_nan=False))
     return 0 if report["summary"]["quality_target_passed"] else 1
 

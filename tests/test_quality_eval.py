@@ -40,6 +40,29 @@ def test_preregistered_suite_has_new_seeds_and_fixed_equal_budget():
     assert quality.protocol_payload()["v2_overrides"]["loss"] == "poisson"
 
 
+def test_round_parameter_preserves_first_protocol_and_does_not_access_final_data(monkeypatch, capsys):
+    assert quality.protocol_hash("round1") == "3608b9095abeb813c06051b8ffa711e6cfae06bba88a010a4d80f7398e795ee1"
+    first = quality.final_cases("round1")
+    second = quality.final_cases("round2")
+    assert len(second) == 10
+    assert {case["seed"] for case in second} == {606, 707, 808, 909, 1001}
+    assert {case["seed"] for case in first}.isdisjoint({case["seed"] for case in second})
+    assert all(case["start"] == "2026-06-01T00:00:00+08:00" for case in second)
+    assert all(case["scenario"]["events"][0]["start"].startswith("2026-07-13")
+               for case in second if case["scenario_name"] == "pressure")
+    assert quality.protocol_payload("round1")["quality_targets"] == quality.protocol_payload("round2")["quality_targets"]
+    assert quality.protocol_hash("round2") != quality.protocol_hash("round1")
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Listing a protocol must not run training or access held-out data")
+
+    monkeypatch.setattr(quality, "run", forbidden)
+    assert quality.main(["--protocol", "round2", "--list-cases"]) == 0
+    assert '"quality-round2"' in capsys.readouterr().out
+    with pytest.raises(SystemExit):
+        quality.build_parser().parse_args(["--run", "--list-cases"])
+
+
 def test_metrics_are_count_scale_and_zero_denominators_remain_unknown():
     values = quality.metric_values([0, 10], [0, 8])
     assert values["mae"] == 1
