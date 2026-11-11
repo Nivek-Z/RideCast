@@ -92,7 +92,7 @@ function ModelDetail(props: { model: Resource; tab: Tab; setTab: (t: Tab) => voi
       <div className="card">
         <div className="row" style={{ padding: '12px 14px 0', flexWrap: 'wrap' }}>
           <h3 className="mono" style={{ fontSize: 14 }}>{model.id}</h3>
-          <Badge>{md.architecture ?? 'GRU'}</Badge>
+          <Badge>{md.architecture ?? '预测模型'}</Badge>
           <Badge>{md.source === 'synthetic' ? '合成数据训练' : '导入数据训练'}</Badge>
           <Improvement value={mt?.model_mae_improvement_percent} />
           <span className="grow" />
@@ -256,7 +256,7 @@ function Backtest({ model, tz }: { model: Resource; tz: string }) {
 function Metrics({ model }: { model: Resource }) {
   const app = useApp();
   const mt = model.metadata.metrics;
-  const rows: [string, Any][] = [['GRU 模型', mt.model], ...Object.entries(mt.baselines ?? {}).map(([k, v]) => [`基线 · ${BASELINES[k] ?? k}`, v] as [string, Any])];
+  const rows: [string, Any][] = [['预测模型', mt.model], ...Object.entries(mt.baselines ?? {}).map(([k, v]) => [`基线 · ${BASELINES[k] ?? k}`, v] as [string, Any])];
   return (
     <div className="col" style={{ gap: 16 }}>
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
