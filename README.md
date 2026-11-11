@@ -7,6 +7,8 @@ Python + TensorFlow/Keras 的可运行课题系统：种子确定的演化城市
 需要 **Python 3.11 或 3.12**。建议为项目新建虚拟环境。
 
 ```bash
+git clone https://github.com/Nivek-Z/RideCast.git
+cd RideCast
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[ml,dev]'

@@ -93,4 +93,4 @@ HTTP 每文件32MiB；数据集最多150,000个区域时间桶、500,000订单�
 
 多世界报告为 `reports/world-benchmark.md` 与同名JSON，原始数据/模型位于 `var/benchmarks/world-holdout/`。最终v2世界种子7/42/99，每世界28天、9区域、相同5轮小模型配置；模型平均MAE为3.4736，基线平均MAE为3.3265，1/3世界模型优于基线。报告保留模型不及基线的结果。每个世界均独立重训并在各自时间留出集评价，不能将其称为单模型跨城市迁移，更不能据合成结果宣称真实业务精度。
 
-工作分支 `codex/ridecast-backend`，阶段 M0 调研与契约、M1 仿真与导入、M2 ML、M3 仪表盘与队列、M4 文档及验收。执行 `git log --oneline --decorate` 查看具体提交。仓库尚无远程，提交保存在本地；不包含用户敏感订单或大体积生成产物。
+远程仓库：[Nivek-Z/RideCast](https://github.com/Nivek-Z/RideCast)。主分支 `main`，开发分支 `codex/ridecast-backend`，验收版本标签 `v0.1.0`。阶段 M0 调研与契约、M1 仿真与导入、M2 ML、M3 仪表盘与队列、M4 文档及验收。执行 `git log --oneline --decorate` 查看具体提交。Git 包含代码、交接文档和小体量合成实验报告；不包含虚拟环境、用户敏感订单、大体积生成数据或模型，克隆后运行 demo 重新生成。
