@@ -8,7 +8,7 @@ import { ago, duration, fix2, int, pct, ratio, time } from '../format';
 import { useApp, useQuery } from '../store';
 
 type Tab = 'backtest' | 'curves' | 'metrics' | 'config';
-const BASELINES: Record<string, string> = { last_value: '上一桶', previous_day: '昨日同刻', previous_week: '上周同刻' };
+const BASELINES: Record<string, string> = { last_value: '上一桶', previous_day: '昨日同刻', previous_week: '上周同刻', seasonal_profile: '平滑季节基线' };
 
 function Improvement({ value }: { value: number | null | undefined }) {
   if (value === null || value === undefined) return <Badge>—</Badge>;

@@ -20,12 +20,13 @@ from ridecast.features import (
     FUTURE_FEATURES,
     HISTORY_FEATURES,
     STATIC_FEATURES,
+    WindowSet,
     chronological_ranges,
     fit_preprocessor,
-    future_context,
     load_panel,
     make_windows,
     metrics,
+    model_inputs,
     preprocess,
     seasonal_predictions,
     validate_scenario,
@@ -33,8 +34,8 @@ from ridecast.features import (
 )
 
 DEFAULT_CONFIG = {
-    "lookback": 24, "horizon": 3, "epochs": 12, "batch_size": 128,
-    "units": 32, "learning_rate": 0.001, "seed": 42, "tune": False,
+    "lookback": 24, "horizon": 3, "epochs": 30, "batch_size": 128,
+    "units": 32, "learning_rate": 0.001, "seed": 42, "tune": False, "loss": "poisson",
 }
 _MODEL_LOAD_LOCK = threading.Lock()
 
@@ -78,6 +79,8 @@ def validate_config(config: dict) -> dict:
             raise ValueError(f"{key} must be an integer in [{low}, {high}]")
     if not isinstance(result["tune"], bool):
         raise ValueError("tune must be boolean")
+    if not isinstance(result["loss"], str) or result["loss"] not in {"poisson", "huber"}:
+        raise ValueError("loss must be poisson or huber")
     if not isinstance(result["learning_rate"], (int, float)) or not 1e-6 <= result["learning_rate"] <= 0.1:
         raise ValueError("learning_rate must lie in [1e-6, 0.1]")
     return result
@@ -108,7 +111,7 @@ def _sha256(path: Path) -> str:
 
 
 def _dataset(tf, inputs, targets, batch_size: int, seed: int, shuffle: bool):
-    dataset = tf.data.Dataset.from_tensor_slices((inputs, np.log1p(targets).astype(np.float32)))
+    dataset = tf.data.Dataset.from_tensor_slices((inputs, targets.astype(np.float32)))
     if shuffle:
         dataset = dataset.shuffle(min(len(targets), 8192), seed=seed, reshuffle_each_iteration=True)
     options = tf.data.Options()
@@ -123,7 +126,7 @@ def _predict(model, inputs, batch_size: int = 512) -> np.ndarray:
     count = len(next(iter(inputs.values())))
     for start in range(0, count, batch_size):
         raw = model({k: v[start:start + batch_size] for k, v in inputs.items()}, training=False).numpy()
-        batches.append(np.expm1(np.clip(raw, 0, 20)))
+        batches.append(np.maximum(0, raw))
     result = np.concatenate(batches).astype(np.float32)
     if not np.isfinite(result).all():
         raise ValueError("Model produced non-finite predictions")
@@ -134,21 +137,42 @@ def _build_model(keras, config: dict, inputs: dict, target_mean: float):
     history = keras.Input(shape=inputs["history"].shape[1:], name="history")
     future = keras.Input(shape=inputs["future"].shape[1:], name="future")
     static = keras.Input(shape=inputs["static"].shape[1:], name="static")
+    anchor = keras.Input(shape=inputs["anchor"].shape[1:], name="anchor")
     sequence = keras.layers.GRU(config["units"], name="regional_gru")(history)
-    known = keras.layers.Dense(32, activation="relu", name="known_future_encoder")(
-        keras.layers.Flatten()(future)
-    )
-    joined = keras.layers.Concatenate()([sequence, known, static])
-    hidden = keras.layers.Dense(config["units"], activation="relu")(joined)
-    hidden = keras.layers.Dropout(0.1)(hidden)
-    # Output is log1p(expected demand). Built-in layers permit safe .keras reload.
-    output = keras.layers.Dense(
-        config["horizon"], activation="softplus", name="log1p_demand",
-        bias_initializer=keras.initializers.Constant(max(target_mean, 0.01)),
-    )(hidden)
-    model = keras.Model({"history": history, "future": future, "static": static}, output, name="ridecast_regional_gru")
-    model.compile(optimizer=keras.optimizers.Adam(config["learning_rate"], clipnorm=1.0), loss="mse")
+    region = keras.layers.Dense(config["units"], activation="swish", name="region_encoder")(static)
+    state = keras.layers.RepeatVector(config["horizon"])(keras.layers.Concatenate()([sequence, region]))
+    known = keras.layers.Dense(config["units"] * 2, activation="swish", name="per_step_future")(future)
+    joined = keras.layers.Concatenate()([state, known])
+    hidden = keras.layers.Dense(config["units"] * 2, activation="swish")(joined)
+    hidden = keras.layers.Dropout(0.05)(hidden)
+    hidden = keras.layers.Dense(config["units"], activation="swish")(hidden)
+    correction = keras.layers.Dense(1, kernel_initializer="zeros", bias_initializer="zeros",
+                                    name="seasonal_log_correction")(hidden)
+    # A bounded learned log-rate adjustment starts exactly at the causal prior.
+    factor = keras.layers.Activation("exponential")(
+        keras.layers.Rescaling(2.0)(keras.layers.Activation("tanh")(correction)))
+    output = keras.layers.Reshape((config["horizon"],), name="demand_counts")(
+        keras.layers.Multiply()([anchor, factor]))
+    model = keras.Model({"history": history, "future": future, "static": static, "anchor": anchor},
+                         output, name="ridecast_seasonal_residual_gru")
+    loss = keras.losses.Poisson() if config["loss"] == "poisson" else keras.losses.Huber(delta=3.0)
+    model.compile(optimizer=keras.optimizers.Adam(config["learning_rate"], clipnorm=1.0),
+                  loss=loss, metrics=[keras.metrics.MeanAbsoluteError(name="mae")])
     return model
+
+
+def _loss_unit(config):
+    return "Poisson loss on demand counts (NLL up to a target-only constant)" if config["loss"] == "poisson" else "Huber loss on demand counts (delta=3)"
+
+
+def _baseline(inputs, baseline_name, data, windows, periods):
+    if baseline_name == "seasonal_profile":
+        return inputs["anchor"][..., 0]
+    return seasonal_predictions(data, windows, periods[baseline_name])
+
+
+def _blend(neural, baseline, weight):
+    return (float(weight) * neural + (1 - float(weight)) * baseline).astype(np.float32)
 
 
 def _breakdown(actual, predicted, baseline, windows, zone_ids):
@@ -160,6 +184,27 @@ def _breakdown(actual, predicted, baseline, windows, zone_ids):
         by_zone.append({"zone_id": zone_id, "model": metrics(actual[mask], predicted[mask]),
                         "baseline": metrics(actual[mask], baseline[mask])})
     return by_horizon, by_zone
+
+
+def _operational_metrics(data, windows, actual, predicted, baseline, training_target):
+    """Aggregate only contemporaneous zones; peak definitions do not use test scores."""
+    zones, horizon = len(data.zone_ids), actual.shape[1]
+    city_actual = actual.reshape(-1, zones, horizon).sum(axis=1)
+    city_predicted = predicted.reshape(-1, zones, horizon).sum(axis=1)
+    city_baseline = baseline.reshape(-1, zones, horizon).sum(axis=1)
+    target_indices = windows.origins[:, None] + np.arange(horizon)[None, :]
+    local = data.times.take(target_indices.ravel()).tz_convert(data.world["timezone"])
+    hours = np.asarray(local.hour).reshape(actual.shape)
+    peak = ((hours >= 7) & (hours < 10)) | ((hours >= 17) & (hours < 21))
+    threshold = float(np.quantile(training_target, 0.8))
+    result = {"city": {"model": metrics(city_actual, city_predicted),
+                       "baseline": metrics(city_actual, city_baseline)},
+              "high_demand_threshold_from_train": threshold,
+              "peak_hours_local": "[07:00,10:00) and [17:00,21:00)"}
+    for name, mask in (("peak", peak), ("off_peak", ~peak), ("high_demand", actual >= threshold)):
+        result[name] = {"model": metrics(actual[mask], predicted[mask]),
+                        "baseline": metrics(actual[mask], baseline[mask])} if mask.any() else None
+    return result
 
 
 def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict, progress=None) -> dict:
@@ -177,7 +222,7 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     live_history = {
         "schema_version": "1.0", "model_id": model_id, "status": "starting", "candidate": None,
         "candidate_count": 2 if config["tune"] else 1, "epoch": 0, "config": config,
-        "epochs": [], "candidates": [], "loss_unit": "mean squared log1p demand",
+        "epochs": [], "candidates": [], "loss_unit": _loss_unit(config),
         "started_at": datetime.now(timezone.utc).isoformat(),
     }
     _write_json_atomic(output_dir / "live_history.json", live_history)
@@ -189,6 +234,17 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     # No validation or test feature contributes to these statistics.
     preprocessor = fit_preprocessor(partitions["train"].inputs)
     normalized = {name: preprocess(w.inputs, preprocessor) for name, w in partitions.items()}
+    validation = partitions["validation"]
+    val_start, val_end = ranges["validation"]
+    calibration_start = val_start + int((val_end - val_start) * 0.65)
+    selection_mask = validation.origins + config["horizon"] <= calibration_start
+    calibration_mask = validation.origins >= calibration_start
+    independent_calibration = bool(selection_mask.any() and calibration_mask.any())
+    if not independent_calibration:
+        # Tiny educational datasets cannot support another temporal split.
+        selection_mask = calibration_mask = np.ones(len(validation.targets), dtype=bool)
+    selection_inputs = {k: v[selection_mask] for k, v in normalized["validation"].items()}
+    selection_target = validation.targets[selection_mask]
     _progress(progress, "features", 0.10, "Origin-aware features ready; scaler fitted on training windows only")
     tf, keras = _tensorflow()
     tf.keras.utils.set_random_seed(config["seed"])
@@ -200,20 +256,21 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     periods = {"last_value": 0, "previous_day": period_day, "previous_week": period_day * 7}
     val_baselines = {name: seasonal_predictions(data, partitions["validation"], period)
                      for name, period in periods.items()}
-    baseline_name = min(val_baselines, key=lambda name: metrics(partitions["validation"].targets, val_baselines[name])["mae"])
+    val_baselines["seasonal_profile"] = validation.inputs["anchor"][..., 0]
+    baseline_name = min(val_baselines, key=lambda name: metrics(selection_target, val_baselines[name][selection_mask])["mae"])
     candidates = [dict(config)]
     if config["tune"]:
-        candidates.append({**config, "units": min(config["units"] * 2, 256), "learning_rate": config["learning_rate"] / 2})
+        candidates.append({**config, "loss": "huber" if config["loss"] == "poisson" else "poisson"})
     histories, candidate_scores, paths = [], [], []
     best_index, best_score = 0, float("inf")
     for index, candidate in enumerate(candidates):
         keras.backend.clear_session()
         tf.keras.utils.set_random_seed(config["seed"] + index)
         model = _build_model(keras, candidate, normalized["train"], float(np.log1p(partitions["train"].targets).mean()))
-        current_curve = {"candidate": index, "config": candidate, "epochs": []}
+        current_curve = {"candidate": index, "config": candidate, "epochs": [], "loss_unit": _loss_unit(candidate)}
         live_history.update({"status": "training", "candidate": index, "epoch": 0,
                              "config": candidate, "epochs": current_curve["epochs"],
-                             "candidates": [*histories, current_curve]})
+                             "candidates": [*histories, current_curve], "loss_unit": _loss_unit(candidate)})
         _write_json_atomic(output_dir / "live_history.json", live_history)
 
         class TrainingProgress(keras.callbacks.Callback):
@@ -241,20 +298,22 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
         training_progress = TrainingProgress()
         history = model.fit(
             _dataset(tf, normalized["train"], partitions["train"].targets, candidate["batch_size"], candidate["seed"], True),
-            validation_data=_dataset(tf, normalized["validation"], partitions["validation"].targets, candidate["batch_size"], candidate["seed"], False),
+            validation_data=_dataset(tf, selection_inputs, selection_target, candidate["batch_size"], candidate["seed"], False),
             epochs=candidate["epochs"], verbose=0,
             callbacks=[training_progress, keras.callbacks.EarlyStopping(
-                monitor="val_loss", patience=4, restore_best_weights=True, min_delta=0.0001
-            )],
+                monitor="val_mae", patience=7, restore_best_weights=True, min_delta=0.001
+            ), keras.callbacks.ReduceLROnPlateau(monitor="val_mae", factor=0.5, patience=3, min_lr=1e-5)],
         )
-        validation_pred = _predict(model, normalized["validation"])
-        score = metrics(partitions["validation"].targets, validation_pred)
+        validation_pred = _predict(model, selection_inputs)
+        score = metrics(selection_target, validation_pred)
         candidate_path = output_dir / f"candidate_{index}.keras"
         model.save(candidate_path)
         paths.append(candidate_path)
         candidate_scores.append({"candidate": index, "config": candidate, "validation": score,
+                                 "initialization_seed": config["seed"] + index,
                                  "epochs_run": len(history.history["loss"])})
-        histories.append({"candidate": index, "config": candidate,
+        histories.append({"candidate": index, "config": candidate, "loss_unit": _loss_unit(candidate),
+                          "initialization_seed": config["seed"] + index,
                           "epochs": [{"epoch": epoch + 1, "duration_seconds": training_progress.epoch_seconds[epoch],
                                       **{k: float(v[epoch]) for k, v in history.history.items()}}
                                      for epoch in range(len(history.history["loss"]))]})
@@ -264,13 +323,22 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     shutil.copyfile(paths[best_index], output_dir / "model.keras")
     keras.backend.clear_session()
     model = keras.models.load_model(output_dir / "model.keras", safe_mode=True)
-    validation_pred = _predict(model, normalized["validation"])
-    test_pred = _predict(model, normalized["test"])
+    validation_neural = _predict(model, normalized["validation"])
+    # All choices below use only the earlier validation segment, never calibration/test labels.
+    weights = [0.0, 0.25, 0.5, 0.75, 1.0]
+    blend_scores = [{"neural_weight": weight, **metrics(selection_target, _blend(
+        validation_neural[selection_mask], val_baselines[baseline_name][selection_mask], weight))}
+                    for weight in weights]
+    neural_weight = min(blend_scores, key=lambda score: (score["mae"], -score["neural_weight"]))["neural_weight"]
+    validation_pred = _blend(validation_neural, val_baselines[baseline_name], neural_weight)
+    test_neural = _predict(model, normalized["test"])
     target = partitions["test"].targets
     baseline_preds = {name: seasonal_predictions(data, partitions["test"], period) for name, period in periods.items()}
+    baseline_preds["seasonal_profile"] = partitions["test"].inputs["anchor"][..., 0]
     baseline = baseline_preds[baseline_name]
-    # Marginal residual bands are calibrated on validation, never on test.
-    residual_q = np.quantile(np.abs(partitions["validation"].targets - validation_pred), 0.9, axis=0)
+    test_pred = _blend(test_neural, baseline, neural_weight)
+    # Later validation targets calibrate intervals, isolated from tuning when history permits.
+    residual_q = np.quantile(np.abs(validation.targets[calibration_mask] - validation_pred[calibration_mask]), 0.9, axis=0)
     lower, upper = np.maximum(0, test_pred - residual_q), test_pred + residual_q
     by_horizon, by_zone = _breakdown(target, test_pred, baseline, partitions["test"], data.zone_ids)
     model_metrics, baseline_metrics = metrics(target, test_pred), metrics(target, baseline)
@@ -290,12 +358,13 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
             rows.append({"forecast_origin": data.times[origin], "timestamp": data.times[origin + h],
                          "zone_id": data.zone_ids[z], "horizon": h + 1, "actual_demand": float(target[i, h]),
                          "predicted_demand": float(test_pred[i, h]), "baseline_demand": float(baseline[i, h]),
+                         "neural_demand": float(test_neural[i, h]),
                          "lower": float(lower[i, h]), "upper": float(upper[i, h])})
     pd.DataFrame(rows).to_parquet(output_dir / "test_predictions.parquet", index=False)
     import keras as standalone_keras
     metadata = {
         "schema_version": "1.0", "model_id": model_id, "dataset_id": data.manifest["dataset_id"],
-        "world_id": data.world["world_id"], "status": "ready", "architecture": "shared_regional_gru_direct_multihorizon",
+        "world_id": data.world["world_id"], "status": "ready", "architecture": "causal_seasonal_residual_gru_count_head",
         "source": data.manifest["source"], "target_semantics": data.manifest["target_semantics"],
         "bucket_minutes": int(data.world["bucket_minutes"]), "timezone": data.world["timezone"],
         "created_at": datetime.now(timezone.utc).isoformat(), "config": candidates[best_index],
@@ -306,11 +375,23 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
         "feature_schema": {"version": FEATURE_VERSION, "history": HISTORY_FEATURES, "future": FUTURE_FEATURES,
                            "static": STATIC_FEATURES + [f"zone_{z}" for z in data.zone_ids], "zone_ids": data.zone_ids},
         "preprocessor": preprocessor, "split": split,
+        "output_transform": "identity_counts",
+        "blending": {"neural_weight": neural_weight, "baseline_name": baseline_name,
+                     "validation_grid": blend_scores, "selection": "earlier_validation_MAE_only",
+                     "deployment": "seasonal_fallback" if neural_weight == 0 else "neural" if neural_weight == 1 else "neural_seasonal_blend"},
+        "validation_subsplit": {"independent_calibration": independent_calibration,
+                                 "calibration_start": data.times[calibration_start].isoformat(),
+                                 "selection_windows": int(selection_mask.sum()),
+                                 "calibration_windows": int(calibration_mask.sum())},
         "metrics": {
             "model": model_metrics, "baseline": {"name": baseline_name, **baseline_metrics},
+            "neural": metrics(target, test_neural),
+            "operational": _operational_metrics(data, partitions["test"], target, test_pred, baseline,
+                                                  partitions["train"].targets),
             "baselines": {name: metrics(target, values) for name, values in baseline_preds.items()},
-            "validation": {"model": candidate_scores[best_index]["validation"],
-                           "baselines": {name: metrics(partitions["validation"].targets, values) for name, values in val_baselines.items()}},
+            "validation": {"model": metrics(selection_target, validation_pred[selection_mask]),
+                           "neural": candidate_scores[best_index]["validation"],
+                           "baselines": {name: metrics(selection_target, values[selection_mask]) for name, values in val_baselines.items()}},
             "by_horizon": by_horizon, "by_zone": by_zone,
             "model_mae_improvement_percent": (baseline_metrics["mae"] - model_metrics["mae"]) / baseline_metrics["mae"] * 100 if baseline_metrics["mae"] else None,
             "interval": {"method": "validation_absolute_residual_quantile", "nominal_marginal_coverage": 0.9,
@@ -321,7 +402,7 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
             "evaluation_unit": "forecast-origin × zone × horizon; overlapping targets within a partition are counted at each origin",
         },
         "exogenous_assumption": "Future weather, traffic and supply use the last origin-available observation; calendar and scheduled events are known in advance.",
-        "validation_selection": "Validation MAE chooses architecture and baseline; validation loss chooses early-stopping epoch; test is evaluated only after selection.",
+        "validation_selection": "Earlier validation MAE chooses epoch, count-loss candidate, seasonal baseline and blend weight; later validation calibrates bands when feasible; test only after choices are frozen.",
         "limitations": ["Synthetic performance does not establish real-world accuracy.",
                         "Imported completed_trips labels represent observed served trips, not total latent requests.",
                         "Single chronological holdout; rolling-origin cross-period validation is recommended before production."],
@@ -334,7 +415,7 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
                      "selected_candidate": best_index, "candidate": best_index, "candidate_count": len(candidates),
                      "config": candidates[best_index], "epoch": len(histories[best_index]["epochs"]),
                      "candidates": histories, "duration_seconds": metadata["duration_seconds"],
-                     "epochs": histories[best_index]["epochs"], "loss_unit": "mean squared log1p demand"}
+                     "epochs": histories[best_index]["epochs"], "loss_unit": _loss_unit(candidates[best_index])}
     _write_json(output_dir / "history.json", history_value)
     _write_json_atomic(output_dir / "live_history.json", {**live_history, **history_value})
     _write_json(output_dir / "metadata.json", metadata)
@@ -347,6 +428,9 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
 def forecast(model_dir: Path, dataset_dir: Path, horizon: int | None = None, scenario: dict | None = None) -> dict:
     model_dir, dataset_dir = Path(model_dir), Path(dataset_dir)
     metadata = json.loads((model_dir / "metadata.json").read_text())
+    if metadata.get("feature_schema", {}).get("version") == "origin-aware-v1":
+        from ridecast.legacy_ml import forecast as legacy_forecast
+        return legacy_forecast(model_dir, dataset_dir, horizon, scenario)
     data = load_panel(dataset_dir)
     if metadata.get("schema_version") != "1.0" or metadata["feature_schema"].get("version") != FEATURE_VERSION:
         raise ValueError("Unsupported model/feature schema version")
@@ -370,14 +454,18 @@ def forecast(model_dir: Path, dataset_dir: Path, horizon: int | None = None, sce
     scenario = validate_scenario(scenario)
     if _sha256(model_dir / "model.keras") != metadata["model_sha256"]:
         raise ValueError("Model artifact checksum mismatch")
-    inputs = {
-        "history": data.history[-lookback:].transpose(1, 0, 2),
-        "future": future_context(data, len(data.times), trained_horizon, scenario), "static": data.static,
-    }
-    inputs = preprocess(inputs, metadata["preprocessor"])
+    raw_inputs = model_inputs(data, len(data.times), lookback, trained_horizon, scenario)
+    inputs = preprocess(raw_inputs, metadata["preprocessor"])
     with _MODEL_LOAD_LOCK:
         model = _cached_model(str((model_dir / "model.keras").resolve()), metadata["model_sha256"])
-    predicted = _predict(model, inputs)[:, :horizon]
+    neural = _predict(model, inputs)
+    period_day = max(1, int(pd.Timedelta(days=1) / data.step))
+    periods = {"last_value": 0, "previous_day": period_day, "previous_week": period_day * 7}
+    windows = WindowSet({}, np.zeros_like(neural), np.full(len(data.zone_ids), len(data.times)),
+                        np.arange(len(data.zone_ids)))
+    blending = metadata["blending"]
+    baseline = _baseline(raw_inputs, blending["baseline_name"], data, windows, periods)
+    predicted = _blend(neural, baseline, blending["neural_weight"])[:, :horizon]
     radius = np.asarray(metadata["metrics"]["interval"]["per_horizon_radius"], dtype=float)[:horizon]
     multiplier = float(scenario.get("demand_multiplier", 1))
     lower, upper = np.maximum(0, predicted - radius) * multiplier, (predicted + radius) * multiplier
@@ -398,5 +486,6 @@ def forecast(model_dir: Path, dataset_dir: Path, horizon: int | None = None, sce
         "interval": {"method": "validation_absolute_residual_quantile", "nominal_marginal_coverage": 0.9,
                      "coverage_is_not_guaranteed": True},
         "exogenous_assumption": metadata["exogenous_assumption"], "scenario": scenario,
+        "architecture": metadata["architecture"], "blending": blending,
         "scenario_note": "Overrides are caller-known assumptions; demand_multiplier is an explicit post-model scaling assumption, not an estimated causal effect.",
     }

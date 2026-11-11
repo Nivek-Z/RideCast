@@ -322,7 +322,7 @@ def create_app(settings=None):
         from ridecast.ml import forecast
 
         directory = resource_path("dataset", body.dataset_id)
-        result = forecast(resource_path("model", body.model_id), directory, 1)
+        result = forecast(resource_path("model", body.model_id), directory, 1, body.scenario)
         world = read_json(directory / "world.json")
         snapshot = heatmap(directory)
         supply = body.supply
@@ -332,6 +332,7 @@ def create_app(settings=None):
         manifest = read_json(directory / "manifest.json")
         suggestion["source"] = manifest["source"]
         suggestion["target_semantics"] = manifest["target_semantics"]
+        suggestion["scenario"] = result["scenario"]
         suggestion["supply_source"] = ("caller" if body.supply is not None else
                                        "last_observed_bucket" if supply is not None else "unavailable")
         suggestion["supply_snapshot_timestamp"] = (snapshot.get("timestamp")
