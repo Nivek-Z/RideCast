@@ -65,7 +65,7 @@ Content-Type: application/json
 提交到 `/simulations`，202响应的 `Location` 指向任务。成功后 `result={resource_type:"dataset",resource_id:"d_..."}`，读取 overview/map/heatmap。再向 `/training-jobs` 提交：
 
 ```json
-{"dataset_id":"实际d_标识","config":{"lookback":24,"horizon":3,"epochs":12,"units":32,"batch_size":128,"learning_rate":0.001,"seed":42,"tune":true}}
+{"dataset_id":"实际d_标识","config":{"lookback":24,"horizon":3,"epochs":30,"units":32,"batch_size":128,"learning_rate":0.001,"seed":42,"tune":true}}
 ```
 
 成功得到 m_ 标识，向 `/forecasts` 提交 `{"model_id":"m_...","dataset_id":"d_...","horizon":3}`。模型预测仅从该数据集的 observation_end 向前，不能用该接口回填训练期曲线；回测图用 evaluation。`lookback/horizon` 单位是时间桶，15分钟桶下24代表6小时。
@@ -74,7 +74,7 @@ Content-Type: application/json
 
 `progress` 范围0–1，前端显示百分比时乘100。任务 `state` 用于颜色和交互，不用progress判断完成。成功资源只在succeeded后可用。queued通常表示等待worker；`/system.worker_online=false` 时应提示启动worker。failed时展示 `error.code/message`，`error.type` 可选，并提供重新提交；cancelled为终态。资源的 `status="ready"`、学习曲线的 `status="starting"/"training"/"ready"` 和任务 `state` 属于不同字段，不能共用枚举。
 
-训练中的候选/epoch/损失取 `/jobs/{id}/history` 的结构化字段，不解析message字符串。`candidates[].epochs[]` 为各候选曲线，顶层 `epochs` 为当前或选中候选；候选编号从0开始，epoch从1开始。每条epoch含 `loss/val_loss/duration_seconds`；损失单位是 log1p需求的均方误差，不能标成“订单数误差”。初始曲线为空是正常状态；尚无快照时响应有 `state`，产生快照后改用曲线自身的 `status`，任务状态仍以 `/jobs/{id}` 为准。
+训练中的候选/epoch/损失取 `/jobs/{id}/history` 的结构化字段，不解析message字符串。`candidates[].epochs[]` 为各候选曲线，顶层 `epochs` 为当前或选中候选；候选编号从0开始，epoch从1开始。每条epoch含 `loss/val_loss/duration_seconds`；损失单位读取候选或history.loss_unit：v1是log1p-MSE，v2默认Poisson计数损失、可选Huber；Poisson省略目标常数后可为负，不能标成“订单数误差”或跨loss直接比较。初始曲线为空是正常状态；尚无快照时响应有 `state`，产生快照后改用曲线自身的 `status`，任务状态仍以 `/jobs/{id}` 为准。
 
 SSE支持 `Last-Event-ID` 和 `?after=<id>` 续读。`state/progress` 事件的 data 为 `{id,job_id,event_type,payload,created_at}`，其中 payload 是局部补丁：progress事件通常只有 progress/stage/message，终态state事件可能只有 state/result/error，不应把它当完整任务覆盖已有字段。事件id是持久游标，可原样保存续读。
 
@@ -115,3 +115,5 @@ timeseries按时间升序返回最早limit条，`total_count` 为过滤后的桶
 错误结构 `{"error":{"code":"invalid_input","message":"...","details":null},"request_id":"..."}`；校验422，资源不存在404，key错误401，上传超限413，内部错误500。定位问题请记录响应 `X-Request-ID`。限制/字段范围以 `/system` 和 OpenAPI 为准。
 
 资源版本不可变：地图、已完成数据/模型可按ID缓存。回放建议前端节流/预取，相同时间桶热力无需逐帧重复请求；动画在客户端插值，后端提供桶状态和有限车辆快照。当前未实现WebSocket推送仿真时钟，时间游标由前端控制。
+
+当前v2 metadata.blending 显式说明纯神经/神经季节融合/基线回退和神经权重；metrics.model为实际服务效果，metrics.neural为纯神经效果，operational含城市/高峰/高需求分组。派单建议请求支持scenario，前端应复用已展示forecast的scenario，确保建议与预测属于同一情景。

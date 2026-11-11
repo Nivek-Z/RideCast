@@ -24,9 +24,9 @@ zone properties 必有 `zone_id: str, name, kind, base_demand: float, population
 
 ## ML 模块约定
 
-* `ml.train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict, progress=None) -> metadata: dict`。config epochs/batch_size/lookback/horizon/units/learning_rate/seed/tune。读取 panel、world、manifest；写 model.keras、metadata.json、history.json、test_predictions.parquet。真实 TensorFlow/Keras GRU，不能用假训练。
+* `ml.train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict, progress=None) -> metadata: dict`。config epochs/batch_size/lookback/horizon/units/learning_rate/seed/tune/loss，当前默认30轮、loss=poisson，支持huber；tune对比两种计数损失。读取 panel、world、manifest；写 model.keras、metadata.json、history.json、test_predictions.parquet。真实TensorFlow/Keras季节残差GRU；v1模型由冻结legacy实现兼容。
 * `ml.forecast(model_dir: Path, dataset_dir: Path, horizon: int | None=None, scenario: dict | None=None) -> dict`。返回 forecast_origin、bucket_minutes、model_id、dataset_id、rows=[timestamp,zone_id,predicted_demand,lower,upper]、exogenous_assumption；默认严格从 dataset observation_end 向前预测，horizon 不超过训练头长度；scenario 为未来已知外因覆盖。
-* metadata 必有 model_id,dataset_id,world_id,config,metrics（模型与基线，MAE/RMSE/WAPE/sMAPE，分horizon和分zone）、split（完整时间边界）, feature_schema, status, created_at；验证集用于挑选超参和估计残差区间，测试仅最终评估；训练集拟合缩放，不能未来实测天气。自动模型晋升不默认执行。
+* metadata 必有 model_id,dataset_id,world_id,config,metrics（模型与基线，MAE/RMSE/WAPE/sMAPE，分horizon和分zone）、split（完整时间边界）, feature_schema, status, created_at；v2新增blending/validation_subsplit、纯neural指标和operational分组。验证前65%选择，后35%校准，短数据不能分开时明确标记；测试仅最终评估。训练集拟合缩放，不能读未来实测天气。自动模型晋升不默认执行。
 
 ## 主进程与 worker
 

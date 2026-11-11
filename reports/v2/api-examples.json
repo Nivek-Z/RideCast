@@ -1,0 +1,4455 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-11T15:07:35.937389+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "source": "responses from the 45-day reference demonstration over real HTTP",
+  "examples": {
+    "overview": {
+      "method": "GET",
+      "path": "/api/v1/datasets/d_af352fc5dfb7412b/overview",
+      "query": {},
+      "response": {
+        "dataset_id": "d_af352fc5dfb7412b",
+        "world_id": "w_85be8c7d5740fade",
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "bucket_minutes": 60,
+        "supply_observed": true,
+        "supply_source": "simulation",
+        "context_default_rows": null,
+        "outcomes_observed": true,
+        "timezone": "Asia/Shanghai",
+        "range": {
+          "start": "2025-12-31T16:00:00+00:00",
+          "end": "2026-02-14T16:00:00+00:00",
+          "end_exclusive": true,
+          "bucket_count": 1080,
+          "zone_count": 9,
+          "panel_rows": 9720,
+          "order_count": 100550
+        },
+        "kpis": {
+          "demand": 100550,
+          "passengers": 146998,
+          "completed": 97524,
+          "cancelled": 3026,
+          "completion_rate": 0.9699055196419691,
+          "cancellation_rate": 0.03009448035803083,
+          "latest_available_drivers": 101,
+          "mean_available_drivers_per_bucket": 121.72685185185185,
+          "peak_bucket_demand": 286,
+          "mean_bucket_demand": 93.10185185185185
+        },
+        "zones": [
+          {
+            "zone_id": "z_000",
+            "name": "商贸区01",
+            "kind": "commercial",
+            "demand": 15322,
+            "passengers": 22565,
+            "completed": 15148,
+            "cancelled": 174,
+            "mean_demand_per_bucket": 14.187037037037037,
+            "peak_demand_per_bucket": 70,
+            "latest_demand": 1,
+            "latest_available_drivers": 11,
+            "latest_supply_gap": -10
+          },
+          {
+            "zone_id": "z_001",
+            "name": "居住区02",
+            "kind": "residential",
+            "demand": 13202,
+            "passengers": 19301,
+            "completed": 12859,
+            "cancelled": 343,
+            "mean_demand_per_bucket": 12.224074074074075,
+            "peak_demand_per_bucket": 61,
+            "latest_demand": 1,
+            "latest_available_drivers": 12,
+            "latest_supply_gap": -11
+          },
+          {
+            "zone_id": "z_002",
+            "name": "文娱区03",
+            "kind": "leisure",
+            "demand": 9618,
+            "passengers": 14016,
+            "completed": 8875,
+            "cancelled": 743,
+            "mean_demand_per_bucket": 8.905555555555555,
+            "peak_demand_per_bucket": 69,
+            "latest_demand": 12,
+            "latest_available_drivers": 19,
+            "latest_supply_gap": -7
+          },
+          {
+            "zone_id": "z_003",
+            "name": "商务区04",
+            "kind": "business",
+            "demand": 11854,
+            "passengers": 17367,
+            "completed": 11643,
+            "cancelled": 211,
+            "mean_demand_per_bucket": 10.975925925925926,
+            "peak_demand_per_bucket": 62,
+            "latest_demand": 1,
+            "latest_available_drivers": 10,
+            "latest_supply_gap": -9
+          },
+          {
+            "zone_id": "z_004",
+            "name": "枢纽区05",
+            "kind": "transport",
+            "demand": 9714,
+            "passengers": 14280,
+            "completed": 9551,
+            "cancelled": 163,
+            "mean_demand_per_bucket": 8.994444444444444,
+            "peak_demand_per_bucket": 31,
+            "latest_demand": 0,
+            "latest_available_drivers": 6,
+            "latest_supply_gap": -6
+          },
+          {
+            "zone_id": "z_005",
+            "name": "文娱区06",
+            "kind": "leisure",
+            "demand": 7010,
+            "passengers": 10190,
+            "completed": 6202,
+            "cancelled": 808,
+            "mean_demand_per_bucket": 6.4907407407407405,
+            "peak_demand_per_bucket": 56,
+            "latest_demand": 11,
+            "latest_available_drivers": 10,
+            "latest_supply_gap": 1
+          },
+          {
+            "zone_id": "z_006",
+            "name": "商贸区07",
+            "kind": "commercial",
+            "demand": 8304,
+            "passengers": 12156,
+            "completed": 8011,
+            "cancelled": 293,
+            "mean_demand_per_bucket": 7.688888888888889,
+            "peak_demand_per_bucket": 34,
+            "latest_demand": 2,
+            "latest_available_drivers": 6,
+            "latest_supply_gap": -4
+          },
+          {
+            "zone_id": "z_007",
+            "name": "商务区08",
+            "kind": "business",
+            "demand": 12647,
+            "passengers": 18368,
+            "completed": 12496,
+            "cancelled": 151,
+            "mean_demand_per_bucket": 11.710185185185185,
+            "peak_demand_per_bucket": 54,
+            "latest_demand": 1,
+            "latest_available_drivers": 11,
+            "latest_supply_gap": -10
+          },
+          {
+            "zone_id": "z_008",
+            "name": "商务区09",
+            "kind": "business",
+            "demand": 12879,
+            "passengers": 18755,
+            "completed": 12739,
+            "cancelled": 140,
+            "mean_demand_per_bucket": 11.925,
+            "peak_demand_per_bucket": 51,
+            "latest_demand": 1,
+            "latest_available_drivers": 16,
+            "latest_supply_gap": -15
+          }
+        ],
+        "quality": {
+          "input_rows": 100550,
+          "accepted_rows": 100550,
+          "rejected_rows": 0,
+          "duplicate_rows": 0,
+          "zero_demand_buckets": 325,
+          "coverage_attested": true,
+          "planned_order_estimate": 110576,
+          "warnings": [
+            "合成城市与需求生成机制未经真实城市校准；司机容量按桶近似，非逐车交通仿真。"
+          ],
+          "missing_panel_values": 0,
+          "completed_orders": 97524,
+          "cancelled_orders": 3026,
+          "cancellation_rate": 0.03009448035803083
+        },
+        "weather": {
+          "timestamp": "2026-02-14T15:00:00+00:00",
+          "temperature": 11.128041552673668,
+          "precipitation": 0.0,
+          "wind_speed": 3.4114272674499166,
+          "traffic_index": 0.8425769271724886,
+          "raining_zones": 0,
+          "event_zones": 0,
+          "holiday": true,
+          "aggregation": "unweighted mean across zones; counts are contemporaneous"
+        },
+        "distributions": {
+          "hour": [
+            {
+              "hour": 0,
+              "demand": 977,
+              "mean_city_demand_per_bucket": 21.711111111111112,
+              "bucket_count": 45
+            },
+            {
+              "hour": 1,
+              "demand": 977,
+              "mean_city_demand_per_bucket": 21.711111111111112,
+              "bucket_count": 45
+            },
+            {
+              "hour": 2,
+              "demand": 997,
+              "mean_city_demand_per_bucket": 22.155555555555555,
+              "bucket_count": 45
+            },
+            {
+              "hour": 3,
+              "demand": 1032,
+              "mean_city_demand_per_bucket": 22.933333333333334,
+              "bucket_count": 45
+            },
+            {
+              "hour": 4,
+              "demand": 1221,
+              "mean_city_demand_per_bucket": 27.133333333333333,
+              "bucket_count": 45
+            },
+            {
+              "hour": 5,
+              "demand": 1661,
+              "mean_city_demand_per_bucket": 36.91111111111111,
+              "bucket_count": 45
+            },
+            {
+              "hour": 6,
+              "demand": 2764,
+              "mean_city_demand_per_bucket": 61.422222222222224,
+              "bucket_count": 45
+            },
+            {
+              "hour": 7,
+              "demand": 4415,
+              "mean_city_demand_per_bucket": 98.11111111111111,
+              "bucket_count": 45
+            },
+            {
+              "hour": 8,
+              "demand": 5608,
+              "mean_city_demand_per_bucket": 124.62222222222222,
+              "bucket_count": 45
+            },
+            {
+              "hour": 9,
+              "demand": 5017,
+              "mean_city_demand_per_bucket": 111.4888888888889,
+              "bucket_count": 45
+            },
+            {
+              "hour": 10,
+              "demand": 4208,
+              "mean_city_demand_per_bucket": 93.5111111111111,
+              "bucket_count": 45
+            },
+            {
+              "hour": 11,
+              "demand": 3695,
+              "mean_city_demand_per_bucket": 82.11111111111111,
+              "bucket_count": 45
+            },
+            {
+              "hour": 12,
+              "demand": 3640,
+              "mean_city_demand_per_bucket": 80.88888888888889,
+              "bucket_count": 45
+            },
+            {
+              "hour": 13,
+              "demand": 4006,
+              "mean_city_demand_per_bucket": 89.02222222222223,
+              "bucket_count": 45
+            },
+            {
+              "hour": 14,
+              "demand": 4527,
+              "mean_city_demand_per_bucket": 100.6,
+              "bucket_count": 45
+            },
+            {
+              "hour": 15,
+              "demand": 5268,
+              "mean_city_demand_per_bucket": 117.06666666666666,
+              "bucket_count": 45
+            },
+            {
+              "hour": 16,
+              "demand": 6772,
+              "mean_city_demand_per_bucket": 150.48888888888888,
+              "bucket_count": 45
+            },
+            {
+              "hour": 17,
+              "demand": 8072,
+              "mean_city_demand_per_bucket": 179.37777777777777,
+              "bucket_count": 45
+            },
+            {
+              "hour": 18,
+              "demand": 9207,
+              "mean_city_demand_per_bucket": 204.6,
+              "bucket_count": 45
+            },
+            {
+              "hour": 19,
+              "demand": 8536,
+              "mean_city_demand_per_bucket": 189.6888888888889,
+              "bucket_count": 45
+            },
+            {
+              "hour": 20,
+              "demand": 6839,
+              "mean_city_demand_per_bucket": 151.9777777777778,
+              "bucket_count": 45
+            },
+            {
+              "hour": 21,
+              "demand": 5263,
+              "mean_city_demand_per_bucket": 116.95555555555555,
+              "bucket_count": 45
+            },
+            {
+              "hour": 22,
+              "demand": 3430,
+              "mean_city_demand_per_bucket": 76.22222222222223,
+              "bucket_count": 45
+            },
+            {
+              "hour": 23,
+              "demand": 2418,
+              "mean_city_demand_per_bucket": 53.733333333333334,
+              "bucket_count": 45
+            }
+          ],
+          "weekday": [
+            {
+              "weekday": 0,
+              "demand": 13565,
+              "mean_city_demand_per_bucket": 94.20138888888889,
+              "bucket_count": 144
+            },
+            {
+              "weekday": 1,
+              "demand": 12888,
+              "mean_city_demand_per_bucket": 89.5,
+              "bucket_count": 144
+            },
+            {
+              "weekday": 2,
+              "demand": 13159,
+              "mean_city_demand_per_bucket": 91.38194444444444,
+              "bucket_count": 144
+            },
+            {
+              "weekday": 3,
+              "demand": 14893,
+              "mean_city_demand_per_bucket": 88.64880952380952,
+              "bucket_count": 168
+            },
+            {
+              "weekday": 4,
+              "demand": 15854,
+              "mean_city_demand_per_bucket": 94.36904761904762,
+              "bucket_count": 168
+            },
+            {
+              "weekday": 5,
+              "demand": 16954,
+              "mean_city_demand_per_bucket": 100.91666666666667,
+              "bucket_count": 168
+            },
+            {
+              "weekday": 6,
+              "demand": 13237,
+              "mean_city_demand_per_bucket": 91.92361111111111,
+              "bucket_count": 144
+            }
+          ]
+        },
+        "status_distribution": [
+          {
+            "status": "completed",
+            "count": 97524
+          },
+          {
+            "status": "cancelled",
+            "count": 3026
+          }
+        ],
+        "latest_bucket": {
+          "start": "2026-02-14T15:00:00+00:00",
+          "end": "2026-02-14T16:00:00+00:00"
+        },
+        "supply_semantics": "available_drivers is a snapshot; never a count of distinct drivers over time"
+      }
+    },
+    "heatmap": {
+      "method": "GET",
+      "path": "/api/v1/datasets/d_af352fc5dfb7412b/heatmap",
+      "query": {},
+      "response": {
+        "dataset_id": "d_af352fc5dfb7412b",
+        "world_id": "w_85be8c7d5740fade",
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "bucket_minutes": 60,
+        "supply_observed": true,
+        "supply_source": "simulation",
+        "context_default_rows": null,
+        "outcomes_observed": true,
+        "timestamp": "2026-02-14T15:00:00+00:00",
+        "bucket_end": "2026-02-14T16:00:00+00:00",
+        "rows": [
+          {
+            "zone_id": "z_000",
+            "name": "商贸区01",
+            "kind": "commercial",
+            "base_demand": 12.581,
+            "population": 14443.0,
+            "jobs": 9124.0,
+            "attractiveness": 1.477,
+            "center": [
+              120.10625345287146,
+              30.206346641267736
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 11,
+            "supply_observed": true,
+            "supply_gap": -10,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_001",
+            "name": "居住区02",
+            "kind": "residential",
+            "base_demand": 13.931,
+            "population": 27162.0,
+            "jobs": 8908.0,
+            "attractiveness": 0.856,
+            "center": [
+              120.1177430152075,
+              30.206346641267736
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 12,
+            "supply_observed": true,
+            "supply_gap": -11,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_002",
+            "name": "文娱区03",
+            "kind": "leisure",
+            "base_demand": 9.667,
+            "population": 16496.0,
+            "jobs": 7178.0,
+            "attractiveness": 0.823,
+            "center": [
+              120.12948956233603,
+              30.206346641267736
+            ],
+            "demand": 12,
+            "passengers": 16,
+            "completed": 12,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8780924953872338,
+            "available_drivers": 19,
+            "supply_observed": true,
+            "supply_gap": -7,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_003",
+            "name": "商务区04",
+            "kind": "business",
+            "base_demand": 11.83,
+            "population": 6213.0,
+            "jobs": 28140.0,
+            "attractiveness": 1.474,
+            "center": [
+              120.10625345287146,
+              30.217109477022994
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 10,
+            "supply_observed": true,
+            "supply_gap": -9,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_004",
+            "name": "枢纽区05",
+            "kind": "transport",
+            "base_demand": 8.258,
+            "population": 16026.0,
+            "jobs": 11092.0,
+            "attractiveness": 1.076,
+            "center": [
+              120.1177430152075,
+              30.217109477022994
+            ],
+            "demand": 0,
+            "passengers": 0,
+            "completed": 0,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 6,
+            "supply_observed": true,
+            "supply_gap": -6,
+            "unserved_requests": 0,
+            "completion_rate": null
+          },
+          {
+            "zone_id": "z_005",
+            "name": "文娱区06",
+            "kind": "leisure",
+            "base_demand": 6.895,
+            "population": 10786.0,
+            "jobs": 6844.0,
+            "attractiveness": 1.081,
+            "center": [
+              120.12948956233603,
+              30.217109477022994
+            ],
+            "demand": 11,
+            "passengers": 16,
+            "completed": 11,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.9059928110948839,
+            "available_drivers": 10,
+            "supply_observed": true,
+            "supply_gap": 1,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_006",
+            "name": "商贸区07",
+            "kind": "commercial",
+            "base_demand": 7.269,
+            "population": 7418.0,
+            "jobs": 7818.0,
+            "attractiveness": 1.05,
+            "center": [
+              120.10625345287146,
+              30.228762835755262
+            ],
+            "demand": 2,
+            "passengers": 3,
+            "completed": 2,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 6,
+            "supply_observed": true,
+            "supply_gap": -4,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_007",
+            "name": "商务区08",
+            "kind": "business",
+            "base_demand": 13.327,
+            "population": 14977.0,
+            "jobs": 21114.0,
+            "attractiveness": 0.95,
+            "center": [
+              120.1177430152075,
+              30.228762835755262
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 11,
+            "supply_observed": true,
+            "supply_gap": -10,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_008",
+            "name": "商务区09",
+            "kind": "business",
+            "base_demand": 13.323,
+            "population": 15403.0,
+            "jobs": 16444.0,
+            "attractiveness": 1.01,
+            "center": [
+              120.12948956233603,
+              30.228762835755262
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 16,
+            "supply_observed": true,
+            "supply_gap": -15,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          }
+        ],
+        "geojson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_000",
+                "name": "商贸区01",
+                "kind": "commercial",
+                "base_demand": 12.581,
+                "population": 14443.0,
+                "jobs": 9124.0,
+                "attractiveness": 1.477,
+                "center": [
+                  120.10625345287146,
+                  30.206346641267736
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 11,
+                "supply_observed": true,
+                "supply_gap": -10,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_001",
+                "name": "居住区02",
+                "kind": "residential",
+                "base_demand": 13.931,
+                "population": 27162.0,
+                "jobs": 8908.0,
+                "attractiveness": 0.856,
+                "center": [
+                  120.1177430152075,
+                  30.206346641267736
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 12,
+                "supply_observed": true,
+                "supply_gap": -11,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_002",
+                "name": "文娱区03",
+                "kind": "leisure",
+                "base_demand": 9.667,
+                "population": 16496.0,
+                "jobs": 7178.0,
+                "attractiveness": 0.823,
+                "center": [
+                  120.12948956233603,
+                  30.206346641267736
+                ],
+                "demand": 12,
+                "passengers": 16,
+                "completed": 12,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8780924953872338,
+                "available_drivers": 19,
+                "supply_observed": true,
+                "supply_gap": -7,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_003",
+                "name": "商务区04",
+                "kind": "business",
+                "base_demand": 11.83,
+                "population": 6213.0,
+                "jobs": 28140.0,
+                "attractiveness": 1.474,
+                "center": [
+                  120.10625345287146,
+                  30.217109477022994
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 10,
+                "supply_observed": true,
+                "supply_gap": -9,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_004",
+                "name": "枢纽区05",
+                "kind": "transport",
+                "base_demand": 8.258,
+                "population": 16026.0,
+                "jobs": 11092.0,
+                "attractiveness": 1.076,
+                "center": [
+                  120.1177430152075,
+                  30.217109477022994
+                ],
+                "demand": 0,
+                "passengers": 0,
+                "completed": 0,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 6,
+                "supply_observed": true,
+                "supply_gap": -6,
+                "unserved_requests": 0,
+                "completion_rate": null
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_005",
+                "name": "文娱区06",
+                "kind": "leisure",
+                "base_demand": 6.895,
+                "population": 10786.0,
+                "jobs": 6844.0,
+                "attractiveness": 1.081,
+                "center": [
+                  120.12948956233603,
+                  30.217109477022994
+                ],
+                "demand": 11,
+                "passengers": 16,
+                "completed": 11,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.9059928110948839,
+                "available_drivers": 10,
+                "supply_observed": true,
+                "supply_gap": 1,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_006",
+                "name": "商贸区07",
+                "kind": "commercial",
+                "base_demand": 7.269,
+                "population": 7418.0,
+                "jobs": 7818.0,
+                "attractiveness": 1.05,
+                "center": [
+                  120.10625345287146,
+                  30.228762835755262
+                ],
+                "demand": 2,
+                "passengers": 3,
+                "completed": 2,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 6,
+                "supply_observed": true,
+                "supply_gap": -4,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_007",
+                "name": "商务区08",
+                "kind": "business",
+                "base_demand": 13.327,
+                "population": 14977.0,
+                "jobs": 21114.0,
+                "attractiveness": 0.95,
+                "center": [
+                  120.1177430152075,
+                  30.228762835755262
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 11,
+                "supply_observed": true,
+                "supply_gap": -10,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_008",
+                "name": "商务区09",
+                "kind": "business",
+                "base_demand": 13.323,
+                "population": 15403.0,
+                "jobs": 16444.0,
+                "attractiveness": 1.01,
+                "center": [
+                  120.12948956233603,
+                  30.228762835755262
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 16,
+                "supply_observed": true,
+                "supply_gap": -15,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            }
+          ]
+        },
+        "supply_semantics": "per-zone availability snapshot in this bucket"
+      }
+    },
+    "flows": {
+      "method": "GET",
+      "path": "/api/v1/datasets/d_af352fc5dfb7412b/flows",
+      "query": {
+        "limit": 5
+      },
+      "response": {
+        "dataset_id": "d_af352fc5dfb7412b",
+        "world_id": "w_85be8c7d5740fade",
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "bucket_minutes": 60,
+        "supply_observed": true,
+        "supply_source": "simulation",
+        "context_default_rows": null,
+        "outcomes_observed": true,
+        "rows": [
+          {
+            "pickup_zone_id": "z_000",
+            "dropoff_zone_id": "z_003",
+            "orders": 2046,
+            "passengers": 2998,
+            "completed": 2019,
+            "cancelled": 27,
+            "origin": [
+              120.10625345287146,
+              30.206346641267736
+            ],
+            "destination": [
+              120.10625345287146,
+              30.217109477022998
+            ]
+          },
+          {
+            "pickup_zone_id": "z_000",
+            "dropoff_zone_id": "z_001",
+            "orders": 1969,
+            "passengers": 2937,
+            "completed": 1940,
+            "cancelled": 29,
+            "origin": [
+              120.10625345287146,
+              30.206346641267736
+            ],
+            "destination": [
+              120.1177430152075,
+              30.206346641267736
+            ]
+          },
+          {
+            "pickup_zone_id": "z_001",
+            "dropoff_zone_id": "z_003",
+            "orders": 1906,
+            "passengers": 2813,
+            "completed": 1840,
+            "cancelled": 66,
+            "origin": [
+              120.1177430152075,
+              30.206346641267736
+            ],
+            "destination": [
+              120.10625345287146,
+              30.217109477022998
+            ]
+          },
+          {
+            "pickup_zone_id": "z_000",
+            "dropoff_zone_id": "z_000",
+            "orders": 1859,
+            "passengers": 2738,
+            "completed": 1835,
+            "cancelled": 24,
+            "origin": [
+              120.10625345287146,
+              30.206346641267736
+            ],
+            "destination": [
+              120.10625345287146,
+              30.206346641267736
+            ]
+          },
+          {
+            "pickup_zone_id": "z_008",
+            "dropoff_zone_id": "z_001",
+            "orders": 1727,
+            "passengers": 2479,
+            "completed": 1699,
+            "cancelled": 28,
+            "origin": [
+              120.12948956233603,
+              30.22876283575526
+            ],
+            "destination": [
+              120.1177430152075,
+              30.206346641267736
+            ]
+          }
+        ],
+        "total_count": 81,
+        "count": 5,
+        "truncated": true,
+        "order_count": 100550,
+        "geojson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.10625345287146,
+                    30.206346641267736
+                  ],
+                  [
+                    120.10625345287146,
+                    30.217109477022998
+                  ]
+                ]
+              },
+              "properties": {
+                "pickup_zone_id": "z_000",
+                "dropoff_zone_id": "z_003",
+                "orders": 2046,
+                "passengers": 2998,
+                "completed": 2019,
+                "cancelled": 27,
+                "origin": [
+                  120.10625345287146,
+                  30.206346641267736
+                ],
+                "destination": [
+                  120.10625345287146,
+                  30.217109477022998
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.10625345287146,
+                    30.206346641267736
+                  ],
+                  [
+                    120.1177430152075,
+                    30.206346641267736
+                  ]
+                ]
+              },
+              "properties": {
+                "pickup_zone_id": "z_000",
+                "dropoff_zone_id": "z_001",
+                "orders": 1969,
+                "passengers": 2937,
+                "completed": 1940,
+                "cancelled": 29,
+                "origin": [
+                  120.10625345287146,
+                  30.206346641267736
+                ],
+                "destination": [
+                  120.1177430152075,
+                  30.206346641267736
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1177430152075,
+                    30.206346641267736
+                  ],
+                  [
+                    120.10625345287146,
+                    30.217109477022998
+                  ]
+                ]
+              },
+              "properties": {
+                "pickup_zone_id": "z_001",
+                "dropoff_zone_id": "z_003",
+                "orders": 1906,
+                "passengers": 2813,
+                "completed": 1840,
+                "cancelled": 66,
+                "origin": [
+                  120.1177430152075,
+                  30.206346641267736
+                ],
+                "destination": [
+                  120.10625345287146,
+                  30.217109477022998
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.10625345287146,
+                    30.206346641267736
+                  ],
+                  [
+                    120.10625345287146,
+                    30.206346641267736
+                  ]
+                ]
+              },
+              "properties": {
+                "pickup_zone_id": "z_000",
+                "dropoff_zone_id": "z_000",
+                "orders": 1859,
+                "passengers": 2738,
+                "completed": 1835,
+                "cancelled": 24,
+                "origin": [
+                  120.10625345287146,
+                  30.206346641267736
+                ],
+                "destination": [
+                  120.10625345287146,
+                  30.206346641267736
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.12948956233603,
+                    30.22876283575526
+                  ],
+                  [
+                    120.1177430152075,
+                    30.206346641267736
+                  ]
+                ]
+              },
+              "properties": {
+                "pickup_zone_id": "z_008",
+                "dropoff_zone_id": "z_001",
+                "orders": 1727,
+                "passengers": 2479,
+                "completed": 1699,
+                "cancelled": 28,
+                "origin": [
+                  120.12948956233603,
+                  30.22876283575526
+                ],
+                "destination": [
+                  120.1177430152075,
+                  30.206346641267736
+                ]
+              }
+            }
+          ]
+        },
+        "geometry_semantics": "zone-centroid links; not actual road trajectories",
+        "end_exclusive": true
+      }
+    },
+    "replay": {
+      "method": "GET",
+      "path": "/api/v1/datasets/d_af352fc5dfb7412b/replay",
+      "query": {
+        "limit": 5
+      },
+      "response": {
+        "dataset_id": "d_af352fc5dfb7412b",
+        "world_id": "w_85be8c7d5740fade",
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "bucket_minutes": 60,
+        "supply_observed": true,
+        "supply_source": "simulation",
+        "context_default_rows": null,
+        "outcomes_observed": true,
+        "mode": "historical_replay",
+        "is_live": false,
+        "timestamp": "2026-02-14T15:30:00+00:00",
+        "bucket_start": "2026-02-14T15:00:00+00:00",
+        "bucket_end": "2026-02-14T16:00:00+00:00",
+        "orders": [
+          {
+            "order_id": "s42_42_491967_z_005_2",
+            "requested_at": "2026-02-14T15:00:21+00:00",
+            "pickup_zone_id": "z_005",
+            "dropoff_zone_id": "z_006",
+            "passenger_count": 2,
+            "status": "completed",
+            "pickup_lon": 120.13331853922486,
+            "pickup_lat": 30.21869914251199,
+            "dropoff_lon": 120.11169887501993,
+            "dropoff_lat": 30.22753745429278,
+            "driver_id": "driver_5_2",
+            "travel_minutes": 8.8
+          },
+          {
+            "order_id": "s42_42_491967_z_001_0",
+            "requested_at": "2026-02-14T15:01:53+00:00",
+            "pickup_zone_id": "z_001",
+            "dropoff_zone_id": "z_008",
+            "passenger_count": 1,
+            "status": "completed",
+            "pickup_lon": 120.1180686707679,
+            "pickup_lat": 30.206908808474864,
+            "dropoff_lon": 120.12984115838928,
+            "dropoff_lat": 30.230309286442232,
+            "driver_id": "driver_1_0",
+            "travel_minutes": 9.55
+          },
+          {
+            "order_id": "s42_42_491967_z_002_8",
+            "requested_at": "2026-02-14T15:03:53+00:00",
+            "pickup_zone_id": "z_002",
+            "dropoff_zone_id": "z_000",
+            "passenger_count": 2,
+            "status": "completed",
+            "pickup_lon": 120.12524421296523,
+            "pickup_lat": 30.201719666958137,
+            "dropoff_lon": 120.10746576784493,
+            "dropoff_lat": 30.210630668972648,
+            "driver_id": "driver_2_8",
+            "travel_minutes": 7.83
+          },
+          {
+            "order_id": "s42_42_491967_z_008_0",
+            "requested_at": "2026-02-14T15:08:42+00:00",
+            "pickup_zone_id": "z_008",
+            "dropoff_zone_id": "z_004",
+            "passenger_count": 1,
+            "status": "completed",
+            "pickup_lon": 120.12825627570169,
+            "pickup_lat": 30.235013092340264,
+            "dropoff_lon": 120.1227745102705,
+            "dropoff_lat": 30.214222799904643,
+            "driver_id": "driver_8_0",
+            "travel_minutes": 8.47
+          },
+          {
+            "order_id": "s42_42_491967_z_005_0",
+            "requested_at": "2026-02-14T15:10:58+00:00",
+            "pickup_zone_id": "z_005",
+            "dropoff_zone_id": "z_000",
+            "passenger_count": 1,
+            "status": "completed",
+            "pickup_lon": 120.12596594321171,
+            "pickup_lat": 30.219550893616095,
+            "dropoff_lon": 120.10733520939236,
+            "dropoff_lat": 30.201586177950187,
+            "driver_id": "driver_5_0",
+            "travel_minutes": 9.77
+          }
+        ],
+        "order_count": 30,
+        "orders_truncated": true,
+        "vehicles": [
+          {
+            "driver_id": "driver_2_1",
+            "order_id": "s42_42_491967_z_002_1",
+            "state": "occupied",
+            "lon": 120.12048663185585,
+            "lat": 30.210722423724523,
+            "progress": 0.6419073819348923,
+            "requested_at": "2026-02-14T15:25:20+00:00",
+            "ends_at": "2026-02-14T15:32:36.200000+00:00"
+          },
+          {
+            "driver_id": "driver_5_5",
+            "order_id": "s42_42_491967_z_005_5",
+            "state": "occupied",
+            "lon": 120.11879150606981,
+            "lat": 30.214250081037786,
+            "progress": 0.504416550441655,
+            "requested_at": "2026-02-14T15:26:23+00:00",
+            "ends_at": "2026-02-14T15:33:33.200000+00:00"
+          },
+          {
+            "driver_id": "driver_5_6",
+            "order_id": "s42_42_491967_z_005_6",
+            "state": "occupied",
+            "lon": 120.13300657384451,
+            "lat": 30.220967353433796,
+            "progress": 0.29380341880341887,
+            "requested_at": "2026-02-14T15:27:15+00:00",
+            "ends_at": "2026-02-14T15:36:36.600000+00:00"
+          },
+          {
+            "driver_id": "driver_2_2",
+            "order_id": "s42_42_491967_z_002_2",
+            "state": "occupied",
+            "lon": 120.13081839574797,
+            "lat": 30.205484373447884,
+            "progress": 0.20539354029476323,
+            "requested_at": "2026-02-14T15:27:49+00:00",
+            "ends_at": "2026-02-14T15:38:26.800000+00:00"
+          },
+          {
+            "driver_id": "driver_7_0",
+            "order_id": "s42_42_491967_z_007_0",
+            "state": "occupied",
+            "lon": 120.11255591334714,
+            "lat": 30.222744472473057,
+            "progress": 0.02685078634445723,
+            "requested_at": "2026-02-14T15:29:46+00:00",
+            "ends_at": "2026-02-14T15:38:27.400000+00:00"
+          }
+        ],
+        "vehicle_count": 5,
+        "vehicles_truncated": false,
+        "zones": [
+          {
+            "zone_id": "z_000",
+            "name": "商贸区01",
+            "kind": "commercial",
+            "base_demand": 12.581,
+            "population": 14443.0,
+            "jobs": 9124.0,
+            "attractiveness": 1.477,
+            "center": [
+              120.10625345287146,
+              30.206346641267736
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 11,
+            "supply_observed": true,
+            "supply_gap": -10,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_001",
+            "name": "居住区02",
+            "kind": "residential",
+            "base_demand": 13.931,
+            "population": 27162.0,
+            "jobs": 8908.0,
+            "attractiveness": 0.856,
+            "center": [
+              120.1177430152075,
+              30.206346641267736
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 12,
+            "supply_observed": true,
+            "supply_gap": -11,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_002",
+            "name": "文娱区03",
+            "kind": "leisure",
+            "base_demand": 9.667,
+            "population": 16496.0,
+            "jobs": 7178.0,
+            "attractiveness": 0.823,
+            "center": [
+              120.12948956233603,
+              30.206346641267736
+            ],
+            "demand": 12,
+            "passengers": 16,
+            "completed": 12,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8780924953872338,
+            "available_drivers": 19,
+            "supply_observed": true,
+            "supply_gap": -7,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_003",
+            "name": "商务区04",
+            "kind": "business",
+            "base_demand": 11.83,
+            "population": 6213.0,
+            "jobs": 28140.0,
+            "attractiveness": 1.474,
+            "center": [
+              120.10625345287146,
+              30.217109477022994
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 10,
+            "supply_observed": true,
+            "supply_gap": -9,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_004",
+            "name": "枢纽区05",
+            "kind": "transport",
+            "base_demand": 8.258,
+            "population": 16026.0,
+            "jobs": 11092.0,
+            "attractiveness": 1.076,
+            "center": [
+              120.1177430152075,
+              30.217109477022994
+            ],
+            "demand": 0,
+            "passengers": 0,
+            "completed": 0,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 6,
+            "supply_observed": true,
+            "supply_gap": -6,
+            "unserved_requests": 0,
+            "completion_rate": null
+          },
+          {
+            "zone_id": "z_005",
+            "name": "文娱区06",
+            "kind": "leisure",
+            "base_demand": 6.895,
+            "population": 10786.0,
+            "jobs": 6844.0,
+            "attractiveness": 1.081,
+            "center": [
+              120.12948956233603,
+              30.217109477022994
+            ],
+            "demand": 11,
+            "passengers": 16,
+            "completed": 11,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.9059928110948839,
+            "available_drivers": 10,
+            "supply_observed": true,
+            "supply_gap": 1,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_006",
+            "name": "商贸区07",
+            "kind": "commercial",
+            "base_demand": 7.269,
+            "population": 7418.0,
+            "jobs": 7818.0,
+            "attractiveness": 1.05,
+            "center": [
+              120.10625345287146,
+              30.228762835755262
+            ],
+            "demand": 2,
+            "passengers": 3,
+            "completed": 2,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 6,
+            "supply_observed": true,
+            "supply_gap": -4,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_007",
+            "name": "商务区08",
+            "kind": "business",
+            "base_demand": 13.327,
+            "population": 14977.0,
+            "jobs": 21114.0,
+            "attractiveness": 0.95,
+            "center": [
+              120.1177430152075,
+              30.228762835755262
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 11,
+            "supply_observed": true,
+            "supply_gap": -10,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          },
+          {
+            "zone_id": "z_008",
+            "name": "商务区09",
+            "kind": "business",
+            "base_demand": 13.323,
+            "population": 15403.0,
+            "jobs": 16444.0,
+            "attractiveness": 1.01,
+            "center": [
+              120.12948956233603,
+              30.228762835755262
+            ],
+            "demand": 1,
+            "passengers": 1,
+            "completed": 1,
+            "cancelled": 0,
+            "temperature": 11.128041552673668,
+            "precipitation": 0.0,
+            "wind_speed": 3.4114272674499166,
+            "holiday": 1,
+            "event_intensity": 0.0,
+            "traffic_index": 0.8284438625814684,
+            "available_drivers": 16,
+            "supply_observed": true,
+            "supply_gap": -15,
+            "unserved_requests": 0,
+            "completion_rate": 1.0
+          }
+        ],
+        "geojson": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_000",
+                "name": "商贸区01",
+                "kind": "commercial",
+                "base_demand": 12.581,
+                "population": 14443.0,
+                "jobs": 9124.0,
+                "attractiveness": 1.477,
+                "center": [
+                  120.10625345287146,
+                  30.206346641267736
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 11,
+                "supply_observed": true,
+                "supply_gap": -10,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_001",
+                "name": "居住区02",
+                "kind": "residential",
+                "base_demand": 13.931,
+                "population": 27162.0,
+                "jobs": 8908.0,
+                "attractiveness": 0.856,
+                "center": [
+                  120.1177430152075,
+                  30.206346641267736
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 12,
+                "supply_observed": true,
+                "supply_gap": -11,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_002",
+                "name": "文娱区03",
+                "kind": "leisure",
+                "base_demand": 9.667,
+                "population": 16496.0,
+                "jobs": 7178.0,
+                "attractiveness": 0.823,
+                "center": [
+                  120.12948956233603,
+                  30.206346641267736
+                ],
+                "demand": 12,
+                "passengers": 16,
+                "completed": 12,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8780924953872338,
+                "available_drivers": 19,
+                "supply_observed": true,
+                "supply_gap": -7,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_003",
+                "name": "商务区04",
+                "kind": "business",
+                "base_demand": 11.83,
+                "population": 6213.0,
+                "jobs": 28140.0,
+                "attractiveness": 1.474,
+                "center": [
+                  120.10625345287146,
+                  30.217109477022994
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 10,
+                "supply_observed": true,
+                "supply_gap": -9,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_004",
+                "name": "枢纽区05",
+                "kind": "transport",
+                "base_demand": 8.258,
+                "population": 16026.0,
+                "jobs": 11092.0,
+                "attractiveness": 1.076,
+                "center": [
+                  120.1177430152075,
+                  30.217109477022994
+                ],
+                "demand": 0,
+                "passengers": 0,
+                "completed": 0,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 6,
+                "supply_observed": true,
+                "supply_gap": -6,
+                "unserved_requests": 0,
+                "completion_rate": null
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_005",
+                "name": "文娱区06",
+                "kind": "leisure",
+                "base_demand": 6.895,
+                "population": 10786.0,
+                "jobs": 6844.0,
+                "attractiveness": 1.081,
+                "center": [
+                  120.12948956233603,
+                  30.217109477022994
+                ],
+                "demand": 11,
+                "passengers": 16,
+                "completed": 11,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.9059928110948839,
+                "available_drivers": 10,
+                "supply_observed": true,
+                "supply_gap": 1,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_006",
+                "name": "商贸区07",
+                "kind": "commercial",
+                "base_demand": 7.269,
+                "population": 7418.0,
+                "jobs": 7818.0,
+                "attractiveness": 1.05,
+                "center": [
+                  120.10625345287146,
+                  30.228762835755262
+                ],
+                "demand": 2,
+                "passengers": 3,
+                "completed": 2,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 6,
+                "supply_observed": true,
+                "supply_gap": -4,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_007",
+                "name": "商务区08",
+                "kind": "business",
+                "base_demand": 13.327,
+                "population": 14977.0,
+                "jobs": 21114.0,
+                "attractiveness": 0.95,
+                "center": [
+                  120.1177430152075,
+                  30.228762835755262
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 11,
+                "supply_observed": true,
+                "supply_gap": -10,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_008",
+                "name": "商务区09",
+                "kind": "business",
+                "base_demand": 13.323,
+                "population": 15403.0,
+                "jobs": 16444.0,
+                "attractiveness": 1.01,
+                "center": [
+                  120.12948956233603,
+                  30.228762835755262
+                ],
+                "demand": 1,
+                "passengers": 1,
+                "completed": 1,
+                "cancelled": 0,
+                "temperature": 11.128041552673668,
+                "precipitation": 0.0,
+                "wind_speed": 3.4114272674499166,
+                "holiday": 1,
+                "event_intensity": 0.0,
+                "traffic_index": 0.8284438625814684,
+                "available_drivers": 16,
+                "supply_observed": true,
+                "supply_gap": -15,
+                "unserved_requests": 0,
+                "completion_rate": 1.0
+              }
+            }
+          ]
+        },
+        "events": [],
+        "position_source": "derived_linear_interpolation",
+        "position_assumption": "travel starts at requested_at; interpolation between pickup/dropoff; no road path or idle-vehicle positions",
+        "status_semantics": "order status is its final dataset outcome, not its state at replay timestamp",
+        "order_scope": "all requests in the selected bucket, including requests later than the replay cursor",
+        "supply_semantics": "zone snapshot; inferred occupied markers do not enumerate the full fleet"
+      }
+    },
+    "forecast": {
+      "method": "POST",
+      "path": "/api/v1/forecasts",
+      "request": {
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b"
+      },
+      "response": {
+        "schema_version": "1.0",
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b",
+        "world_id": "w_85be8c7d5740fade",
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "forecast_origin": "2026-02-14T16:00:00+00:00",
+        "bucket_minutes": 60,
+        "timezone": "Asia/Shanghai",
+        "horizon": 3,
+        "rows": [
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_000",
+            "horizon": 1,
+            "predicted_demand": 3.2053534984588623,
+            "lower": 0.0,
+            "upper": 8.641747236251831
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_001",
+            "horizon": 1,
+            "predicted_demand": 2.7243826389312744,
+            "lower": 0.0,
+            "upper": 8.160776376724243
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_002",
+            "horizon": 1,
+            "predicted_demand": 3.903522253036499,
+            "lower": 0.0,
+            "upper": 9.339915990829468
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_003",
+            "horizon": 1,
+            "predicted_demand": 1.364026665687561,
+            "lower": 0.0,
+            "upper": 6.80042040348053
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_004",
+            "horizon": 1,
+            "predicted_demand": 1.59172785282135,
+            "lower": 0.0,
+            "upper": 7.028121590614319
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_005",
+            "horizon": 1,
+            "predicted_demand": 2.7862634658813477,
+            "lower": 0.0,
+            "upper": 8.222657203674316
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_006",
+            "horizon": 1,
+            "predicted_demand": 1.5491982698440552,
+            "lower": 0.0,
+            "upper": 6.985592007637024
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_007",
+            "horizon": 1,
+            "predicted_demand": 1.734999179840088,
+            "lower": 0.0,
+            "upper": 7.171392917633057
+          },
+          {
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "zone_id": "z_008",
+            "horizon": 1,
+            "predicted_demand": 1.6771944761276245,
+            "lower": 0.0,
+            "upper": 7.113588213920593
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_000",
+            "horizon": 2,
+            "predicted_demand": 3.3010404109954834,
+            "lower": 0.0,
+            "upper": 8.86090350151062
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_001",
+            "horizon": 2,
+            "predicted_demand": 2.86622953414917,
+            "lower": 0.0,
+            "upper": 8.426092624664307
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_002",
+            "horizon": 2,
+            "predicted_demand": 1.7064135074615479,
+            "lower": 0.0,
+            "upper": 7.266276597976685
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_003",
+            "horizon": 2,
+            "predicted_demand": 1.4158926010131836,
+            "lower": 0.0,
+            "upper": 6.97575569152832
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_004",
+            "horizon": 2,
+            "predicted_demand": 1.5167700052261353,
+            "lower": 0.0,
+            "upper": 7.076633095741272
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_005",
+            "horizon": 2,
+            "predicted_demand": 1.141095757484436,
+            "lower": 0.0,
+            "upper": 6.700958847999573
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_006",
+            "horizon": 2,
+            "predicted_demand": 1.4592608213424683,
+            "lower": 0.0,
+            "upper": 7.019123911857605
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_007",
+            "horizon": 2,
+            "predicted_demand": 1.4800689220428467,
+            "lower": 0.0,
+            "upper": 7.039932012557983
+          },
+          {
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "zone_id": "z_008",
+            "horizon": 2,
+            "predicted_demand": 1.644631266593933,
+            "lower": 0.0,
+            "upper": 7.20449435710907
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_000",
+            "horizon": 3,
+            "predicted_demand": 3.417146921157837,
+            "lower": 0.0,
+            "upper": 9.24013876914978
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_001",
+            "horizon": 3,
+            "predicted_demand": 2.8707737922668457,
+            "lower": 0.0,
+            "upper": 8.693765640258789
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_002",
+            "horizon": 3,
+            "predicted_demand": 1.8281844854354858,
+            "lower": 0.0,
+            "upper": 7.651176333427429
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_003",
+            "horizon": 3,
+            "predicted_demand": 1.4088141918182373,
+            "lower": 0.0,
+            "upper": 7.231806039810181
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_004",
+            "horizon": 3,
+            "predicted_demand": 1.5186283588409424,
+            "lower": 0.0,
+            "upper": 7.341620206832886
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_005",
+            "horizon": 3,
+            "predicted_demand": 1.259447455406189,
+            "lower": 0.0,
+            "upper": 7.082439303398132
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_006",
+            "horizon": 3,
+            "predicted_demand": 1.6093324422836304,
+            "lower": 0.0,
+            "upper": 7.432324290275574
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_007",
+            "horizon": 3,
+            "predicted_demand": 1.5602853298187256,
+            "lower": 0.0,
+            "upper": 7.383277177810669
+          },
+          {
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "zone_id": "z_008",
+            "horizon": 3,
+            "predicted_demand": 1.800054907798767,
+            "lower": 0.0,
+            "upper": 7.6230467557907104
+          }
+        ],
+        "totals": [
+          {
+            "horizon": 1,
+            "timestamp": "2026-02-14T16:00:00+00:00",
+            "predicted_demand": 20.53666877746582
+          },
+          {
+            "horizon": 2,
+            "timestamp": "2026-02-14T17:00:00+00:00",
+            "predicted_demand": 16.531402587890625
+          },
+          {
+            "horizon": 3,
+            "timestamp": "2026-02-14T18:00:00+00:00",
+            "predicted_demand": 17.272666931152344
+          }
+        ],
+        "interval": {
+          "method": "validation_absolute_residual_quantile",
+          "nominal_marginal_coverage": 0.9,
+          "coverage_is_not_guaranteed": true
+        },
+        "exogenous_assumption": "Future weather, traffic and supply use the last origin-available observation; calendar and scheduled events are known in advance.",
+        "scenario": {},
+        "architecture": "conditional_poisson_rate_residual_gru",
+        "blending": {
+          "neural_weight": 0.25,
+          "baseline_name": "calendar_rate",
+          "validation_grid": [
+            {
+              "neural_weight": 0.0,
+              "adaptation": {
+                "window_hours": 0,
+                "strength": 0.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.891379925253922,
+              "rmse": 3.985000255388482,
+              "wape": 24.687383169479464,
+              "smape": 35.78314213824682,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.23920147657308677,
+              "volume_bias_percent": 2.0423668488832223
+            },
+            {
+              "neural_weight": 0.0,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.820627757646505,
+              "rmse": 3.8918378060674383,
+              "wape": 24.083282042353417,
+              "smape": 35.59364604866783,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.16866931290302462,
+              "volume_bias_percent": 1.4401441748282566
+            },
+            {
+              "neural_weight": 0.0,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8705586825545337,
+              "rmse": 3.982306045265103,
+              "wape": 24.509605772571177,
+              "smape": 36.26833690469334,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1389399730057564,
+              "volume_bias_percent": 1.1863070367167372
+            },
+            {
+              "neural_weight": 0.0,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8653347010408448,
+              "rmse": 3.9572133656738373,
+              "wape": 24.46500200667646,
+              "smape": 35.759148300610605,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1992372398280446,
+              "volume_bias_percent": 1.7011413956028125
+            },
+            {
+              "neural_weight": 0.0,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.9091170638295996,
+              "rmse": 4.042661458661175,
+              "wape": 24.838827651929986,
+              "smape": 36.321494764350234,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1861807203515748,
+              "volume_bias_percent": 1.5896613039136946
+            },
+            {
+              "neural_weight": 0.25,
+              "adaptation": {
+                "window_hours": 0,
+                "strength": 0.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8843682681172496,
+              "rmse": 3.9811172209875965,
+              "wape": 24.627515746013543,
+              "smape": 35.73623366920347,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.21850118149274203,
+              "volume_bias_percent": 1.8656221354312597
+            },
+            {
+              "neural_weight": 0.25,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8168472092342824,
+              "rmse": 3.897436240199676,
+              "wape": 24.05100269835295,
+              "smape": 35.55366788021571,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.15006845711547237,
+              "volume_bias_percent": 1.2813250414114663
+            },
+            {
+              "neural_weight": 0.25,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8680197568473007,
+              "rmse": 3.990630957619671,
+              "wape": 24.487927738762526,
+              "smape": 36.21510526627531,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.12156108779385981,
+              "volume_bias_percent": 1.0379214183007097
+            },
+            {
+              "neural_weight": 0.25,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8578550652264263,
+              "rmse": 3.959628182670428,
+              "wape": 24.401138854793196,
+              "smape": 35.71210928112575,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.18441063630756652,
+              "volume_bias_percent": 1.5745478479977357
+            },
+            {
+              "neural_weight": 0.25,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.9046139936145368,
+              "rmse": 4.050671466835928,
+              "wape": 24.8003792215223,
+              "smape": 36.25244836933116,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.17700769296013077,
+              "volume_bias_percent": 1.5113395171229735
+            },
+            {
+              "neural_weight": 0.5,
+              "adaptation": {
+                "window_hours": 0,
+                "strength": 0.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8818756006725055,
+              "rmse": 3.9858740099076786,
+              "wape": 24.606232677750874,
+              "smape": 35.72731670872271,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.19780091573248146,
+              "volume_bias_percent": 1.688877672322099
+            },
+            {
+              "neural_weight": 0.5,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8180800374143202,
+              "rmse": 3.911246525223999,
+              "wape": 24.061528918514092,
+              "smape": 35.55095836326325,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.131574061653332,
+              "volume_bias_percent": 1.123414895022923
+            },
+            {
+              "neural_weight": 0.5,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.870460195341628,
+              "rmse": 4.008117603091278,
+              "wape": 24.508764862132164,
+              "smape": 36.18905739165638,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.10468387365855573,
+              "volume_bias_percent": 0.89381920310842
+            },
+            {
+              "neural_weight": 0.5,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.857052605214714,
+              "rmse": 3.97118719627629,
+              "wape": 24.39428723435608,
+              "smape": 35.70399328519937,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1698034961461078,
+              "volume_bias_percent": 1.4498281378598317
+            },
+            {
+              "neural_weight": 0.5,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.9051857515874846,
+              "rmse": 4.069015737113833,
+              "wape": 24.805261045607427,
+              "smape": 36.21793124007987,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1684388292217289,
+              "volume_bias_percent": 1.438176242871352
+            },
+            {
+              "neural_weight": 0.75,
+              "adaptation": {
+                "window_hours": 0,
+                "strength": 0.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.885188388078601,
+              "rmse": 3.9992398171690193,
+              "wape": 24.63451815187311,
+              "smape": 35.766529492533024,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.177100642513603,
+              "volume_bias_percent": 1.5121331455292435
+            },
+            {
+              "neural_weight": 0.75,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.82457243170253,
+              "rmse": 3.933141825141227,
+              "wape": 24.116962735454038,
+              "smape": 35.58361825825166,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.11318330835927437,
+              "volume_bias_percent": 0.9663896734737711
+            },
+            {
+              "neural_weight": 0.75,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8795355217613707,
+              "rmse": 4.034503977442611,
+              "wape": 24.58625245162375,
+              "smape": 36.20454172132957,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.08829942820355945,
+              "volume_bias_percent": 0.7539243800746026
+            },
+            {
+              "neural_weight": 0.75,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8628227814458675,
+              "rmse": 3.9918341522883334,
+              "wape": 24.443554558352393,
+              "smape": 35.73432602896958,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.15541496426027826,
+              "volume_bias_percent": 1.3269749642560371
+            },
+            {
+              "neural_weight": 0.75,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.913387747472758,
+              "rmse": 4.097610484981265,
+              "wape": 24.875291902986525,
+              "smape": 36.24644965782153,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.16047283746663807,
+              "volume_bias_percent": 1.370160452533605
+            },
+            {
+              "neural_weight": 1.0,
+              "adaptation": {
+                "window_hours": 0,
+                "strength": 0.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.894005520572683,
+              "rmse": 4.02112881262785,
+              "wape": 24.709801211852973,
+              "smape": 35.85963602083873,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.15640034919074866,
+              "volume_bias_percent": 1.3353884470832091
+            },
+            {
+              "neural_weight": 1.0,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.8383444068844224,
+              "rmse": 3.9629553715296235,
+              "wape": 24.23455158130109,
+              "smape": 35.66933428318351,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.09489375633629309,
+              "volume_bias_percent": 0.810228535725741
+            },
+            {
+              "neural_weight": 1.0,
+              "adaptation": {
+                "window_hours": 12,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.8952551144826586,
+              "rmse": 4.069503806186359,
+              "wape": 24.7204705823471,
+              "smape": 36.28668944388455,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.07239974488118106,
+              "volume_bias_percent": 0.6181685871313884
+            },
+            {
+              "neural_weight": 1.0,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 0.5,
+                "prior_count": 20.0
+              },
+              "mae": 2.874721512053777,
+              "rmse": 4.021455453425766,
+              "wape": 24.545149135800415,
+              "smape": 35.8231055696016,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.14124432578013124,
+              "volume_bias_percent": 1.2059822234335604
+            },
+            {
+              "neural_weight": 1.0,
+              "adaptation": {
+                "window_hours": 24,
+                "strength": 1.0,
+                "prior_count": 20.0
+              },
+              "mae": 2.928863987674905,
+              "rmse": 4.136310204421945,
+              "wape": 25.007432224137766,
+              "smape": 36.33661435877957,
+              "sample_count": 2781,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              },
+              "bias": 0.1531088217390994,
+              "volume_bias_percent": 1.3072844961973393
+            }
+          ],
+          "selection": "earlier_validation_MAE_only",
+          "deployment": "neural_seasonal_blend"
+        },
+        "adaptation": {
+          "window_hours": 12,
+          "strength": 0.5,
+          "prior_count": 20.0,
+          "ratio_clip": [
+            0.5,
+            2.0
+          ],
+          "selection": "earlier_validation_MAE_only",
+          "source": "past observed demand versus frozen-model h1 hindcasts, strictly before each origin",
+          "current_factors": {
+            "z_000": 0.9167934656143188,
+            "z_001": 1.005599021911621,
+            "z_002": 0.982292115688324,
+            "z_003": 0.8643723726272583,
+            "z_004": 0.9462817907333374,
+            "z_005": 0.9681521058082581,
+            "z_006": 0.9266887307167053,
+            "z_007": 0.9393256902694702,
+            "z_008": 0.9299253225326538
+          }
+        },
+        "scenario_note": "Overrides are caller-known assumptions; demand_multiplier is an explicit post-model scaling assumption, not an estimated causal effect."
+      }
+    },
+    "dispatch": {
+      "method": "POST",
+      "path": "/api/v1/dispatch-suggestions",
+      "request": {
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b"
+      },
+      "response": {
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b",
+        "forecast_origin": "2026-02-14T16:00:00+00:00",
+        "timestamp": "2026-02-14T16:00:00+00:00",
+        "bucket_minutes": 60,
+        "method": "greedy_nearest_surplus",
+        "executed": false,
+        "horizon_policy": "first_forecast_bucket_only",
+        "capacity_assumption": "one available driver serves one request in the next bucket; required_drivers=ceil(predicted_demand)",
+        "distance_method": "great_circle_between_zone_centroids; does not model road access or travel time",
+        "limitations": "heuristic advice; supply age, trip duration, road closures and relocation arrival times must be checked before execution",
+        "supply_known": true,
+        "recommendations": [],
+        "zones": [
+          {
+            "zone_id": "z_000",
+            "predicted_demand": 3.2053534984588623,
+            "required_drivers": 4,
+            "available_before": 11,
+            "available_after": 11,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_001",
+            "predicted_demand": 2.7243826389312744,
+            "required_drivers": 3,
+            "available_before": 12,
+            "available_after": 12,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_002",
+            "predicted_demand": 3.903522253036499,
+            "required_drivers": 4,
+            "available_before": 19,
+            "available_after": 19,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_003",
+            "predicted_demand": 1.364026665687561,
+            "required_drivers": 2,
+            "available_before": 10,
+            "available_after": 10,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_004",
+            "predicted_demand": 1.59172785282135,
+            "required_drivers": 2,
+            "available_before": 6,
+            "available_after": 6,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_005",
+            "predicted_demand": 2.7862634658813477,
+            "required_drivers": 3,
+            "available_before": 10,
+            "available_after": 10,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_006",
+            "predicted_demand": 1.5491982698440552,
+            "required_drivers": 2,
+            "available_before": 6,
+            "available_after": 6,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_007",
+            "predicted_demand": 1.734999179840088,
+            "required_drivers": 2,
+            "available_before": 11,
+            "available_after": 11,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_008",
+            "predicted_demand": 1.6771944761276245,
+            "required_drivers": 2,
+            "available_before": 16,
+            "available_after": 16,
+            "shortage_before": 0,
+            "shortage_after": 0
+          }
+        ],
+        "total_relocated_drivers": 0,
+        "total_driver_km": 0,
+        "remaining_shortage": 0,
+        "conservation": {
+          "before": 101,
+          "after": 101,
+          "preserved": true
+        },
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "scenario": {},
+        "supply_source": "last_observed_bucket",
+        "supply_snapshot_timestamp": "2026-02-14T15:00:00+00:00"
+      }
+    },
+    "dispatch_with_supply": {
+      "method": "POST",
+      "path": "/api/v1/dispatch-suggestions",
+      "request": {
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b",
+        "supply": {
+          "z_000": 30,
+          "z_001": 30,
+          "z_002": 30,
+          "z_003": 30,
+          "z_004": 30,
+          "z_005": 30,
+          "z_006": 30,
+          "z_007": 30,
+          "z_008": 30
+        }
+      },
+      "response": {
+        "model_id": "m_5c91b393189043be",
+        "dataset_id": "d_af352fc5dfb7412b",
+        "forecast_origin": "2026-02-14T16:00:00+00:00",
+        "timestamp": "2026-02-14T16:00:00+00:00",
+        "bucket_minutes": 60,
+        "method": "greedy_nearest_surplus",
+        "executed": false,
+        "horizon_policy": "first_forecast_bucket_only",
+        "capacity_assumption": "one available driver serves one request in the next bucket; required_drivers=ceil(predicted_demand)",
+        "distance_method": "great_circle_between_zone_centroids; does not model road access or travel time",
+        "limitations": "heuristic advice; supply age, trip duration, road closures and relocation arrival times must be checked before execution",
+        "supply_known": true,
+        "recommendations": [],
+        "zones": [
+          {
+            "zone_id": "z_000",
+            "predicted_demand": 3.2053534984588623,
+            "required_drivers": 4,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_001",
+            "predicted_demand": 2.7243826389312744,
+            "required_drivers": 3,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_002",
+            "predicted_demand": 3.903522253036499,
+            "required_drivers": 4,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_003",
+            "predicted_demand": 1.364026665687561,
+            "required_drivers": 2,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_004",
+            "predicted_demand": 1.59172785282135,
+            "required_drivers": 2,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_005",
+            "predicted_demand": 2.7862634658813477,
+            "required_drivers": 3,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_006",
+            "predicted_demand": 1.5491982698440552,
+            "required_drivers": 2,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_007",
+            "predicted_demand": 1.734999179840088,
+            "required_drivers": 2,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          },
+          {
+            "zone_id": "z_008",
+            "predicted_demand": 1.6771944761276245,
+            "required_drivers": 2,
+            "available_before": 30,
+            "available_after": 30,
+            "shortage_before": 0,
+            "shortage_after": 0
+          }
+        ],
+        "total_relocated_drivers": 0,
+        "total_driver_km": 0,
+        "remaining_shortage": 0,
+        "conservation": {
+          "before": 270,
+          "after": 270,
+          "preserved": true
+        },
+        "source": "synthetic",
+        "target_semantics": "requests",
+        "scenario": {},
+        "supply_source": "caller",
+        "supply_snapshot_timestamp": null
+      }
+    },
+    "job": {
+      "method": "GET",
+      "path": "/api/v1/jobs/j_ca08d6b680334f22",
+      "response": {
+        "id": "j_ca08d6b680334f22",
+        "kind": "train",
+        "state": "succeeded",
+        "progress": 1.0,
+        "stage": "succeeded",
+        "message": "Model serialized, reloaded, and held-out metrics saved",
+        "params": {
+          "dataset_id": "d_af352fc5dfb7412b",
+          "config": {
+            "lookback": 24,
+            "horizon": 3,
+            "epochs": 30,
+            "batch_size": 128,
+            "units": 32,
+            "learning_rate": 0.001,
+            "seed": 42,
+            "tune": true,
+            "loss": "poisson"
+          },
+          "resource_id": "m_5c91b393189043be"
+        },
+        "result": {
+          "resource_type": "model",
+          "resource_id": "m_5c91b393189043be"
+        },
+        "error": null,
+        "created_at": "2026-11-11T15:05:56.243154+00:00",
+        "started_at": "2026-11-11T15:05:56.245784+00:00",
+        "finished_at": "2026-11-11T15:06:06.537597+00:00",
+        "heartbeat_at": "2026-11-11T15:06:06.537598+00:00",
+        "worker_id": "j_abe8e8697be44aa0"
+      }
+    },
+    "history": {
+      "method": "GET",
+      "path": "/api/v1/models/m_5c91b393189043be/history",
+      "response": {
+        "candidates": [
+          {
+            "candidate": 0,
+            "config": {
+              "lookback": 24,
+              "horizon": 3,
+              "epochs": 30,
+              "batch_size": 128,
+              "units": 32,
+              "learning_rate": 0.001,
+              "seed": 42,
+              "tune": true,
+              "loss": "poisson"
+            },
+            "loss_unit": "Poisson loss on demand counts (NLL up to a target-only constant)",
+            "initialization_seed": 42,
+            "epochs": [
+              {
+                "epoch": 1,
+                "duration_seconds": 1.012381749926135,
+                "loss": -18.312755584716797,
+                "mae": 2.5701005458831787,
+                "val_loss": -20.65068817138672,
+                "val_mae": 2.923830986022949,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 2,
+                "duration_seconds": 0.26639566710218787,
+                "loss": -18.31818962097168,
+                "mae": 2.5513412952423096,
+                "val_loss": -20.65595054626465,
+                "val_mae": 2.9055685997009277,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 3,
+                "duration_seconds": 0.26744512491859496,
+                "loss": -18.32452964782715,
+                "mae": 2.538365364074707,
+                "val_loss": -20.634685516357422,
+                "val_mae": 2.966757297515869,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 4,
+                "duration_seconds": 0.2656315420754254,
+                "loss": -18.33207130432129,
+                "mae": 2.5194592475891113,
+                "val_loss": -20.5877742767334,
+                "val_mae": 3.0728919506073,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 5,
+                "duration_seconds": 0.26566870883107185,
+                "loss": -18.338626861572266,
+                "mae": 2.4970896244049072,
+                "val_loss": -20.652095794677734,
+                "val_mae": 2.894005298614502,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 6,
+                "duration_seconds": 0.26433529099449515,
+                "loss": -18.345203399658203,
+                "mae": 2.48356294631958,
+                "val_loss": -20.625362396240234,
+                "val_mae": 2.947748899459839,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 7,
+                "duration_seconds": 0.27598945889621973,
+                "loss": -18.349729537963867,
+                "mae": 2.470885992050171,
+                "val_loss": -20.62016487121582,
+                "val_mae": 2.9546141624450684,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 8,
+                "duration_seconds": 0.2648850828409195,
+                "loss": -18.359848022460938,
+                "mae": 2.4408044815063477,
+                "val_loss": -20.609025955200195,
+                "val_mae": 3.0148093700408936,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 9,
+                "duration_seconds": 0.2649515410885215,
+                "loss": -18.368541717529297,
+                "mae": 2.4117538928985596,
+                "val_loss": -20.598236083984375,
+                "val_mae": 3.047372817993164,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 10,
+                "duration_seconds": 0.26547429198399186,
+                "loss": -18.373624801635742,
+                "mae": 2.396681785583496,
+                "val_loss": -20.5972957611084,
+                "val_mae": 3.0464963912963867,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 11,
+                "duration_seconds": 0.2646753750741482,
+                "loss": -18.379037857055664,
+                "mae": 2.382524251937866,
+                "val_loss": -20.601768493652344,
+                "val_mae": 3.034900188446045,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 12,
+                "duration_seconds": 0.26476987497881055,
+                "loss": -18.384172439575195,
+                "mae": 2.3665881156921387,
+                "val_loss": -20.594711303710938,
+                "val_mae": 3.055570602416992,
+                "learning_rate": 0.0002500000118743628
+              }
+            ]
+          },
+          {
+            "candidate": 1,
+            "config": {
+              "lookback": 24,
+              "horizon": 3,
+              "epochs": 30,
+              "batch_size": 128,
+              "units": 32,
+              "learning_rate": 0.001,
+              "seed": 42,
+              "tune": true,
+              "loss": "huber"
+            },
+            "loss_unit": "Huber loss on demand counts (delta=3)",
+            "initialization_seed": 43,
+            "epochs": [
+              {
+                "epoch": 1,
+                "duration_seconds": 1.009433750063181,
+                "loss": 4.441319942474365,
+                "mae": 2.5664756298065186,
+                "val_loss": 5.390289783477783,
+                "val_mae": 2.902778148651123,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 2,
+                "duration_seconds": 0.2660621658433229,
+                "loss": 4.407939434051514,
+                "mae": 2.553499221801758,
+                "val_loss": 5.474432468414307,
+                "val_mae": 2.9265506267547607,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 3,
+                "duration_seconds": 0.2652017918881029,
+                "loss": 4.353583335876465,
+                "mae": 2.532083034515381,
+                "val_loss": 5.516225814819336,
+                "val_mae": 2.9394211769104004,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 4,
+                "duration_seconds": 0.26464691711589694,
+                "loss": 4.303037166595459,
+                "mae": 2.511608123779297,
+                "val_loss": 5.712464332580566,
+                "val_mae": 3.006352424621582,
+                "learning_rate": 0.0010000000474974513
+              },
+              {
+                "epoch": 5,
+                "duration_seconds": 0.263946833088994,
+                "loss": 4.23970890045166,
+                "mae": 2.488696575164795,
+                "val_loss": 5.6960344314575195,
+                "val_mae": 3.003572940826416,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 6,
+                "duration_seconds": 0.26431462494656444,
+                "loss": 4.1993842124938965,
+                "mae": 2.474135398864746,
+                "val_loss": 5.648051738739014,
+                "val_mae": 2.9825775623321533,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 7,
+                "duration_seconds": 0.2643249169923365,
+                "loss": 4.175827503204346,
+                "mae": 2.4640464782714844,
+                "val_loss": 5.707891464233398,
+                "val_mae": 3.0014522075653076,
+                "learning_rate": 0.0005000000237487257
+              },
+              {
+                "epoch": 8,
+                "duration_seconds": 0.26442608307115734,
+                "loss": 4.13626766204834,
+                "mae": 2.451831579208374,
+                "val_loss": 5.793375015258789,
+                "val_mae": 3.0327117443084717,
+                "learning_rate": 0.0002500000118743628
+              }
+            ]
+          }
+        ],
+        "epochs": [
+          {
+            "epoch": 1,
+            "duration_seconds": 1.012381749926135,
+            "loss": -18.312755584716797,
+            "mae": 2.5701005458831787,
+            "val_loss": -20.65068817138672,
+            "val_mae": 2.923830986022949,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 2,
+            "duration_seconds": 0.26639566710218787,
+            "loss": -18.31818962097168,
+            "mae": 2.5513412952423096,
+            "val_loss": -20.65595054626465,
+            "val_mae": 2.9055685997009277,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 3,
+            "duration_seconds": 0.26744512491859496,
+            "loss": -18.32452964782715,
+            "mae": 2.538365364074707,
+            "val_loss": -20.634685516357422,
+            "val_mae": 2.966757297515869,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 4,
+            "duration_seconds": 0.2656315420754254,
+            "loss": -18.33207130432129,
+            "mae": 2.5194592475891113,
+            "val_loss": -20.5877742767334,
+            "val_mae": 3.0728919506073,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 5,
+            "duration_seconds": 0.26566870883107185,
+            "loss": -18.338626861572266,
+            "mae": 2.4970896244049072,
+            "val_loss": -20.652095794677734,
+            "val_mae": 2.894005298614502,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 6,
+            "duration_seconds": 0.26433529099449515,
+            "loss": -18.345203399658203,
+            "mae": 2.48356294631958,
+            "val_loss": -20.625362396240234,
+            "val_mae": 2.947748899459839,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 7,
+            "duration_seconds": 0.27598945889621973,
+            "loss": -18.349729537963867,
+            "mae": 2.470885992050171,
+            "val_loss": -20.62016487121582,
+            "val_mae": 2.9546141624450684,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 8,
+            "duration_seconds": 0.2648850828409195,
+            "loss": -18.359848022460938,
+            "mae": 2.4408044815063477,
+            "val_loss": -20.609025955200195,
+            "val_mae": 3.0148093700408936,
+            "learning_rate": 0.0010000000474974513
+          },
+          {
+            "epoch": 9,
+            "duration_seconds": 0.2649515410885215,
+            "loss": -18.368541717529297,
+            "mae": 2.4117538928985596,
+            "val_loss": -20.598236083984375,
+            "val_mae": 3.047372817993164,
+            "learning_rate": 0.0005000000237487257
+          },
+          {
+            "epoch": 10,
+            "duration_seconds": 0.26547429198399186,
+            "loss": -18.373624801635742,
+            "mae": 2.396681785583496,
+            "val_loss": -20.5972957611084,
+            "val_mae": 3.0464963912963867,
+            "learning_rate": 0.0005000000237487257
+          },
+          {
+            "epoch": 11,
+            "duration_seconds": 0.2646753750741482,
+            "loss": -18.379037857055664,
+            "mae": 2.382524251937866,
+            "val_loss": -20.601768493652344,
+            "val_mae": 3.034900188446045,
+            "learning_rate": 0.0005000000237487257
+          },
+          {
+            "epoch": 12,
+            "duration_seconds": 0.26476987497881055,
+            "loss": -18.384172439575195,
+            "mae": 2.3665881156921387,
+            "val_loss": -20.594711303710938,
+            "val_mae": 3.055570602416992,
+            "learning_rate": 0.0002500000118743628
+          }
+        ],
+        "schema_version": "1.0",
+        "model_id": "m_5c91b393189043be",
+        "status": "ready",
+        "selected_candidate": 0,
+        "candidate": 0,
+        "candidate_count": 2,
+        "config": {
+          "lookback": 24,
+          "horizon": 3,
+          "epochs": 30,
+          "batch_size": 128,
+          "units": 32,
+          "learning_rate": 0.001,
+          "seed": 42,
+          "tune": true,
+          "loss": "poisson"
+        },
+        "epoch": 12,
+        "duration_seconds": 10.283292499836534,
+        "loss_unit": "Poisson loss on demand counts (NLL up to a target-only constant)"
+      }
+    },
+    "world_map": {
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/map",
+      "response": {
+        "world_id": "w_85be8c7d5740fade",
+        "crs": "EPSG:4326",
+        "zones": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.1,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_000",
+                "name": "商贸区01",
+                "kind": "commercial",
+                "base_demand": 12.581,
+                "population": 14443.0,
+                "jobs": 9124.0,
+                "attractiveness": 1.477,
+                "center": [
+                  120.10625345287146,
+                  30.206346641267736
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_001",
+                "name": "居住区02",
+                "kind": "residential",
+                "base_demand": 13.931,
+                "population": 27162.0,
+                "jobs": 8908.0,
+                "attractiveness": 0.856,
+                "center": [
+                  120.1177430152075,
+                  30.206346641267736
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.2
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.2
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_002",
+                "name": "文娱区03",
+                "kind": "leisure",
+                "base_demand": 9.667,
+                "population": 16496.0,
+                "jobs": 7178.0,
+                "attractiveness": 0.823,
+                "center": [
+                  120.12948956233603,
+                  30.206346641267736
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.1,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_003",
+                "name": "商务区04",
+                "kind": "business",
+                "base_demand": 11.83,
+                "population": 6213.0,
+                "jobs": 28140.0,
+                "attractiveness": 1.474,
+                "center": [
+                  120.10625345287146,
+                  30.217109477022994
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_004",
+                "name": "枢纽区05",
+                "kind": "transport",
+                "base_demand": 8.258,
+                "population": 16026.0,
+                "jobs": 11092.0,
+                "attractiveness": 1.076,
+                "center": [
+                  120.1177430152075,
+                  30.217109477022994
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.21269328253547
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.21269328253547
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_005",
+                "name": "文娱区06",
+                "kind": "leisure",
+                "base_demand": 6.895,
+                "population": 10786.0,
+                "jobs": 6844.0,
+                "attractiveness": 1.081,
+                "center": [
+                  120.12948956233603,
+                  30.217109477022994
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.1,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.236
+                    ],
+                    [
+                      120.1,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_006",
+                "name": "商贸区07",
+                "kind": "commercial",
+                "base_demand": 7.269,
+                "population": 7418.0,
+                "jobs": 7818.0,
+                "attractiveness": 1.05,
+                "center": [
+                  120.10625345287146,
+                  30.228762835755262
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.236
+                    ],
+                    [
+                      120.11250690574292,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_007",
+                "name": "商务区08",
+                "kind": "business",
+                "base_demand": 13.327,
+                "population": 14977.0,
+                "jobs": 21114.0,
+                "attractiveness": 0.95,
+                "center": [
+                  120.1177430152075,
+                  30.228762835755262
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.221525671510523
+                    ],
+                    [
+                      120.136,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.236
+                    ],
+                    [
+                      120.12297912467207,
+                      30.221525671510523
+                    ]
+                  ]
+                ]
+              },
+              "properties": {
+                "zone_id": "z_008",
+                "name": "商务区09",
+                "kind": "business",
+                "base_demand": 13.323,
+                "population": 15403.0,
+                "jobs": 16444.0,
+                "attractiveness": 1.01,
+                "center": [
+                  120.12948956233603,
+                  30.228762835755262
+                ]
+              }
+            }
+          ]
+        },
+        "roads": {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1,
+                    30.2
+                  ],
+                  [
+                    120.136,
+                    30.2
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "h_0",
+                "name": "纬路0",
+                "speed_kph": 35
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1,
+                    30.21269328253547
+                  ],
+                  [
+                    120.136,
+                    30.21269328253547
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "h_1",
+                "name": "纬路1",
+                "speed_kph": 35
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1,
+                    30.221525671510523
+                  ],
+                  [
+                    120.136,
+                    30.221525671510523
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "h_2",
+                "name": "纬路2",
+                "speed_kph": 35
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1,
+                    30.236
+                  ],
+                  [
+                    120.136,
+                    30.236
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "h_3",
+                "name": "纬路3",
+                "speed_kph": 35
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.1,
+                    30.2
+                  ],
+                  [
+                    120.1,
+                    30.236
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "v_0",
+                "name": "经路0",
+                "speed_kph": 40
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.11250690574292,
+                    30.2
+                  ],
+                  [
+                    120.11250690574292,
+                    30.236
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "v_1",
+                "name": "经路1",
+                "speed_kph": 40
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.12297912467207,
+                    30.2
+                  ],
+                  [
+                    120.12297912467207,
+                    30.236
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "v_2",
+                "name": "经路2",
+                "speed_kph": 40
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    120.136,
+                    30.2
+                  ],
+                  [
+                    120.136,
+                    30.236
+                  ]
+                ]
+              },
+              "properties": {
+                "road_id": "v_3",
+                "name": "经路3",
+                "speed_kph": 40
+              }
+            }
+          ]
+        },
+        "is_virtual": true
+      }
+    }
+  },
+  "reference": {
+    "world_id": "w_85be8c7d5740fade",
+    "dataset_id": "d_af352fc5dfb7412b",
+    "model_id": "m_5c91b393189043be"
+  }
+}

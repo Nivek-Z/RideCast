@@ -13,10 +13,10 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[ml,dev]'
 ridecast init
-ridecast demo --days 45 --epochs 12 --tune --output reports/demo.json
+ridecast demo --days 45 --epochs 30 --tune --output reports/current-demo.json
 ```
 
-演示命令实际生成城市和订单、训练 GRU、评估、保存预测样例；不会自动激活模型。依赖受网络环境影响；模型训练使用 CPU 即可。完整环境锁定见 `requirements.lock.txt`。
+当前v0.2默认训练“训练集条件率＋GRU计数残差＋因果水平校准”模型，`tune`比较Poisson/Huber候选，验证集选择融合，独立后段校准区间；旧v1模型仍能直接预测。演示命令实际生成订单、训练评估并保存样例，不自动激活模型。原 `reports/demo.json` 为保留的v1历史证据。完整依赖见 `requirements.lock.txt`。
 
 启动两个终端，均在本目录并激活同一个虚拟环境：
 
@@ -53,6 +53,7 @@ npm run dev
 * [前端仪表盘接入](docs/FRONTEND.md)：图层/热力/流向/回放/训练状态接口与示例。
 * [真实数据导入](docs/DATA_IMPORT.md)：GeoJSON、CSV、时区、覆盖声明、质量检查。
 * [建模与实验说明](docs/MODELING.md)：特征、GRU、时序分区、基线、区间与结果边界。
+* [模型升级独立验收](reports/model-quality.md)：预登记的10组未见世界等预算比较；[协议](docs/MODEL_QUALITY_PROTOCOL.md)。
 * [架构决策](docs/ARCHITECTURE.md)、[一手资料调研](docs/research-notes.md)、[内部数据契约](docs/CONTRACT.md)。
 * `docs/openapi.json`：导出的 HTTP 契约；重新生成：`ridecast export-openapi`。
 * `reports/`：实际运行的演示、随机世界实验与验证报告。大数据/模型位于 `var/`，不进入 Git。
