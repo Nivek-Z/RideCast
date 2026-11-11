@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ridecast-data:/data
+    environment:
+      RIDECAST_API_KEY: ${RIDECAST_API_KEY:-}
+      RIDECAST_CORS_ORIGINS: ${RIDECAST_CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+  worker:
+    build: .
+    command: ["ridecast", "worker"]
+    volumes:
+      - ridecast-data:/data
+    restart: unless-stopped
+volumes:
+  ridecast-data:
