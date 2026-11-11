@@ -22,7 +22,7 @@ def parser():
     worker.add_argument("--once", action="store_true")
     demo = commands.add_parser("demo", help="Build evolving city, simulate, train and export reviewable sample payloads")
     demo.add_argument("--days", type=int, default=45)
-    demo.add_argument("--epochs", type=int, default=30)
+    demo.add_argument("--epochs", type=int, default=12)
     demo.add_argument("--seed", type=int, default=42)
     demo.add_argument("--rows", type=int, default=3)
     demo.add_argument("--cols", type=int, default=3)

@@ -40,7 +40,7 @@ def test_auth_errors_world_reproducibility_and_openapi(environment):
     unknown = client.get("/api/v1/worlds/w_aaaaaaaaaaaaaaaa")
     assert unknown.status_code == 404
     assert "X-Request-ID" in unknown.headers
-    assert client.get("/openapi.json").json()["info"]["version"] == "0.2.0"
+    assert client.get("/openapi.json").json()["info"]["version"] == "0.1.0"
 
 
 def test_real_simulation_queue_dashboard_and_terminal_sse(environment):

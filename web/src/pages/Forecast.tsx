@@ -64,7 +64,7 @@ export function ForecastPage() {
     if (!fc) return;
     setDispatch({ busy: true, data: dispatch.data });
     try {
-      const body: Any = { model_id: fc.model_id, dataset_id: fc.dataset_id, scenario: fc.scenario ?? {} };
+      const body: Any = { model_id: fc.model_id, dataset_id: fc.dataset_id };
       if (supplyMode === 'custom') body.supply = Object.fromEntries(zoneIds.map((id) => [id, Math.max(0, Math.round(supply[id] ?? 0))]));
       const data = await api.dispatch(body);
       setDispatch({ data });

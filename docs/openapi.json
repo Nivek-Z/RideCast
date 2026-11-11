@@ -3,7 +3,7 @@
   "info": {
     "title": "RideCast · 网约车需求实验室",
     "description": "虚拟城市、真实订单导入、TensorFlow 预测及仪表盘接口。所有桶为左闭右开。",
-    "version": "0.2.0"
+    "version": "0.1.0"
   },
   "paths": {
     "/health": {
@@ -3813,18 +3813,6 @@
               }
             ],
             "title": "Supply"
-          },
-          "scenario": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Scenario"
           }
         },
         "additionalProperties": false,
@@ -4516,7 +4504,7 @@
             "maximum": 100.0,
             "minimum": 1.0,
             "title": "Epochs",
-            "default": 30
+            "default": 12
           },
           "batch_size": {
             "type": "integer",
@@ -4550,15 +4538,6 @@
             "type": "boolean",
             "title": "Tune",
             "default": false
-          },
-          "loss": {
-            "type": "string",
-            "enum": [
-              "poisson",
-              "huber"
-            ],
-            "title": "Loss",
-            "default": "poisson"
           }
         },
         "additionalProperties": false,

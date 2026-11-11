@@ -13,10 +13,6 @@ export function LearningCurves({ history, height = 220 }: { history: Any; height
   const fallback = selected ?? history?.candidate ?? (candidates.length ? candidates[candidates.length - 1].candidate : 0);
   const current = candidates.find((c) => c.candidate === (pick ?? fallback)) ?? candidates[candidates.length - 1];
   const epochs: Any[] = current?.epochs ?? history?.epochs ?? [];
-  const lossUnit = current?.loss_unit ?? history?.loss_unit;
-  const lossLabel = !lossUnit || lossUnit === 'mean squared log1p demand'
-    ? 'log1p(需求) 的均方误差，不是订单数误差。'
-    : String(lossUnit);
 
   if (!epochs.length) {
     return <Empty title="暂无曲线">{history?.status === 'starting' || history?.state === 'queued' || history?.state === 'running' ? '第一个 epoch 结束后出现。' : '该任务没有留下学习曲线快照。'}</Empty>;
@@ -52,7 +48,7 @@ export function LearningCurves({ history, height = 220 }: { history: Any; height
           { name: '验证损失', color: 'var(--text-3)', points: epochs.map((e) => ({ x: e.epoch, y: e.val_loss })), dots: epochs.length < 30 },
         ]}
       />
-      <div className="small muted">损失单位：{lossLabel}</div>
+      <div className="small muted">损失单位：log1p(需求) 的均方误差，不是订单数误差。</div>
     </div>
   );
 }

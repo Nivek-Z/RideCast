@@ -8,7 +8,7 @@ import { ago, duration, fix2, int, pct, ratio, time } from '../format';
 import { useApp, useQuery } from '../store';
 
 type Tab = 'backtest' | 'curves' | 'metrics' | 'config';
-const BASELINES: Record<string, string> = { last_value: '上一桶', previous_day: '昨日同刻', previous_week: '上周同刻', seasonal_profile: '平滑季节基线', calendar_rate: '日历条件率基线' };
+const BASELINES: Record<string, string> = { last_value: '上一桶', previous_day: '昨日同刻', previous_week: '上周同刻' };
 
 function Improvement({ value }: { value: number | null | undefined }) {
   if (value === null || value === undefined) return <Badge>—</Badge>;
@@ -92,7 +92,7 @@ function ModelDetail(props: { model: Resource; tab: Tab; setTab: (t: Tab) => voi
       <div className="card">
         <div className="row" style={{ padding: '12px 14px 0', flexWrap: 'wrap' }}>
           <h3 className="mono" style={{ fontSize: 14 }}>{model.id}</h3>
-          <Badge>{md.architecture ?? '预测模型'}</Badge>
+          <Badge>{md.architecture ?? 'GRU'}</Badge>
           <Badge>{md.source === 'synthetic' ? '合成数据训练' : '导入数据训练'}</Badge>
           <Improvement value={mt?.model_mae_improvement_percent} />
           <span className="grow" />
@@ -131,12 +131,6 @@ function ModelDetail(props: { model: Resource; tab: Tab; setTab: (t: Tab) => voi
                   ['批大小', md.config.batch_size],
                   ['轮数上限', md.config.epochs],
                   ['随机种子', md.config.seed],
-                  ['训练目标', md.config.loss ?? 'log1p-MSE（v1）'],
-                  ...(md.blending ? [
-                    ['服务预测', ({ neural: '神经网络', neural_seasonal_blend: '神经与季节融合', seasonal_fallback: '季节基线回退' } as Record<string, string>)[md.blending.deployment] ?? md.blending.deployment],
-                    ['神经网络权重', ratio(md.blending.neural_weight)],
-                  ] as [string, string][] : []),
-                  ...(md.adaptation ? [['近期水平校准', md.adaptation.strength ? `${md.adaptation.window_hours}小时 · 强度 ${md.adaptation.strength}` : '验证集选择关闭']] as [string, string][] : []),
                   ['候选数 / 选中', `${md.candidates?.length ?? 1} / #${md.selected_candidate ?? 0}`],
                   ['训练耗时', duration(md.duration_seconds)],
                   ['特征版本', md.feature_schema?.version],
@@ -262,17 +256,9 @@ function Backtest({ model, tz }: { model: Resource; tz: string }) {
 function Metrics({ model }: { model: Resource }) {
   const app = useApp();
   const mt = model.metadata.metrics;
-  const rows: [string, Any][] = [['服务预测', mt.model], ...(mt.neural ? [['网络原始输出', mt.neural] as [string, Any]] : []), ...(mt.uncalibrated_model ? [['水平校准前', mt.uncalibrated_model] as [string, Any]] : []), ...Object.entries(mt.baselines ?? {}).map(([k, v]) => [`基线 · ${BASELINES[k] ?? k}`, v] as [string, Any])];
+  const rows: [string, Any][] = [['GRU 模型', mt.model], ...Object.entries(mt.baselines ?? {}).map(([k, v]) => [`基线 · ${BASELINES[k] ?? k}`, v] as [string, Any])];
   return (
     <div className="col" style={{ gap: 16 }}>
-      {mt.operational && (
-        <div className="stat-strip">
-          <Stat k="城市总量 WAPE" v={pct(mt.operational.city?.model?.wape)} d="同一起点与步长汇总区域" />
-          <Stat k="总量偏差" v={pct(mt.model.volume_bias_percent)} d="正值高估，负值低估" />
-          <Stat k="高峰 MAE" v={fix2(mt.operational.peak?.model?.mae)} unit="单" d="当地 07–10 / 17–21 时" />
-          <Stat k="高需求 MAE" v={fix2(mt.operational.high_demand?.model?.mae)} unit="单" d="阈值取自训练集，不用测试选阈值" />
-        </div>
-      )}
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
         <div>
           <div className="label" style={{ marginBottom: 6 }}>分预测步 MAE（单）</div>

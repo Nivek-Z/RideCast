@@ -260,7 +260,7 @@ function TrainDialog({ onClose }: { onClose: () => void }) {
   const app = useApp();
   const s = useSubmit();
   const [datasetId, setDatasetId] = useState(app.dataset?.id ?? app.datasets[0]?.id ?? '');
-  const [c, setC] = useState({ lookback: 24, horizon: 3, epochs: 30, units: 32, batch_size: 128, learning_rate: 0.001, seed: 42, tune: true });
+  const [c, setC] = useState({ lookback: 24, horizon: 3, epochs: 12, units: 32, batch_size: 128, learning_rate: 0.001, seed: 42, tune: true });
   const set = (patch: Partial<typeof c>) => setC({ ...c, ...patch });
   const dataset = app.datasets.find((d) => d.id === datasetId);
   const bucket = dataset?.metadata?.bucket_minutes ?? 60;

@@ -54,13 +54,12 @@ class SimulationCreate(StrictModel):
 class TrainConfig(StrictModel):
     lookback: int = Field(default=24, ge=2, le=168)
     horizon: int = Field(default=3, ge=1, le=24)
-    epochs: int = Field(default=30, ge=1, le=100)
+    epochs: int = Field(default=12, ge=1, le=100)
     batch_size: int = Field(default=128, ge=16, le=1024)
     units: int = Field(default=32, ge=8, le=128)
     learning_rate: float = Field(default=0.001, gt=0, le=0.1)
     seed: int = Field(default=42, ge=0, le=2**31 - 1)
     tune: bool = False
-    loss: Literal["poisson", "huber"] = "poisson"
 
 
 class TrainingCreate(StrictModel):
@@ -96,7 +95,6 @@ class DispatchRequest(StrictModel):
     model_id: str
     dataset_id: str
     supply: dict[str, Annotated[int, Field(strict=True, ge=0, le=1_000_000)]] | None = None
-    scenario: dict | None = None
 
 
 class ActivateRequest(StrictModel):
