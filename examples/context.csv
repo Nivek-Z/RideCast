@@ -1,0 +1,3 @@
+timestamp,zone_id,temperature,precipitation,wind_speed,traffic_index,available_drivers
+2026-01-01T08:00:00+08:00,z_000,8.5,1.2,3.0,1.4,12
+2026-01-01T08:00:00+08:00,z_001,8.5,1.2,3.0,1.4,4

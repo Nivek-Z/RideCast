@@ -1,0 +1,1942 @@
+{
+  "schema_version": "1.0",
+  "experiment": "independent_world_holdout_retraining",
+  "created_at": "2026-11-11T04:15:24.296388+00:00",
+  "settings": {
+    "seeds": [
+      7,
+      42,
+      99
+    ],
+    "days": 28,
+    "epochs": 5,
+    "train": true,
+    "rows": 3,
+    "cols": 3,
+    "start": "2026-01-01T00:00:00+08:00",
+    "training_seed": 42,
+    "training_config": {
+      "lookback": 24,
+      "horizon": 3,
+      "units": 16,
+      "batch_size": 128,
+      "learning_rate": 0.001,
+      "epochs": 5,
+      "seed": 42,
+      "tune": false
+    }
+  },
+  "generalization_claim": "within-world temporal holdout after independent retraining; not zero-shot cross-city transfer",
+  "implementation": {
+    "python": "3.12.14",
+    "source_sha256_at_start": {
+      "simulation.py": "4742183085edfc4e46a1d288ae18769318f99b3ef1209640ebf0fe664ac7ec31",
+      "data.py": "f69c5709a4c0ab755232af20f27d861ff2213fb32cdb3236924da384f15c0d60",
+      "features.py": "56194ef6085cd98fcd7075d0488585fb6a5c38de263b0460fc36d4f813da3643",
+      "ml.py": "d1e0b2c5700149961a3c373d67f5b48b5c1f0ab290e37c8bba8c28d41b3e8eda",
+      "benchmark_worlds.py": "db88a95c7ddfa54b067dcc0632f1b3c6d2c242ed7cd6dc505d856597a744b16b"
+    },
+    "source_sha256_at_end": {
+      "simulation.py": "4742183085edfc4e46a1d288ae18769318f99b3ef1209640ebf0fe664ac7ec31",
+      "data.py": "f69c5709a4c0ab755232af20f27d861ff2213fb32cdb3236924da384f15c0d60",
+      "features.py": "77ba046e6d707c150271df570cd1b1e6e26959f6c30bfb1d8b4eceaf58212324",
+      "ml.py": "d1e0b2c5700149961a3c373d67f5b48b5c1f0ab290e37c8bba8c28d41b3e8eda",
+      "benchmark_worlds.py": "db88a95c7ddfa54b067dcc0632f1b3c6d2c242ed7cd6dc505d856597a744b16b"
+    },
+    "source_files_changed_during_run": [
+      "features.py"
+    ]
+  },
+  "worlds": [
+    {
+      "seed": 7,
+      "status": "succeeded",
+      "metrics": {
+        "model": {
+          "mae": 2.912541408285504,
+          "rmse": 4.4982178524558964,
+          "wape": 43.22722478815743,
+          "smape": 54.018306656002245,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baseline": {
+          "name": "previous_week",
+          "mae": 2.684249906472129,
+          "rmse": 3.656756324437173,
+          "wape": 39.838978345363685,
+          "smape": 61.96460093907821,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baselines": {
+          "last_value": {
+            "mae": 4.075944631500187,
+            "rmse": 6.00445650682781,
+            "wape": 60.494169905608,
+            "smape": 72.79419426730927,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_day": {
+            "mae": 2.9319117096894876,
+            "rmse": 4.307702842412183,
+            "wape": 43.514714047751255,
+            "smape": 62.23931839875541,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_week": {
+            "mae": 2.684249906472129,
+            "rmse": 3.656756324437173,
+            "wape": 39.838978345363685,
+            "smape": 61.96460093907821,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          }
+        },
+        "validation": {
+          "model": {
+            "mae": 3.06416948158064,
+            "rmse": 4.513315631630592,
+            "wape": 45.94191734499131,
+            "smape": 56.34849063264601,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "baselines": {
+            "last_value": {
+              "mae": 4.043396932285821,
+              "rmse": 5.943744255310807,
+              "wape": 60.6237379403186,
+              "smape": 73.97062407372167,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_day": {
+              "mae": 3.004489337822671,
+              "rmse": 4.284102631069353,
+              "wape": 45.04711689477227,
+              "smape": 64.06168145788581,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_week": {
+              "mae": 2.753086419753086,
+              "rmse": 3.8162528752993365,
+              "wape": 41.2777653129908,
+              "smape": 60.92982765722098,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        },
+        "by_horizon": [
+          {
+            "horizon": 1,
+            "model": {
+              "mae": 2.7304241247182475,
+              "rmse": 4.227392110428317,
+              "wape": 40.092417520170706,
+              "smape": 51.849980259700814,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.6924803591470257,
+              "rmse": 3.6688086795067134,
+              "wape": 39.53526697429137,
+              "smape": 61.6363683829665,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 2,
+            "model": {
+              "mae": 2.9451452032751777,
+              "rmse": 4.636754100315289,
+              "wape": 43.706268756132296,
+              "smape": 54.75127078218075,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.6835016835016834,
+              "rmse": 3.6540953762976254,
+              "wape": 39.823451032644904,
+              "smape": 61.845630543367704,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 3,
+            "model": {
+              "mae": 3.0620548968630876,
+              "rmse": 4.618610061734654,
+              "wape": 45.94629358546668,
+              "smape": 55.45366892612515,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.676767676767677,
+              "rmse": 3.647331943082546,
+              "wape": 40.16503873358033,
+              "smape": 62.411803890900444,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "by_zone": [
+          {
+            "zone_id": "z_000",
+            "model": {
+              "mae": 2.1887495585964984,
+              "rmse": 3.0091688845356135,
+              "wape": 46.4991859015136,
+              "smape": 53.330314643565,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.185185185185185,
+              "rmse": 2.9467781870208154,
+              "wape": 46.423462088698145,
+              "smape": 64.47555494244513,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_001",
+            "model": {
+              "mae": 1.971823797081456,
+              "rmse": 2.5700839848167587,
+              "wape": 42.56044096898201,
+              "smape": 58.97082823545621,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.34006734006734,
+              "rmse": 3.1037069180250625,
+              "wape": 50.508720930232556,
+              "smape": 66.78294030401456,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_002",
+            "model": {
+              "mae": 2.5499481163442335,
+              "rmse": 3.3634334013012457,
+              "wape": 35.323441723611815,
+              "smape": 43.479046341316,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.774410774410774,
+              "rmse": 3.6385515303561715,
+              "wape": 38.43283582089552,
+              "smape": 57.85385144089557,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_003",
+            "model": {
+              "mae": 2.9014191258234607,
+              "rmse": 3.8673018575929516,
+              "wape": 34.087083875378475,
+              "smape": 46.573200921210876,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.367003367003367,
+              "rmse": 4.339932814574073,
+              "wape": 39.55696202531646,
+              "smape": 60.391280353002166,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_004",
+            "model": {
+              "mae": 1.785166576655224,
+              "rmse": 2.49651380905599,
+              "wape": 51.57533786640093,
+              "smape": 63.50705185123137,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.1245791245791246,
+              "rmse": 2.7652241584480355,
+              "wape": 61.38132295719845,
+              "smape": 79.92815627908954,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_005",
+            "model": {
+              "mae": 2.5373391222070762,
+              "rmse": 3.9141186286816994,
+              "wape": 48.524772652640166,
+              "smape": 57.9769977941786,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.4545454545454546,
+              "rmse": 3.365001088147272,
+              "wape": 46.94140373470702,
+              "smape": 70.48259009994007,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_006",
+            "model": {
+              "mae": 3.598626251573916,
+              "rmse": 4.737603278604062,
+              "wape": 34.016295248804994,
+              "smape": 42.291683995356124,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.474747474747475,
+              "rmse": 4.834639321990563,
+              "wape": 32.845321451304905,
+              "smape": 47.41379018669045,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_007",
+            "model": {
+              "mae": 5.438538807008403,
+              "rmse": 8.386573883738723,
+              "wape": 56.08493144727416,
+              "smape": 66.60546218353018,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.5723905723905722,
+              "rmse": 3.7036700335169868,
+              "wape": 26.52777777777778,
+              "smape": 51.15901877098348,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_008",
+            "model": {
+              "mae": 3.2412613192792694,
+              "rmse": 5.083711783227694,
+              "wape": 49.08998530473957,
+              "smape": 53.4301739381758,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.8653198653198655,
+              "rmse": 3.727683314824758,
+              "wape": 43.39622641509434,
+              "smape": 59.194226074642955,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "model_mae_improvement_percent": -8.504852743514316,
+        "interval": {
+          "method": "validation_absolute_residual_quantile",
+          "nominal_marginal_coverage": 0.9,
+          "test_coverage": 0.912832023943135,
+          "test_mean_width": 11.604362487792969,
+          "per_horizon_radius": [
+            5.590126037597656,
+            7.157509803771973,
+            7.976304054260254
+          ],
+          "limitation": "Empirical marginal residual band; temporal dependence and distribution shift can change coverage. Not a confidence guarantee."
+        },
+        "evaluation_unit": "forecast-origin × zone × horizon; overlapping targets within a partition are counted at each origin"
+      },
+      "world_id": "w_2e06e7a838678daa",
+      "world_hash": "0fed21e783a61347cd7582319a2de1c63eb4570826f12e34de7adda65477059e",
+      "statistics": {
+        "zone_count": 9,
+        "road_count": 8,
+        "bucket_count": 672,
+        "panel_rows": 6048,
+        "orders": 42530,
+        "demand_total": 42530,
+        "passenger_total": 62253,
+        "completed_total": 41572,
+        "cancelled_total": 958,
+        "cancellation_rate": 0.022525276275570185,
+        "mean_demand_per_zone_bucket": 7.03207671957672,
+        "std_demand_per_zone_bucket": 6.9580158315122,
+        "peak_city_bucket_demand": 148,
+        "mean_city_available_drivers_per_bucket": 99.1577380952381,
+        "temperature_min": 4.345852595138202,
+        "temperature_max": 16.519634004171504,
+        "rainy_zone_bucket_fraction": 0.49404761904761907,
+        "event_zone_bucket_fraction": 0.009259259259259259,
+        "supply_semantics": "mean of contemporaneous city snapshots, not unique drivers summed over time",
+        "land_use_counts": {
+          "business": 1,
+          "commercial": 1,
+          "leisure": 1,
+          "residential": 4,
+          "transport": 2
+        }
+      },
+      "consistency_checks": {
+        "same_seed_world_repeatable": true,
+        "overlap_panel_consistent": true,
+        "overlap_orders_consistent": true,
+        "overlap_start": "2026-01-27T16:00:00+00:00",
+        "overlap_days": 1
+      },
+      "dataset_id": "d_5d5ae29d12aded43",
+      "dataset_path": "worlds/seed_7/dataset",
+      "generator_provenance": {
+        "generator": "ridecast.simulation.v2",
+        "evolution": {
+          "version": "absolute-time-v2",
+          "anchor": "1970-01-01T00:00:00Z",
+          "seed_policy": "world.seed + simulation seed + absolute UTC bucket + zone_id",
+          "geometry": "seeded nonuniform rectangular tessellation with shared edges",
+          "weather": "smooth absolute-time synoptic fronts with seasonal and diurnal cycles",
+          "demand": "spatially shared and local smooth latent regimes plus calendar/activity effects",
+          "feedback": "supply and congestion respond to previous bucket realized demand",
+          "scheduled_events": "seeded weekly leisure/commercial programme; announced in advance",
+          "scope": "macro bucket simulator; no continuous per-driver trajectory or road routing"
+        },
+        "window_independent": true,
+        "world_seed": 7,
+        "seed": 7,
+        "fictional": true,
+        "future_weather_policy": "训练和评估只能使用预测起点及之前的观测天气；场景覆盖属条件假设。"
+      },
+      "split": {
+        "train": {
+          "target_start": "2026-01-01T16:00:00+00:00",
+          "target_end_exclusive": "2026-01-20T06:00:00+00:00",
+          "first_origin": "2026-01-01T16:00:00+00:00",
+          "last_origin": "2026-01-20T03:00:00+00:00",
+          "forecast_origin_count": 444,
+          "zone_window_count": 3996,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "validation": {
+          "target_start": "2026-01-20T06:00:00+00:00",
+          "target_end_exclusive": "2026-01-24T11:00:00+00:00",
+          "first_origin": "2026-01-20T06:00:00+00:00",
+          "last_origin": "2026-01-24T08:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "test": {
+          "target_start": "2026-01-24T11:00:00+00:00",
+          "target_end_exclusive": "2026-01-28T16:00:00+00:00",
+          "first_origin": "2026-01-24T11:00:00+00:00",
+          "last_origin": "2026-01-28T13:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        }
+      },
+      "model_path": "worlds/seed_7/model",
+      "dependencies": {
+        "tensorflow": "2.19.1",
+        "keras": "3.11.3",
+        "numpy": "2.1.3",
+        "pandas": "2.3.2"
+      },
+      "duration_seconds": 5.712544791982509,
+      "world_generator_version": "seeded-city-v2",
+      "map_geometry_sha256": "57181322076d13d1b773fd0acf69ddd73de1b86d91d9172109166d67f6c9d8da"
+    },
+    {
+      "seed": 42,
+      "status": "succeeded",
+      "metrics": {
+        "model": {
+          "mae": 4.189058727175388,
+          "rmse": 6.442618961688741,
+          "wape": 37.419308841531254,
+          "smape": 45.87958644658823,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baseline": {
+          "name": "previous_week",
+          "mae": 3.936026936026936,
+          "rmse": 5.543792260043797,
+          "wape": 35.15906964309584,
+          "smape": 49.76696800044581,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baselines": {
+          "last_value": {
+            "mae": 6.302282080059858,
+            "rmse": 9.2393050982253,
+            "wape": 56.295949739339655,
+            "smape": 64.65227327801654,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_day": {
+            "mae": 4.460905349794238,
+            "rmse": 6.487721863599261,
+            "wape": 39.84761395535356,
+            "smape": 51.652812598593066,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_week": {
+            "mae": 3.936026936026936,
+            "rmse": 5.543792260043797,
+            "wape": 35.15906964309584,
+            "smape": 49.76696800044581,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          }
+        },
+        "validation": {
+          "model": {
+            "mae": 4.365475087655514,
+            "rmse": 6.832016988506596,
+            "wape": 37.182279926403424,
+            "smape": 46.51585900542113,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "baselines": {
+            "last_value": {
+              "mae": 6.276842499064721,
+              "rmse": 9.173678575185804,
+              "wape": 53.46206544944715,
+              "smape": 62.78756342920507,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_day": {
+              "mae": 4.320987654320987,
+              "rmse": 6.016251839416814,
+              "wape": 36.80336487907466,
+              "smape": 50.543436502401384,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_week": {
+              "mae": 4.117471006359895,
+              "rmse": 5.755850648285815,
+              "wape": 35.06994232546283,
+              "smape": 50.52673481299893,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        },
+        "by_horizon": [
+          {
+            "horizon": 1,
+            "model": {
+              "mae": 4.008577239232433,
+              "rmse": 6.096661309558081,
+              "wape": 35.23372122083553,
+              "smape": 43.8829139110258,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.967452300785634,
+              "rmse": 5.581253695815975,
+              "wape": 34.8722501726349,
+              "smape": 49.52171859550216,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 2,
+            "model": {
+              "mae": 4.371833679518181,
+              "rmse": 6.658147041781302,
+              "wape": 39.07024883099999,
+              "smape": 47.326763396131696,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.9349046015712683,
+              "rmse": 5.5458501082449105,
+              "wape": 35.16549648946841,
+              "smape": 49.65844687985592,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 3,
+            "model": {
+              "mae": 4.186765262775549,
+              "rmse": 6.559101775631351,
+              "wape": 37.99946876981781,
+              "smape": 46.429082032607184,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.9057239057239057,
+              "rmse": 5.504003236498409,
+              "wape": 35.4487114189671,
+              "smape": 50.12073852597938,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "by_zone": [
+          {
+            "zone_id": "z_000",
+            "model": {
+              "mae": 4.092632430169719,
+              "rmse": 5.527028972241568,
+              "wape": 27.846777359917674,
+              "smape": 36.42771255224814,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 5.35016835016835,
+              "rmse": 6.8738023137968005,
+              "wape": 36.40320733104238,
+              "smape": 42.64657043049072,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_001",
+            "model": {
+              "mae": 6.072794000709097,
+              "rmse": 9.502824231373893,
+              "wape": 44.86616463210452,
+              "smape": 46.534699816294264,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 4.380471380471381,
+              "rmse": 6.130730673081194,
+              "wape": 32.36318407960199,
+              "smape": 40.3364574072837,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_002",
+            "model": {
+              "mae": 4.742492711905277,
+              "rmse": 7.719552184415379,
+              "wape": 47.6334235859272,
+              "smape": 56.591172144624814,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.872053872053872,
+              "rmse": 6.150196405393557,
+              "wape": 38.89076766993574,
+              "smape": 54.20270545807932,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_003",
+            "model": {
+              "mae": 4.193104053185845,
+              "rmse": 6.694497274903634,
+              "wape": 34.621960072176705,
+              "smape": 39.27282632029789,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 4.043771043771044,
+              "rmse": 5.802878654030314,
+              "wape": 33.38893522379761,
+              "smape": 41.23294267163421,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_004",
+            "model": {
+              "mae": 3.819038646791118,
+              "rmse": 5.2737259419204126,
+              "wape": 37.10351580297553,
+              "smape": 42.87635749984491,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.8013468013468015,
+              "rmse": 5.10199010488094,
+              "wape": 36.93163231926725,
+              "smape": 51.87190925710077,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_005",
+            "model": {
+              "mae": 3.528816702189269,
+              "rmse": 5.931079421643299,
+              "wape": 48.63380791416301,
+              "smape": 58.51002528957802,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.771043771043771,
+              "rmse": 3.906741130741358,
+              "wape": 38.19025522041763,
+              "smape": 63.796113758572446,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_006",
+            "model": {
+              "mae": 2.9695950437475136,
+              "rmse": 4.097012095935596,
+              "wape": 37.85277802545114,
+              "smape": 49.49473458832193,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.2693602693602695,
+              "rmse": 4.419500710712301,
+              "wape": 41.67381974248927,
+              "smape": 61.099383603927414,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_007",
+            "model": {
+              "mae": 3.896955541488699,
+              "rmse": 5.3887299578469605,
+              "wape": 31.657434240211803,
+              "smape": 43.26263138546113,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 4.3367003367003365,
+              "rmse": 6.099069863401566,
+              "wape": 35.22975929978118,
+              "smape": 52.804197186987864,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_008",
+            "model": {
+              "mae": 4.386099414391951,
+              "rmse": 6.284325529159663,
+              "wape": 34.39850874239265,
+              "smape": 39.94611842262296,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.5993265993265995,
+              "rmse": 4.716544417875363,
+              "wape": 28.22814893055189,
+              "smape": 39.9124322299359,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "model_mae_improvement_percent": -6.428609236192484,
+        "interval": {
+          "method": "validation_absolute_residual_quantile",
+          "nominal_marginal_coverage": 0.9,
+          "test_coverage": 0.9057239057239057,
+          "test_mean_width": 17.20077133178711,
+          "per_horizon_radius": [
+            9.310906410217285,
+            10.891241073608398,
+            9.970134735107422
+          ],
+          "limitation": "Empirical marginal residual band; temporal dependence and distribution shift can change coverage. Not a confidence guarantee."
+        },
+        "evaluation_unit": "forecast-origin × zone × horizon; overlapping targets within a partition are counted at each origin"
+      },
+      "world_id": "w_1c6851bfc175a559",
+      "world_hash": "6e6163af139a698e9a3c48caeb13def998359c5a39442cdd27f641469e5c5edc",
+      "statistics": {
+        "zone_count": 9,
+        "road_count": 8,
+        "bucket_count": 672,
+        "panel_rows": 6048,
+        "orders": 64586,
+        "demand_total": 64586,
+        "passenger_total": 94438,
+        "completed_total": 62844,
+        "cancelled_total": 1742,
+        "cancellation_rate": 0.026971789551915277,
+        "mean_demand_per_zone_bucket": 10.678902116402117,
+        "std_demand_per_zone_bucket": 9.551036225171895,
+        "peak_city_bucket_demand": 271,
+        "mean_city_available_drivers_per_bucket": 122.44791666666667,
+        "temperature_min": 4.445562683964713,
+        "temperature_max": 16.9454650854565,
+        "rainy_zone_bucket_fraction": 0.41964285714285715,
+        "event_zone_bucket_fraction": 0.018518518518518517,
+        "supply_semantics": "mean of contemporaneous city snapshots, not unique drivers summed over time",
+        "land_use_counts": {
+          "business": 3,
+          "commercial": 2,
+          "leisure": 2,
+          "residential": 1,
+          "transport": 1
+        }
+      },
+      "consistency_checks": {
+        "same_seed_world_repeatable": true,
+        "overlap_panel_consistent": true,
+        "overlap_orders_consistent": true,
+        "overlap_start": "2026-01-27T16:00:00+00:00",
+        "overlap_days": 1
+      },
+      "dataset_id": "d_68d68c93cdb2d68e",
+      "dataset_path": "worlds/seed_42/dataset",
+      "generator_provenance": {
+        "generator": "ridecast.simulation.v2",
+        "evolution": {
+          "version": "absolute-time-v2",
+          "anchor": "1970-01-01T00:00:00Z",
+          "seed_policy": "world.seed + simulation seed + absolute UTC bucket + zone_id",
+          "geometry": "seeded nonuniform rectangular tessellation with shared edges",
+          "weather": "smooth absolute-time synoptic fronts with seasonal and diurnal cycles",
+          "demand": "spatially shared and local smooth latent regimes plus calendar/activity effects",
+          "feedback": "supply and congestion respond to previous bucket realized demand",
+          "scheduled_events": "seeded weekly leisure/commercial programme; announced in advance",
+          "scope": "macro bucket simulator; no continuous per-driver trajectory or road routing"
+        },
+        "window_independent": true,
+        "world_seed": 42,
+        "seed": 42,
+        "fictional": true,
+        "future_weather_policy": "训练和评估只能使用预测起点及之前的观测天气；场景覆盖属条件假设。"
+      },
+      "split": {
+        "train": {
+          "target_start": "2026-01-01T16:00:00+00:00",
+          "target_end_exclusive": "2026-01-20T06:00:00+00:00",
+          "first_origin": "2026-01-01T16:00:00+00:00",
+          "last_origin": "2026-01-20T03:00:00+00:00",
+          "forecast_origin_count": 444,
+          "zone_window_count": 3996,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "validation": {
+          "target_start": "2026-01-20T06:00:00+00:00",
+          "target_end_exclusive": "2026-01-24T11:00:00+00:00",
+          "first_origin": "2026-01-20T06:00:00+00:00",
+          "last_origin": "2026-01-24T08:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "test": {
+          "target_start": "2026-01-24T11:00:00+00:00",
+          "target_end_exclusive": "2026-01-28T16:00:00+00:00",
+          "first_origin": "2026-01-24T11:00:00+00:00",
+          "last_origin": "2026-01-28T13:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        }
+      },
+      "model_path": "worlds/seed_42/model",
+      "dependencies": {
+        "tensorflow": "2.19.1",
+        "keras": "3.11.3",
+        "numpy": "2.1.3",
+        "pandas": "2.3.2"
+      },
+      "duration_seconds": 4.9169680420309305,
+      "world_generator_version": "seeded-city-v2",
+      "map_geometry_sha256": "f27932d0bd8ae98f8a5ea4781b9814015b1ee2137fbc9bdae3e56741009d24e1"
+    },
+    {
+      "seed": 99,
+      "status": "succeeded",
+      "metrics": {
+        "model": {
+          "mae": 3.3191293648374782,
+          "rmse": 4.852332958388326,
+          "wape": 42.95343883907324,
+          "smape": 51.84455165979409,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baseline": {
+          "name": "previous_day",
+          "mae": 3.3591470258136926,
+          "rmse": 4.903139621904445,
+          "wape": 43.47131445170661,
+          "smape": 57.162463566839996,
+          "sample_count": 2673,
+          "units": {
+            "mae": "orders",
+            "rmse": "orders",
+            "wape": "percent",
+            "smape": "percent"
+          }
+        },
+        "baselines": {
+          "last_value": {
+            "mae": 4.517396184062851,
+            "rmse": 6.753170543018306,
+            "wape": 58.46042120551924,
+            "smape": 67.53647044559582,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_day": {
+            "mae": 3.3591470258136926,
+            "rmse": 4.903139621904445,
+            "wape": 43.47131445170661,
+            "smape": 57.162463566839996,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "previous_week": {
+            "mae": 2.910213243546577,
+            "rmse": 4.007615272464572,
+            "wape": 37.66158315177923,
+            "smape": 55.995611447800286,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          }
+        },
+        "validation": {
+          "model": {
+            "mae": 3.1066605819105613,
+            "rmse": 4.441727735922076,
+            "wape": 41.34274487427527,
+            "smape": 52.5165243752206,
+            "sample_count": 2673,
+            "units": {
+              "mae": "orders",
+              "rmse": "orders",
+              "wape": "percent",
+              "smape": "percent"
+            }
+          },
+          "baselines": {
+            "last_value": {
+              "mae": 4.258136924803591,
+              "rmse": 6.0987631601662455,
+              "wape": 56.66633476052972,
+              "smape": 71.65231848955905,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_day": {
+              "mae": 3.0265619154508046,
+              "rmse": 4.365802554985834,
+              "wape": 40.276809718211695,
+              "smape": 55.614811446188014,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "previous_week": {
+              "mae": 3.15413393191171,
+              "rmse": 4.543055857927064,
+              "wape": 41.974509608682666,
+              "smape": 55.98092176685307,
+              "sample_count": 2673,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        },
+        "by_horizon": [
+          {
+            "horizon": 1,
+            "model": {
+              "mae": 3.030432029605313,
+              "rmse": 4.49396878138267,
+              "wape": 38.611682230492406,
+              "smape": 48.43878705249092,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.409652076318743,
+              "rmse": 5.031884867508926,
+              "wape": 43.44344344344344,
+              "smape": 56.93124776462852,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 2,
+            "model": {
+              "mae": 3.379850152767066,
+              "rmse": 4.921950205845874,
+              "wape": 43.78375234247536,
+              "smape": 52.39662679884276,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.3602693602693603,
+              "rmse": 4.895541846040126,
+              "wape": 43.53009595812736,
+              "smape": 57.20439525846706,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "horizon": 3,
+            "model": {
+              "mae": 3.547105912140055,
+              "rmse": 5.119966423748941,
+              "wape": 46.58713690620267,
+              "smape": 54.69824112804861,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.3075196408529743,
+              "rmse": 4.778717314245791,
+              "wape": 43.440448113207545,
+              "smape": 57.35174767742443,
+              "sample_count": 891,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "by_zone": [
+          {
+            "zone_id": "z_000",
+            "model": {
+              "mae": 2.7017933102167815,
+              "rmse": 3.8749136594920772,
+              "wape": 49.2894725512521,
+              "smape": 55.969226914365635,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.508417508417508,
+              "rmse": 3.445096060879416,
+              "wape": 45.761670761670764,
+              "smape": 61.147402658746586,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_001",
+            "model": {
+              "mae": 3.4561273618177935,
+              "rmse": 4.568751364129027,
+              "wape": 32.31957891876211,
+              "smape": 38.53061358788336,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 4.084175084175084,
+              "rmse": 5.617732866461573,
+              "wape": 38.19269521410579,
+              "smape": 43.342395722806,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_002",
+            "model": {
+              "mae": 5.163408128902166,
+              "rmse": 7.942682912102229,
+              "wape": 53.95961345122953,
+              "smape": 63.30455430921626,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 4.811447811447811,
+              "rmse": 7.763117496598468,
+              "wape": 50.281491907107664,
+              "smape": 56.3862184669916,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_003",
+            "model": {
+              "mae": 3.061414775623617,
+              "rmse": 3.920992261327337,
+              "wape": 41.82337572954067,
+              "smape": 55.78230622353706,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.0134680134680134,
+              "rmse": 4.087840225649446,
+              "wape": 41.16835326586937,
+              "smape": 58.232482060731705,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_004",
+            "model": {
+              "mae": 2.0177294517607,
+              "rmse": 2.5385535493388396,
+              "wape": 47.149146119034455,
+              "smape": 56.47708438275212,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.1986531986531985,
+              "rmse": 2.8503647353591655,
+              "wape": 51.37686860739576,
+              "smape": 66.29058288866901,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_005",
+            "model": {
+              "mae": 3.1061553031908544,
+              "rmse": 4.2719747037346405,
+              "wape": 42.27901581336772,
+              "smape": 50.0213295144211,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.6498316498316496,
+              "rmse": 4.85479387502946,
+              "wape": 49.679193400549956,
+              "smape": 63.309886356467274,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_006",
+            "model": {
+              "mae": 3.5027582878215546,
+              "rmse": 4.651079590219098,
+              "wape": 35.300957294978005,
+              "smape": 43.81955686586704,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.6195286195286194,
+              "rmse": 5.150594094725339,
+              "wape": 36.47777400746522,
+              "smape": 53.591003838536054,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_007",
+            "model": {
+              "mae": 2.642020482005495,
+              "rmse": 3.470767239679189,
+              "wape": 42.278021721747415,
+              "smape": 52.56880240364219,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 2.478114478114478,
+              "rmse": 3.470898737666953,
+              "wape": 39.6551724137931,
+              "smape": 56.71397695858512,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          },
+          {
+            "zone_id": "z_008",
+            "model": {
+              "mae": 4.220757182198342,
+              "rmse": 6.259759629684135,
+              "wape": 48.60662594466489,
+              "smape": 50.1274907364621,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            },
+            "baseline": {
+              "mae": 3.8686868686868685,
+              "rmse": 5.068885744776922,
+              "wape": 44.55215199689802,
+              "smape": 55.448223150026564,
+              "sample_count": 297,
+              "units": {
+                "mae": "orders",
+                "rmse": "orders",
+                "wape": "percent",
+                "smape": "percent"
+              }
+            }
+          }
+        ],
+        "model_mae_improvement_percent": 1.1913042408889751,
+        "interval": {
+          "method": "validation_absolute_residual_quantile",
+          "nominal_marginal_coverage": 0.9,
+          "test_coverage": 0.8930041152263375,
+          "test_mean_width": 12.303293228149414,
+          "per_horizon_radius": [
+            6.500923156738281,
+            7.031011581420898,
+            7.308588981628418
+          ],
+          "limitation": "Empirical marginal residual band; temporal dependence and distribution shift can change coverage. Not a confidence guarantee."
+        },
+        "evaluation_unit": "forecast-origin × zone × horizon; overlapping targets within a partition are counted at each origin"
+      },
+      "world_id": "w_789bf9fa1f7b0752",
+      "world_hash": "646c7345bf5161b24e1c05984424906496a15ed1df8227b0cd5162a3f11e442f",
+      "statistics": {
+        "zone_count": 9,
+        "road_count": 8,
+        "bucket_count": 672,
+        "panel_rows": 6048,
+        "orders": 53494,
+        "demand_total": 53494,
+        "passenger_total": 78169,
+        "completed_total": 52234,
+        "cancelled_total": 1260,
+        "cancellation_rate": 0.023554043444124574,
+        "mean_demand_per_zone_bucket": 8.844907407407407,
+        "std_demand_per_zone_bucket": 8.32287561225296,
+        "peak_city_bucket_demand": 230,
+        "mean_city_available_drivers_per_bucket": 111.15029761904762,
+        "temperature_min": 3.8000290563652457,
+        "temperature_max": 17.278417937536208,
+        "rainy_zone_bucket_fraction": 0.28125,
+        "event_zone_bucket_fraction": 0.017195767195767195,
+        "supply_semantics": "mean of contemporaneous city snapshots, not unique drivers summed over time",
+        "land_use_counts": {
+          "business": 1,
+          "commercial": 3,
+          "leisure": 1,
+          "residential": 3,
+          "transport": 1
+        }
+      },
+      "consistency_checks": {
+        "same_seed_world_repeatable": true,
+        "overlap_panel_consistent": true,
+        "overlap_orders_consistent": true,
+        "overlap_start": "2026-01-27T16:00:00+00:00",
+        "overlap_days": 1
+      },
+      "dataset_id": "d_f9e951f6579a97a0",
+      "dataset_path": "worlds/seed_99/dataset",
+      "generator_provenance": {
+        "generator": "ridecast.simulation.v2",
+        "evolution": {
+          "version": "absolute-time-v2",
+          "anchor": "1970-01-01T00:00:00Z",
+          "seed_policy": "world.seed + simulation seed + absolute UTC bucket + zone_id",
+          "geometry": "seeded nonuniform rectangular tessellation with shared edges",
+          "weather": "smooth absolute-time synoptic fronts with seasonal and diurnal cycles",
+          "demand": "spatially shared and local smooth latent regimes plus calendar/activity effects",
+          "feedback": "supply and congestion respond to previous bucket realized demand",
+          "scheduled_events": "seeded weekly leisure/commercial programme; announced in advance",
+          "scope": "macro bucket simulator; no continuous per-driver trajectory or road routing"
+        },
+        "window_independent": true,
+        "world_seed": 99,
+        "seed": 99,
+        "fictional": true,
+        "future_weather_policy": "训练和评估只能使用预测起点及之前的观测天气；场景覆盖属条件假设。"
+      },
+      "split": {
+        "train": {
+          "target_start": "2026-01-01T16:00:00+00:00",
+          "target_end_exclusive": "2026-01-20T06:00:00+00:00",
+          "first_origin": "2026-01-01T16:00:00+00:00",
+          "last_origin": "2026-01-20T03:00:00+00:00",
+          "forecast_origin_count": 444,
+          "zone_window_count": 3996,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "validation": {
+          "target_start": "2026-01-20T06:00:00+00:00",
+          "target_end_exclusive": "2026-01-24T11:00:00+00:00",
+          "first_origin": "2026-01-20T06:00:00+00:00",
+          "last_origin": "2026-01-24T08:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        },
+        "test": {
+          "target_start": "2026-01-24T11:00:00+00:00",
+          "target_end_exclusive": "2026-01-28T16:00:00+00:00",
+          "first_origin": "2026-01-24T11:00:00+00:00",
+          "last_origin": "2026-01-28T13:00:00+00:00",
+          "forecast_origin_count": 99,
+          "zone_window_count": 891,
+          "history_policy": "Only observations strictly before each origin; earlier partition history is allowed"
+        }
+      },
+      "model_path": "worlds/seed_99/model",
+      "dependencies": {
+        "tensorflow": "2.19.1",
+        "keras": "3.11.3",
+        "numpy": "2.1.3",
+        "pandas": "2.3.2"
+      },
+      "duration_seconds": 4.46838774997741,
+      "world_generator_version": "seeded-city-v2",
+      "map_geometry_sha256": "62d44d530b980c15702c71877bcdca031213bf3bc28cf4276d99575d9a9b5da7"
+    }
+  ],
+  "summary": {
+    "world_count": 3,
+    "succeeded": 3,
+    "failed": 0,
+    "distinct_world_hashes": 3,
+    "distinct_map_geometries": 3,
+    "demand_total": {
+      "count": 3,
+      "mean": 53536.666666666664,
+      "std": 9004.374837945288,
+      "min": 42530.0,
+      "max": 64586.0
+    },
+    "trained_worlds": 3,
+    "model": {
+      "mae": {
+        "count": 3,
+        "mean": 3.4735765000994565,
+        "std": 0.5324562921338727,
+        "min": 2.912541408285504,
+        "max": 4.189058727175388
+      },
+      "rmse": {
+        "count": 3,
+        "mean": 5.264389924177654,
+        "std": 0.8455834773252173,
+        "min": 4.4982178524558964,
+        "max": 6.442618961688741
+      },
+      "wape": {
+        "count": 3,
+        "mean": 41.19999082292065,
+        "std": 2.6756814546056327,
+        "min": 37.419308841531254,
+        "max": 43.22722478815743
+      },
+      "smape": {
+        "count": 3,
+        "mean": 50.58081492079486,
+        "std": 3.4406844833456574,
+        "min": 45.87958644658823,
+        "max": 54.018306656002245
+      }
+    },
+    "selected_baseline": {
+      "mae": {
+        "count": 3,
+        "mean": 3.326474622770919,
+        "std": 0.5115577825757361,
+        "min": 2.684249906472129,
+        "max": 3.936026936026936
+      },
+      "rmse": {
+        "count": 3,
+        "mean": 4.7012294021284715,
+        "std": 0.7834972700251006,
+        "min": 3.656756324437173,
+        "max": 5.543792260043797
+      },
+      "wape": {
+        "count": 3,
+        "mean": 39.48978748005538,
+        "std": 3.4024309089120632,
+        "min": 35.15906964309584,
+        "max": 43.47131445170661
+      },
+      "smape": {
+        "count": 3,
+        "mean": 56.29801083545467,
+        "std": 5.017039048416386,
+        "min": 49.76696800044581,
+        "max": 61.96460093907821
+      }
+    },
+    "worlds_with_lower_model_mae": 1,
+    "model_mae_improvement_percent": {
+      "count": 3,
+      "mean": -4.580719246272609,
+      "std": 4.16852396959905,
+      "min": -8.504852743514316,
+      "max": 1.1913042408889751
+    },
+    "aggregation": "equal weight per world; population standard deviation; no cross-world model transfer"
+  },
+  "implementation_review": {
+    "assessment": "本次使用冻结的 seeded-city-v2 地图生成器及 absolute-time-v2 演化规则。上一批基准使用较早的城市类型采样规则，已保留到 var/benchmarks/world-holdout-previous-city-generator，仅本报告代表最终版本。训练完成后仅为报告补充地图几何摘要、土地用途分布和本地时间展示，未改动数据或模型。 运行期间 features.py 增加非法场景结构校验，并以数学等价的 einsum 及非有限检查替换邻域矩阵乘法，消除当前平台的浮点状态警告。正常输入语义不变；以最终特征实现重载三个已保存模型并重算全部测试预测，均通过 rtol=1e-5、atol=1e-4 一致性比较，明细记录在 JSON。未重复训练。",
+    "superseded_artifacts": "var/benchmarks/world-holdout-previous-city-generator",
+    "feature_update_inference_checks": [
+      {
+        "seed": 7,
+        "max_abs_prediction_difference": 5.7220458984375e-06,
+        "allclose_rtol_1e-5_atol_1e-4": true,
+        "current_feature_mae": 2.9125414026216134,
+        "recorded_mae": 2.912541408285504
+      },
+      {
+        "seed": 42,
+        "max_abs_prediction_difference": 1.1444091796875e-05,
+        "allclose_rtol_1e-5_atol_1e-4": true,
+        "current_feature_mae": 4.189058702200752,
+        "recorded_mae": 4.189058727175388
+      },
+      {
+        "seed": 99,
+        "max_abs_prediction_difference": 7.62939453125e-06,
+        "allclose_rtol_1e-5_atol_1e-4": true,
+        "current_feature_mae": 3.319129362117027,
+        "recorded_mae": 3.3191293648374782
+      }
+    ]
+  }
+}

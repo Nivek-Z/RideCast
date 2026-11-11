@@ -1,0 +1,9 @@
+{
+  "observation_start": "2026-01-01T00:00:00+08:00",
+  "observation_end": "2026-01-03T00:00:00+08:00",
+  "coverage_attested": true,
+  "target_semantics": "requests",
+  "timezone": "Asia/Shanghai",
+  "invalid_policy": "reject",
+  "column_map": {}
+}

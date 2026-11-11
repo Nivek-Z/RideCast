@@ -1,0 +1,5 @@
+order_id,requested_at,pickup_zone_id,dropoff_zone_id,passenger_count,status
+request_001,2026-01-01T08:05:00+08:00,z_000,z_001,1,completed
+request_002,2026-01-01T08:12:00+08:00,z_000,z_002,2,completed
+request_003,2026-01-01T08:18:00+08:00,z_001,,1,cancelled
+request_004,2026-01-02T18:35:00+08:00,z_003,z_000,3,completed

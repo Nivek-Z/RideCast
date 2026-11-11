@@ -120,7 +120,12 @@ def create_app(settings=None):
     @app.get("/api/v1/system", tags=["system"], dependencies=auth)
     def system():
         return {"version": __version__, "server_time": now(), "api_version": "v1", "storage": "sqlite+parquet",
+                "api_key_required": bool(settings.api_key),
                 "tensorflow_installed": importlib.util.find_spec("tensorflow") is not None,
+                "units": {"demand": "orders_per_bucket", "passengers": "people_per_bucket",
+                          "temperature": "degC", "precipitation": "mm_per_hour", "wind_speed": "m_per_s",
+                          "traffic_index": "dimensionless", "available_drivers": "driver_snapshot",
+                          "distance": "km", "travel_minutes": "minutes"},
                 "time_convention": "UTC ISO8601; local calendar uses world.timezone; [start,end)",
                 "job_states": ["queued", "running", "cancelling", "succeeded", "failed", "cancelled"],
                 "limits": {"upload_bytes_per_file": settings.max_upload_bytes, "max_panel_rows": 150000,
@@ -369,7 +374,10 @@ def create_app(settings=None):
                 continue
         return {"state": job["state"], "candidates": [], "epochs": []}
 
-    @app.get("/api/v1/jobs/{job_id}/events", tags=["jobs"], dependencies=auth)
+    @app.get("/api/v1/jobs/{job_id}/events", tags=["jobs"], dependencies=auth,
+             response_class=StreamingResponse,
+             responses={200: {"description": "Durable server-sent job events",
+                              "content": {"text/event-stream": {"schema": {"type": "string"}}}}})
     async def events(job_id: str, request: Request, after: int = Query(0, ge=0),
                      last_event_id: Annotated[str | None, Header()] = None):
         store.job(job_id)

@@ -77,7 +77,8 @@ def demo(args, store):
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(dump(report) + "\n", encoding="utf-8")
     # Machine-readable schema for frontend generation, without binding a network port.
-    openapi = args.output.parent / "openapi.json"
+    openapi = Path("docs/openapi.json")
+    openapi.parent.mkdir(parents=True, exist_ok=True)
     openapi.write_text(json.dumps(create_app(store.settings).openapi(), ensure_ascii=False, indent=2), encoding="utf-8")
     return {"report": str(args.output.resolve()), "world_id": world["world_id"], "dataset_id": dataset_id,
             "model_id": model_id, "metrics": report["model"]["metrics"]["model"]}

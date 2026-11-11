@@ -1,0 +1,1382 @@
+{
+  "schema_version": "1.0",
+  "status": "passed",
+  "started_at": "2026-11-11T04:26:26.818195+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "demo_file": "reports/demo.json",
+  "transport": "real TCP HTTP",
+  "client_pid": 44779,
+  "in_process_testclient": false,
+  "total_timeout_seconds": 90,
+  "checks": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/health",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "282d1f1176ea458c983a96b468c1fdd7",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 10.24,
+      "shape": {
+        "keys": [
+          "database",
+          "job_counts",
+          "last_job_heartbeat_at",
+          "server_time",
+          "status",
+          "version",
+          "worker_online",
+          "workers"
+        ]
+      }
+    },
+    {
+      "name": "system",
+      "method": "GET",
+      "path": "/api/v1/system",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "c3322f04c5b8425b84f17e27637c2fb9",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.07,
+      "shape": {
+        "keys": [
+          "api_key_required",
+          "api_version",
+          "capabilities",
+          "database",
+          "job_counts",
+          "job_states",
+          "last_job_heartbeat_at",
+          "limits",
+          "server_time",
+          "storage",
+          "tensorflow_installed",
+          "time_convention",
+          "units",
+          "version",
+          "worker_online",
+          "workers"
+        ]
+      }
+    },
+    {
+      "name": "healthy_api_and_ml_dependency",
+      "status": "passed"
+    },
+    {
+      "name": "openapi",
+      "method": "GET",
+      "path": "/openapi.json",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "448a57a4c5514c389bc8399e82e68851",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 13.59,
+      "shape": {
+        "keys": [
+          "components",
+          "info",
+          "openapi",
+          "paths"
+        ]
+      }
+    },
+    {
+      "name": "openapi_version_matches_server",
+      "status": "passed"
+    },
+    {
+      "name": "world_list",
+      "method": "GET",
+      "path": "/api/v1/worlds?limit=1000",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "3a75b22e50ed4312a6529aa8781df212",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 3.0,
+      "shape": {
+        "keys": [
+          "items",
+          "limit",
+          "offset",
+          "total"
+        ],
+        "items_count": 1
+      }
+    },
+    {
+      "name": "reference_world_registered",
+      "status": "passed"
+    },
+    {
+      "name": "world_detail",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "a8c324da16ae417c9ae6d7e497fc2d43",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.16,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "calendar",
+          "events",
+          "metadata",
+          "name",
+          "roads",
+          "schema_version",
+          "seed",
+          "timezone",
+          "world_id",
+          "zones"
+        ],
+        "zones_feature_count": 9,
+        "roads_feature_count": 8
+      }
+    },
+    {
+      "name": "world_map",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/map",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "ffc79d82131b4d19a2f86db207f98377",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.1,
+      "shape": {
+        "keys": [
+          "crs",
+          "is_virtual",
+          "roads",
+          "world_id",
+          "zones"
+        ],
+        "zones_feature_count": 9,
+        "roads_feature_count": 8
+      }
+    },
+    {
+      "name": "map_zone_shape",
+      "status": "passed"
+    },
+    {
+      "name": "reference_active_model_before",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/active-model",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "4627a0e43450404f85826f6a72add686",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 1.92,
+      "shape": {
+        "keys": [
+          "model_id",
+          "world_id"
+        ]
+      }
+    },
+    {
+      "name": "world_random_state_0",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/state?timestamp=2026-02-07T22%3A56%3A00%2B00%3A00&seed=42",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "575f6757a3144b219ff8fdb99c7617be",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 6.86,
+      "shape": {
+        "keys": [
+          "active_events",
+          "assumptions",
+          "bucket_end",
+          "bucket_minutes",
+          "evolution",
+          "local_time",
+          "requested_time",
+          "scenario",
+          "seed",
+          "status",
+          "timestamp",
+          "totals",
+          "weather",
+          "world_id",
+          "world_seed",
+          "world_time",
+          "zones"
+        ],
+        "zones_count": 9
+      }
+    },
+    {
+      "name": "world_state_0_shape",
+      "status": "passed"
+    },
+    {
+      "name": "world_random_state_1",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/state?timestamp=2026-01-23T20%3A22%3A00%2B00%3A00&seed=42",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "1ad14449d3474fc3a9838aa893079b31",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 6.5,
+      "shape": {
+        "keys": [
+          "active_events",
+          "assumptions",
+          "bucket_end",
+          "bucket_minutes",
+          "evolution",
+          "local_time",
+          "requested_time",
+          "scenario",
+          "seed",
+          "status",
+          "timestamp",
+          "totals",
+          "weather",
+          "world_id",
+          "world_seed",
+          "world_time",
+          "zones"
+        ],
+        "zones_count": 9
+      }
+    },
+    {
+      "name": "world_state_1_shape",
+      "status": "passed"
+    },
+    {
+      "name": "world_random_state_2",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/state?timestamp=2026-01-14T08%3A29%3A00%2B00%3A00&seed=42",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "8acd3b69b6c44c8492d10c903d3a886f",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 6.08,
+      "shape": {
+        "keys": [
+          "active_events",
+          "assumptions",
+          "bucket_end",
+          "bucket_minutes",
+          "evolution",
+          "local_time",
+          "requested_time",
+          "scenario",
+          "seed",
+          "status",
+          "timestamp",
+          "totals",
+          "weather",
+          "world_id",
+          "world_seed",
+          "world_time",
+          "zones"
+        ],
+        "zones_count": 9
+      }
+    },
+    {
+      "name": "world_state_2_shape",
+      "status": "passed"
+    },
+    {
+      "name": "dataset_list",
+      "method": "GET",
+      "path": "/api/v1/datasets?limit=1000",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "5035922a010f4b55ac639d6d0f266862",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.58,
+      "shape": {
+        "keys": [
+          "items",
+          "limit",
+          "offset",
+          "total"
+        ],
+        "items_count": 1
+      }
+    },
+    {
+      "name": "reference_dataset_registered",
+      "status": "passed"
+    },
+    {
+      "name": "dataset_detail",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "e172a4d7c42440b281642532b9c96a12",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 1.74,
+      "shape": {
+        "keys": [
+          "created_at",
+          "id",
+          "kind",
+          "metadata",
+          "name",
+          "status"
+        ]
+      }
+    },
+    {
+      "name": "dashboard_overview",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/overview",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "4c4100e40c3e49819c370cc4b01a47e0",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 16.93,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "context_default_rows",
+          "dataset_id",
+          "distributions",
+          "kpis",
+          "latest_bucket",
+          "outcomes_observed",
+          "quality",
+          "range",
+          "source",
+          "status_distribution",
+          "supply_observed",
+          "supply_semantics",
+          "supply_source",
+          "target_semantics",
+          "timezone",
+          "weather",
+          "world_id",
+          "zones"
+        ],
+        "zones_count": 9
+      }
+    },
+    {
+      "name": "dashboard_timeseries",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/timeseries?limit=8",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "2dd8d9ebf7684b2e8f62bcf652f5e3fa",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 9.7,
+      "shape": {
+        "keys": [
+          "aggregation",
+          "bucket_minutes",
+          "context_default_rows",
+          "count",
+          "dataset_id",
+          "end_exclusive",
+          "outcomes_observed",
+          "rows",
+          "source",
+          "supply_observed",
+          "supply_source",
+          "target_semantics",
+          "total_count",
+          "truncated",
+          "world_id",
+          "zone_id"
+        ],
+        "rows_count": 8
+      }
+    },
+    {
+      "name": "dashboard_heatmap",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/heatmap",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "8e3f8fbcf51e48409e70a0007726a408",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 8.49,
+      "shape": {
+        "keys": [
+          "bucket_end",
+          "bucket_minutes",
+          "context_default_rows",
+          "dataset_id",
+          "geojson",
+          "outcomes_observed",
+          "rows",
+          "source",
+          "supply_observed",
+          "supply_semantics",
+          "supply_source",
+          "target_semantics",
+          "timestamp",
+          "world_id"
+        ],
+        "rows_count": 9,
+        "geojson_feature_count": 9
+      }
+    },
+    {
+      "name": "dashboard_flows",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/flows?limit=5",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "ef7b77062dee488e9383270727f83e58",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 89.42,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "context_default_rows",
+          "count",
+          "dataset_id",
+          "end_exclusive",
+          "geojson",
+          "geometry_semantics",
+          "order_count",
+          "outcomes_observed",
+          "rows",
+          "source",
+          "supply_observed",
+          "supply_source",
+          "target_semantics",
+          "total_count",
+          "truncated",
+          "world_id"
+        ],
+        "rows_count": 5,
+        "geojson_feature_count": 5
+      }
+    },
+    {
+      "name": "dashboard_replay",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/replay?limit=5",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "dac17f4bd4534e5e8fbfac60ce6eead9",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 85.06,
+      "shape": {
+        "keys": [
+          "bucket_end",
+          "bucket_minutes",
+          "bucket_start",
+          "context_default_rows",
+          "dataset_id",
+          "events",
+          "geojson",
+          "is_live",
+          "mode",
+          "order_count",
+          "order_scope",
+          "orders",
+          "orders_truncated",
+          "outcomes_observed",
+          "position_assumption",
+          "position_source",
+          "source",
+          "status_semantics",
+          "supply_observed",
+          "supply_semantics",
+          "supply_source",
+          "target_semantics",
+          "timestamp",
+          "vehicle_count",
+          "vehicles",
+          "vehicles_truncated",
+          "world_id",
+          "zones"
+        ],
+        "zones_count": 9,
+        "orders_count": 5,
+        "vehicles_count": 5,
+        "geojson_feature_count": 9
+      }
+    },
+    {
+      "name": "dashboard_orders",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/orders?limit=5&offset=0",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "57851f3cebef46f389352bebd170e9a6",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 59.01,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "context_default_rows",
+          "count",
+          "dataset_id",
+          "limit",
+          "next_offset",
+          "offset",
+          "outcomes_observed",
+          "rows",
+          "source",
+          "status",
+          "supply_observed",
+          "supply_source",
+          "target_semantics",
+          "total_count",
+          "world_id",
+          "zone_id"
+        ],
+        "rows_count": 5
+      }
+    },
+    {
+      "name": "zone_timeseries",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_31f4cb3b7651420a/timeseries?zone_id=z_000&limit=3",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "a0014de962284a01a98d25cd6cc30d92",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 7.9,
+      "shape": {
+        "keys": [
+          "aggregation",
+          "bucket_minutes",
+          "context_default_rows",
+          "count",
+          "dataset_id",
+          "end_exclusive",
+          "outcomes_observed",
+          "rows",
+          "source",
+          "supply_observed",
+          "supply_source",
+          "target_semantics",
+          "total_count",
+          "truncated",
+          "world_id",
+          "zone_id"
+        ],
+        "rows_count": 3
+      }
+    },
+    {
+      "name": "heatmap_zone_shape",
+      "status": "passed"
+    },
+    {
+      "name": "replay_is_labelled_historical",
+      "status": "passed"
+    },
+    {
+      "name": "model_list",
+      "method": "GET",
+      "path": "/api/v1/models?limit=1000",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "4b2e571727b94ee9b555428bb3a39ff5",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.51,
+      "shape": {
+        "keys": [
+          "items",
+          "limit",
+          "offset",
+          "total"
+        ],
+        "items_count": 1
+      }
+    },
+    {
+      "name": "reference_model_registered",
+      "status": "passed"
+    },
+    {
+      "name": "model_detail",
+      "method": "GET",
+      "path": "/api/v1/models/m_e24df79b24c14311",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "7a6364387cfd4f68be24fffac851b554",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.06,
+      "shape": {
+        "keys": [
+          "created_at",
+          "id",
+          "kind",
+          "metadata",
+          "name",
+          "status"
+        ]
+      }
+    },
+    {
+      "name": "model_learning_history",
+      "method": "GET",
+      "path": "/api/v1/models/m_e24df79b24c14311/history",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "62335d65981845b384ef65a20e9701b2",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 1.92,
+      "shape": {
+        "keys": [
+          "candidate",
+          "candidate_count",
+          "candidates",
+          "config",
+          "duration_seconds",
+          "epoch",
+          "epochs",
+          "loss_unit",
+          "model_id",
+          "schema_version",
+          "selected_candidate",
+          "status"
+        ],
+        "epochs_count": 12,
+        "candidates_count": 2
+      }
+    },
+    {
+      "name": "model_heldout_evaluation",
+      "method": "GET",
+      "path": "/api/v1/models/m_e24df79b24c14311/evaluation?limit=5",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "e46d1fc0f4284c5d977b5f1de1b6324b",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 3.24,
+      "shape": {
+        "keys": [
+          "limit",
+          "model_id",
+          "offset",
+          "rows",
+          "total"
+        ],
+        "rows_count": 5
+      }
+    },
+    {
+      "name": "trained_curves_and_evaluation_exist",
+      "status": "passed"
+    },
+    {
+      "name": "reference_forecast",
+      "method": "POST",
+      "path": "/api/v1/forecasts",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "8ac2d19f2814411ea9a4893edbed0a78",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 29.96,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "dataset_id",
+          "exogenous_assumption",
+          "forecast_origin",
+          "horizon",
+          "interval",
+          "model_id",
+          "rows",
+          "scenario",
+          "scenario_note",
+          "schema_version",
+          "source",
+          "target_semantics",
+          "timezone",
+          "totals",
+          "world_id"
+        ],
+        "rows_count": 27
+      }
+    },
+    {
+      "name": "forecast_dimensions_and_finite_counts",
+      "status": "passed"
+    },
+    {
+      "name": "dispatch_default_supply",
+      "method": "POST",
+      "path": "/api/v1/dispatch-suggestions",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "db8f9acf72dd4b37847bc42e3ae6857c",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 35.21,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "capacity_assumption",
+          "conservation",
+          "dataset_id",
+          "distance_method",
+          "executed",
+          "forecast_origin",
+          "horizon_policy",
+          "limitations",
+          "method",
+          "model_id",
+          "recommendations",
+          "remaining_shortage",
+          "source",
+          "supply_known",
+          "supply_snapshot_timestamp",
+          "supply_source",
+          "target_semantics",
+          "timestamp",
+          "total_driver_km",
+          "total_relocated_drivers",
+          "zones"
+        ],
+        "zones_count": 9,
+        "recommendations_count": 0
+      }
+    },
+    {
+      "name": "dispatch_explicit_integer_supply",
+      "method": "POST",
+      "path": "/api/v1/dispatch-suggestions",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "7b29d48b721f44b6b87f02b1fd9e7a3f",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 33.97,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "capacity_assumption",
+          "conservation",
+          "dataset_id",
+          "distance_method",
+          "executed",
+          "forecast_origin",
+          "horizon_policy",
+          "limitations",
+          "method",
+          "model_id",
+          "recommendations",
+          "remaining_shortage",
+          "source",
+          "supply_known",
+          "supply_snapshot_timestamp",
+          "supply_source",
+          "target_semantics",
+          "timestamp",
+          "total_driver_km",
+          "total_relocated_drivers",
+          "zones"
+        ],
+        "zones_count": 9,
+        "recommendations_count": 0
+      }
+    },
+    {
+      "name": "dispatch_is_advice_and_preserves_supply",
+      "status": "passed"
+    },
+    {
+      "name": "malformed_forecast_event_rejected",
+      "method": "POST",
+      "path": "/api/v1/forecasts",
+      "expected_status": 422,
+      "http_status": 422,
+      "request_id": "7be51a54901348b8a04277006567f4bf",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 9.61,
+      "shape": {
+        "keys": [
+          "error",
+          "request_id"
+        ]
+      }
+    },
+    {
+      "name": "validation_error_envelope",
+      "status": "passed"
+    },
+    {
+      "name": "job_list",
+      "method": "GET",
+      "path": "/api/v1/jobs?limit=1000",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "abc613ee30914ce2aa35c3172fdd753b",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.13,
+      "shape": {
+        "keys": [
+          "items",
+          "limit",
+          "offset",
+          "total"
+        ],
+        "items_count": 2
+      }
+    },
+    {
+      "name": "reference_training_job",
+      "method": "GET",
+      "path": "/api/v1/jobs/j_3d232d1c2e6b4f93",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "244ed5d4c78a4516af07a6c46e5003cf",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 1.68,
+      "shape": {
+        "keys": [
+          "created_at",
+          "error",
+          "finished_at",
+          "heartbeat_at",
+          "id",
+          "kind",
+          "message",
+          "params",
+          "progress",
+          "result",
+          "stage",
+          "started_at",
+          "state",
+          "worker_id"
+        ]
+      }
+    },
+    {
+      "name": "reference_job_learning_history",
+      "method": "GET",
+      "path": "/api/v1/jobs/j_3d232d1c2e6b4f93/history",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "daf4e7943a5d4b11a1df232ec8bc0bbc",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 1.64,
+      "shape": {
+        "keys": [
+          "candidate",
+          "candidate_count",
+          "candidates",
+          "config",
+          "duration_seconds",
+          "epoch",
+          "epochs",
+          "job_id",
+          "loss_unit",
+          "model_id",
+          "schema_version",
+          "selected_candidate",
+          "state",
+          "status"
+        ],
+        "epochs_count": 12,
+        "candidates_count": 2
+      }
+    },
+    {
+      "name": "reference_training_sse",
+      "method": "GET",
+      "path": "/api/v1/jobs/j_3d232d1c2e6b4f93/events",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "a8461b66130942db9bd30cb72172a4f6",
+      "content_type": "text/event-stream; charset=utf-8",
+      "status": "passed",
+      "duration_ms": 4.58,
+      "shape": {
+        "characters": 8580
+      }
+    },
+    {
+      "name": "reference_training_sse_terminal_payload",
+      "status": "passed",
+      "details": {
+        "event_count": 32
+      }
+    },
+    {
+      "name": "create_http_smoke_world",
+      "method": "POST",
+      "path": "/api/v1/worlds",
+      "expected_status": 201,
+      "http_status": 201,
+      "request_id": "bdc2327093e445c1b39eca750d8092a4",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 4.72,
+      "shape": {
+        "keys": [
+          "created_at",
+          "id",
+          "kind",
+          "metadata",
+          "name",
+          "status"
+        ]
+      }
+    },
+    {
+      "name": "smoke_world_is_separate",
+      "status": "passed"
+    },
+    {
+      "name": "enqueue_http_simulation",
+      "method": "POST",
+      "path": "/api/v1/simulations",
+      "expected_status": 202,
+      "http_status": 202,
+      "request_id": "3571044963464d03ba52d98c9390c168",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 3.18,
+      "shape": {
+        "keys": [
+          "created_at",
+          "error",
+          "finished_at",
+          "heartbeat_at",
+          "id",
+          "kind",
+          "message",
+          "params",
+          "progress",
+          "result",
+          "stage",
+          "started_at",
+          "state",
+          "worker_id"
+        ]
+      }
+    },
+    {
+      "name": "independent_worker_simulation",
+      "status": "passed",
+      "details": {
+        "job_id": "j_0875945da4c748f5",
+        "state": "succeeded",
+        "worker_id": "j_69422378368041f9",
+        "observed_states": [
+          "queued",
+          "running",
+          "succeeded"
+        ],
+        "observed_stages": [
+          "queued",
+          "starting",
+          "simulate",
+          "succeeded"
+        ],
+        "poll_count": 5,
+        "live_epochs_seen": 0,
+        "duration_ms": 828.61,
+        "error": null,
+        "result": {
+          "resource_type": "dataset",
+          "resource_id": "d_56b688543fd149e9"
+        }
+      }
+    },
+    {
+      "name": "enqueue_http_training",
+      "method": "POST",
+      "path": "/api/v1/training-jobs",
+      "expected_status": 202,
+      "http_status": 202,
+      "request_id": "32e4774c3a834ffd9e1596eb803cd6a6",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 4.14,
+      "shape": {
+        "keys": [
+          "created_at",
+          "error",
+          "finished_at",
+          "heartbeat_at",
+          "id",
+          "kind",
+          "message",
+          "params",
+          "progress",
+          "result",
+          "stage",
+          "started_at",
+          "state",
+          "worker_id"
+        ]
+      }
+    },
+    {
+      "name": "independent_worker_real_training",
+      "status": "passed",
+      "details": {
+        "job_id": "j_a403f1f7eaf34632",
+        "state": "succeeded",
+        "worker_id": "j_69422378368041f9",
+        "observed_states": [
+          "queued",
+          "running",
+          "succeeded"
+        ],
+        "observed_stages": [
+          "queued",
+          "features",
+          "succeeded"
+        ],
+        "poll_count": 17,
+        "live_epochs_seen": 1,
+        "duration_ms": 3367.28,
+        "error": null,
+        "result": {
+          "resource_type": "model",
+          "resource_id": "m_fa2937d26c7a4f67"
+        }
+      }
+    },
+    {
+      "name": "worker_trained_model_forecast",
+      "method": "POST",
+      "path": "/api/v1/forecasts",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "888f0a526c3848c3b1319f3b82598af2",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 46.2,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "dataset_id",
+          "exogenous_assumption",
+          "forecast_origin",
+          "horizon",
+          "interval",
+          "model_id",
+          "rows",
+          "scenario",
+          "scenario_note",
+          "schema_version",
+          "source",
+          "target_semantics",
+          "timezone",
+          "totals",
+          "world_id"
+        ],
+        "rows_count": 8
+      }
+    },
+    {
+      "name": "worker_training_final_curve",
+      "method": "GET",
+      "path": "/api/v1/jobs/j_a403f1f7eaf34632/history",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "a29289e91e954c75901efb4f94e04f0a",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.57,
+      "shape": {
+        "keys": [
+          "candidate",
+          "candidate_count",
+          "candidates",
+          "config",
+          "duration_seconds",
+          "epoch",
+          "epochs",
+          "job_id",
+          "loss_unit",
+          "model_id",
+          "schema_version",
+          "selected_candidate",
+          "state",
+          "status"
+        ],
+        "epochs_count": 1,
+        "candidates_count": 1
+      }
+    },
+    {
+      "name": "worker_model_output_shape",
+      "status": "passed"
+    },
+    {
+      "name": "worker_training_sse",
+      "method": "GET",
+      "path": "/api/v1/jobs/j_a403f1f7eaf34632/events",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "cfa944d1301344c9bc4cb1f2204bb7ed",
+      "content_type": "text/event-stream; charset=utf-8",
+      "status": "passed",
+      "duration_ms": 4.92,
+      "shape": {
+        "characters": 2126
+      }
+    },
+    {
+      "name": "worker_training_sse_terminal_payload",
+      "status": "passed",
+      "details": {
+        "event_count": 9
+      }
+    },
+    {
+      "name": "activate_isolated_smoke_model",
+      "method": "POST",
+      "path": "/api/v1/models/m_fa2937d26c7a4f67/activate",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "878204280e5a4735a447f90bdd1f49b9",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.22,
+      "shape": {
+        "keys": [
+          "model_id",
+          "status",
+          "world_id"
+        ]
+      }
+    },
+    {
+      "name": "isolated_world_active_model",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_b2b15d3ffc182838/active-model",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "0f52efc193b144f7a357b48aeeba0ff9",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.03,
+      "shape": {
+        "keys": [
+          "activated_at",
+          "model_id",
+          "world_id"
+        ]
+      }
+    },
+    {
+      "name": "isolated_model_activation",
+      "status": "passed"
+    },
+    {
+      "name": "reference_active_model_after",
+      "method": "GET",
+      "path": "/api/v1/worlds/w_85be8c7d5740fade/active-model",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "2e98f8f66f0149a8b60665fb3072c869",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 2.06,
+      "shape": {
+        "keys": [
+          "model_id",
+          "world_id"
+        ]
+      }
+    },
+    {
+      "name": "reference_activation_unchanged",
+      "status": "passed"
+    },
+    {
+      "name": "world_geojson_import",
+      "method": "POST",
+      "path": "/api/v1/worlds/import",
+      "expected_status": 201,
+      "http_status": 201,
+      "request_id": "6148d531fc404072986687fa274d40c3",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 4.55,
+      "shape": {
+        "keys": [
+          "created_at",
+          "id",
+          "kind",
+          "metadata",
+          "name",
+          "status"
+        ]
+      }
+    },
+    {
+      "name": "enqueue_csv_import_over_http",
+      "method": "POST",
+      "path": "/api/v1/datasets/import",
+      "expected_status": 202,
+      "http_status": 202,
+      "request_id": "f5f0747b789d489a8d3a887219b520c4",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 3.49,
+      "shape": {
+        "keys": [
+          "created_at",
+          "error",
+          "finished_at",
+          "heartbeat_at",
+          "id",
+          "kind",
+          "message",
+          "params",
+          "progress",
+          "result",
+          "stage",
+          "started_at",
+          "state",
+          "worker_id"
+        ]
+      }
+    },
+    {
+      "name": "independent_worker_csv_import",
+      "status": "passed",
+      "details": {
+        "job_id": "j_02f5e8d6a1144984",
+        "state": "succeeded",
+        "worker_id": "j_69422378368041f9",
+        "observed_states": [
+          "queued",
+          "succeeded"
+        ],
+        "observed_stages": [
+          "queued",
+          "succeeded"
+        ],
+        "poll_count": 6,
+        "live_epochs_seen": 0,
+        "duration_ms": 1046.55,
+        "error": null,
+        "result": {
+          "resource_type": "dataset",
+          "resource_id": "d_3a2b7b0dfe754808"
+        }
+      }
+    },
+    {
+      "name": "http_import_quality_and_semantics",
+      "method": "GET",
+      "path": "/api/v1/datasets/d_3a2b7b0dfe754808/overview",
+      "expected_status": 200,
+      "http_status": 200,
+      "request_id": "373e7f3a302143e78ac5c4c2f434eaad",
+      "content_type": "application/json",
+      "status": "passed",
+      "duration_ms": 19.92,
+      "shape": {
+        "keys": [
+          "bucket_minutes",
+          "context_default_rows",
+          "dataset_id",
+          "distributions",
+          "kpis",
+          "latest_bucket",
+          "outcomes_observed",
+          "quality",
+          "range",
+          "source",
+          "status_distribution",
+          "supply_observed",
+          "supply_semantics",
+          "supply_source",
+          "target_semantics",
+          "timezone",
+          "weather",
+          "world_id",
+          "zones"
+        ],
+        "zones_count": 9
+      }
+    },
+    {
+      "name": "import_target_and_missing_supply_are_labelled",
+      "status": "passed"
+    }
+  ],
+  "reference": {
+    "world_id": "w_85be8c7d5740fade",
+    "dataset_id": "d_31f4cb3b7651420a",
+    "model_id": "m_e24df79b24c14311"
+  },
+  "versions": {
+    "api": "0.1.0",
+    "api_version": "v1",
+    "model_dependencies": {
+      "tensorflow": "2.19.1",
+      "keras": "3.11.3",
+      "numpy": "2.1.3",
+      "pandas": "2.3.2"
+    }
+  },
+  "reference_shapes": {
+    "zones": 9,
+    "panel_rows": 9720,
+    "forecast_rows": 27,
+    "horizon": 3,
+    "learning_epochs": 12
+  },
+  "queued_http_experiment": {
+    "world_id": "w_b2b15d3ffc182838",
+    "dataset_id": "d_56b688543fd149e9",
+    "model_id": "m_fa2937d26c7a4f67",
+    "simulation_job_id": "j_0875945da4c748f5",
+    "training_job_id": "j_a403f1f7eaf34632",
+    "simulation_worker_id": "j_69422378368041f9",
+    "training_worker_id": "j_69422378368041f9",
+    "forecast_rows": 8,
+    "learning_epochs": 1,
+    "purpose": "integration only; no small-experiment accuracy or generalization claim"
+  },
+  "http_adapter_experiment": {
+    "world_id": "w_a2dd09f11cb74e29",
+    "dataset_id": "d_3a2b7b0dfe754808",
+    "job_id": "j_02f5e8d6a1144984",
+    "purpose": "single-row adapter integration fixture"
+  },
+  "finished_at": "2026-11-11T04:26:32.626293+00:00",
+  "duration_seconds": 5.808,
+  "checks_passed": 68,
+  "checks_total": 68,
+  "examples_file": "reports/api-examples.json"
+}
