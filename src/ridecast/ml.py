@@ -15,10 +15,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from ridecast.adaptation import causal_level_factors
 from ridecast.features import (
     FEATURE_VERSION,
     FUTURE_FEATURES,
     HISTORY_FEATURES,
+    PROFILE_FEATURES,
     STATIC_FEATURES,
     WindowSet,
     chronological_ranges,
@@ -32,6 +34,7 @@ from ridecast.features import (
     validate_scenario,
     world_fingerprint,
 )
+from ridecast.rate_profile import fit_rate_profile, predict_rate_profile
 
 DEFAULT_CONFIG = {
     "lookback": 24, "horizon": 3, "epochs": 30, "batch_size": 128,
@@ -133,28 +136,46 @@ def _predict(model, inputs, batch_size: int = 512) -> np.ndarray:
     return result
 
 
-def _build_model(keras, config: dict, inputs: dict, target_mean: float):
+def _build_model(keras, config: dict, inputs: dict, rate_profile: dict):
     history = keras.Input(shape=inputs["history"].shape[1:], name="history")
     future = keras.Input(shape=inputs["future"].shape[1:], name="future")
     static = keras.Input(shape=inputs["static"].shape[1:], name="static")
     anchor = keras.Input(shape=inputs["anchor"].shape[1:], name="anchor")
+    profile = keras.Input(shape=inputs["profile"].shape[1:], name="profile")
+    region_id = keras.Input(shape=inputs["region"].shape[1:], name="region")
     sequence = keras.layers.GRU(config["units"], name="regional_gru")(history)
     region = keras.layers.Dense(config["units"], activation="swish", name="region_encoder")(static)
     state = keras.layers.RepeatVector(config["horizon"])(keras.layers.Concatenate()([sequence, region]))
     known = keras.layers.Dense(config["units"] * 2, activation="swish", name="per_step_future")(future)
-    joined = keras.layers.Concatenate()([state, known])
+    joined = keras.layers.Concatenate()([state, known, keras.layers.Rescaling(0.01)(anchor)])
     hidden = keras.layers.Dense(config["units"] * 2, activation="swish")(joined)
     hidden = keras.layers.Dropout(0.05)(hidden)
     hidden = keras.layers.Dense(config["units"], activation="swish")(hidden)
     correction = keras.layers.Dense(1, kernel_initializer="zeros", bias_initializer="zeros",
                                     name="seasonal_log_correction")(hidden)
-    # A bounded learned log-rate adjustment starts exactly at the causal prior.
+    # Fit a regularized calendar/rate model using training labels only. It is a
+    # frozen parameter layer, not a target-derived feature or simulator oracle.
+    all_region_rates = keras.layers.Dense(
+        inputs["region"].shape[-1], trainable=False, name="fitted_calendar_log_rates",
+        kernel_initializer=keras.initializers.Constant(rate_profile["kernel"]),
+        bias_initializer=keras.initializers.Constant(rate_profile["bias"]),
+    )(profile)
+    chosen_rate = keras.layers.Multiply()([all_region_rates,
+                                           keras.layers.RepeatVector(config["horizon"])(region_id)])
+    log_rate = keras.layers.Dense(1, use_bias=False, trainable=False,
+                                  kernel_initializer="ones", name="select_region_rate")(chosen_rate)
+    log_rate = keras.layers.Rescaling(1.0, offset=-20.0)(keras.layers.ReLU(max_value=40.0)(
+        keras.layers.Rescaling(1.0, offset=20.0)(log_rate)))
+    conditional_rate = keras.layers.Activation("exponential")(log_rate)
+    # The recurrent model learns deviations from a smooth fitted conditional
+    # rate, rather than being forced to multiply a stale 14-day demand level.
     factor = keras.layers.Activation("exponential")(
         keras.layers.Rescaling(2.0)(keras.layers.Activation("tanh")(correction)))
     output = keras.layers.Reshape((config["horizon"],), name="demand_counts")(
-        keras.layers.Multiply()([anchor, factor]))
-    model = keras.Model({"history": history, "future": future, "static": static, "anchor": anchor},
-                         output, name="ridecast_seasonal_residual_gru")
+        keras.layers.Multiply()([conditional_rate, factor]))
+    model = keras.Model({"history": history, "future": future, "static": static, "anchor": anchor,
+                          "profile": profile, "region": region_id},
+                         output, name="ridecast_conditional_rate_residual_gru")
     loss = keras.losses.Poisson() if config["loss"] == "poisson" else keras.losses.Huber(delta=3.0)
     model.compile(optimizer=keras.optimizers.Adam(config["learning_rate"], clipnorm=1.0),
                   loss=loss, metrics=[keras.metrics.MeanAbsoluteError(name="mae")])
@@ -165,14 +186,40 @@ def _loss_unit(config):
     return "Poisson loss on demand counts (NLL up to a target-only constant)" if config["loss"] == "poisson" else "Huber loss on demand counts (delta=3)"
 
 
-def _baseline(inputs, baseline_name, data, windows, periods):
+def _baseline(inputs, baseline_name, data, windows, periods, rate_profile=None):
     if baseline_name == "seasonal_profile":
         return inputs["anchor"][..., 0]
+    if baseline_name == "calendar_rate":
+        return predict_rate_profile(inputs["profile"], rate_profile["kernel"], rate_profile["bias"],
+                                     np.argmax(inputs["region"], axis=-1))
     return seasonal_predictions(data, windows, periods[baseline_name])
 
 
 def _blend(neural, baseline, weight):
     return (float(weight) * neural + (1 - float(weight)) * baseline).astype(np.float32)
+
+
+def _hindcasts(data, model, preprocessor, lookback, horizon, start, end, baseline_name, periods, rate_profile):
+    """Current frozen model backcasts h1 using only each past origin's inputs."""
+    origins = np.arange(start, end, dtype=np.int32)
+    raw = [model_inputs(data, int(t), lookback, horizon) for t in origins]
+    inputs = preprocess({key: np.concatenate([row[key] for row in raw]) for key in raw[0]}, preprocessor)
+    neural = _predict(model, inputs)
+    windows = WindowSet({}, np.zeros_like(neural), np.repeat(origins, len(data.zone_ids)),
+                        np.tile(np.arange(len(data.zone_ids)), len(origins)))
+    baseline = _baseline(inputs, baseline_name, data, windows, periods, rate_profile)
+    shape = (len(origins), len(data.zone_ids))
+    return neural[:, 0].reshape(shape), baseline[:, 0].reshape(shape)
+
+
+def _level_factors(data, observed, expected, origins, zone_indices, start, policy):
+    if not policy["strength"]:
+        return np.ones(len(origins), dtype=np.float32)
+    width = max(1, int(pd.Timedelta(hours=policy["window_hours"]) / data.step))
+    matrix = causal_level_factors(observed, expected, np.asarray(origins) - start,
+                                  window_steps=width, strength=policy["strength"],
+                                  prior_count=policy["prior_count"])
+    return matrix[np.arange(len(origins)), zone_indices]
 
 
 def _breakdown(actual, predicted, baseline, windows, zone_ids):
@@ -234,6 +281,9 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     # No validation or test feature contributes to these statistics.
     preprocessor = fit_preprocessor(partitions["train"].inputs)
     normalized = {name: preprocess(w.inputs, preprocessor) for name, w in partitions.items()}
+    rate_profile = fit_rate_profile(normalized["train"]["profile"], partitions["train"].targets,
+                                     partitions["train"].zone_indices, len(data.zone_ids),
+                                     shared_feature_indices=[PROFILE_FEATURES.index("log_scheduled_event")])
     validation = partitions["validation"]
     val_start, val_end = ranges["validation"]
     calibration_start = val_start + int((val_end - val_start) * 0.65)
@@ -257,6 +307,8 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     val_baselines = {name: seasonal_predictions(data, partitions["validation"], period)
                      for name, period in periods.items()}
     val_baselines["seasonal_profile"] = validation.inputs["anchor"][..., 0]
+    val_baselines["calendar_rate"] = predict_rate_profile(
+        normalized["validation"]["profile"], rate_profile["kernel"], rate_profile["bias"], validation.zone_indices)
     baseline_name = min(val_baselines, key=lambda name: metrics(selection_target, val_baselines[name][selection_mask])["mae"])
     candidates = [dict(config)]
     if config["tune"]:
@@ -266,7 +318,7 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     for index, candidate in enumerate(candidates):
         keras.backend.clear_session()
         tf.keras.utils.set_random_seed(config["seed"] + index)
-        model = _build_model(keras, candidate, normalized["train"], float(np.log1p(partitions["train"].targets).mean()))
+        model = _build_model(keras, candidate, normalized["train"], rate_profile)
         current_curve = {"candidate": index, "config": candidate, "epochs": [], "loss_unit": _loss_unit(candidate)}
         live_history.update({"status": "training", "candidate": index, "epoch": 0,
                              "config": candidate, "epochs": current_curve["epochs"],
@@ -326,17 +378,41 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
     validation_neural = _predict(model, normalized["validation"])
     # All choices below use only the earlier validation segment, never calibration/test labels.
     weights = [0.0, 0.25, 0.5, 0.75, 1.0]
-    blend_scores = [{"neural_weight": weight, **metrics(selection_target, _blend(
-        validation_neural[selection_mask], val_baselines[baseline_name][selection_mask], weight))}
-                    for weight in weights]
-    neural_weight = min(blend_scores, key=lambda score: (score["mae"], -score["neural_weight"]))["neural_weight"]
-    validation_pred = _blend(validation_neural, val_baselines[baseline_name], neural_weight)
+    policies = [{"window_hours": 0, "strength": 0.0, "prior_count": 20.0}] + [
+        {"window_hours": hours, "strength": strength, "prior_count": 20.0}
+        for hours in (12, 24) for strength in (0.5, 1.0)]
+    hindcast_start = max(config["lookback"], val_start - int(pd.Timedelta(hours=24) / data.step))
+    hindcast_neural, hindcast_baseline = _hindcasts(
+        data, model, preprocessor, config["lookback"], config["horizon"], hindcast_start,
+        len(data.times), baseline_name, periods, rate_profile)
+    observed = data.values["demand"][hindcast_start:]
+    blend_scores = []
+    for weight in weights:
+        historical_expected = _blend(hindcast_neural, hindcast_baseline, weight)
+        raw_selection = _blend(validation_neural[selection_mask], val_baselines[baseline_name][selection_mask], weight)
+        for policy in policies:
+            factors = _level_factors(data, observed, historical_expected, validation.origins[selection_mask],
+                                     validation.zone_indices[selection_mask], hindcast_start, policy)
+            blend_scores.append({"neural_weight": weight, "adaptation": policy,
+                                 **metrics(selection_target, raw_selection * factors[:, None])})
+    chosen = min(blend_scores, key=lambda score: (score["mae"], -score["neural_weight"],
+                                                  score["adaptation"]["strength"]))
+    neural_weight, adaptation = chosen["neural_weight"], chosen["adaptation"]
+    historical_expected = _blend(hindcast_neural, hindcast_baseline, neural_weight)
+    validation_factors = _level_factors(data, observed, historical_expected, validation.origins,
+                                       validation.zone_indices, hindcast_start, adaptation)
+    validation_pred = _blend(validation_neural, val_baselines[baseline_name], neural_weight) * validation_factors[:, None]
     test_neural = _predict(model, normalized["test"])
     target = partitions["test"].targets
     baseline_preds = {name: seasonal_predictions(data, partitions["test"], period) for name, period in periods.items()}
     baseline_preds["seasonal_profile"] = partitions["test"].inputs["anchor"][..., 0]
+    baseline_preds["calendar_rate"] = predict_rate_profile(
+        normalized["test"]["profile"], rate_profile["kernel"], rate_profile["bias"], partitions["test"].zone_indices)
     baseline = baseline_preds[baseline_name]
-    test_pred = _blend(test_neural, baseline, neural_weight)
+    raw_test = _blend(test_neural, baseline, neural_weight)
+    test_factors = _level_factors(data, observed, historical_expected, partitions["test"].origins,
+                                 partitions["test"].zone_indices, hindcast_start, adaptation)
+    test_pred = raw_test * test_factors[:, None]
     # Later validation targets calibrate intervals, isolated from tuning when history permits.
     residual_q = np.quantile(np.abs(validation.targets[calibration_mask] - validation_pred[calibration_mask]), 0.9, axis=0)
     lower, upper = np.maximum(0, test_pred - residual_q), test_pred + residual_q
@@ -359,12 +435,13 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
                          "zone_id": data.zone_ids[z], "horizon": h + 1, "actual_demand": float(target[i, h]),
                          "predicted_demand": float(test_pred[i, h]), "baseline_demand": float(baseline[i, h]),
                          "neural_demand": float(test_neural[i, h]),
+                         "uncalibrated_demand": float(raw_test[i, h]), "adaptation_factor": float(test_factors[i]),
                          "lower": float(lower[i, h]), "upper": float(upper[i, h])})
     pd.DataFrame(rows).to_parquet(output_dir / "test_predictions.parquet", index=False)
     import keras as standalone_keras
     metadata = {
         "schema_version": "1.0", "model_id": model_id, "dataset_id": data.manifest["dataset_id"],
-        "world_id": data.world["world_id"], "status": "ready", "architecture": "causal_seasonal_residual_gru_count_head",
+        "world_id": data.world["world_id"], "status": "ready", "architecture": "conditional_poisson_rate_residual_gru",
         "source": data.manifest["source"], "target_semantics": data.manifest["target_semantics"],
         "bucket_minutes": int(data.world["bucket_minutes"]), "timezone": data.world["timezone"],
         "created_at": datetime.now(timezone.utc).isoformat(), "config": candidates[best_index],
@@ -373,8 +450,13 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
         "training_observation_start": data.manifest["observation_start"], "training_observation_end": data.manifest["observation_end"],
         "training_panel_sha256": _sha256(dataset_dir / "panel.parquet"), "world_fingerprint": world_fingerprint(data.world),
         "feature_schema": {"version": FEATURE_VERSION, "history": HISTORY_FEATURES, "future": FUTURE_FEATURES,
+                           "profile": PROFILE_FEATURES,
                            "static": STATIC_FEATURES + [f"zone_{z}" for z in data.zone_ids], "zone_ids": data.zone_ids},
         "preprocessor": preprocessor, "split": split,
+        "rate_profile": {**rate_profile, "fit_partition": "train_only", "ridge": 0.02},
+        "adaptation": {**adaptation, "ratio_clip": [0.5, 2.0],
+                       "selection": "earlier_validation_MAE_only",
+                       "source": "past observed demand versus frozen-model h1 hindcasts, strictly before each origin"},
         "output_transform": "identity_counts",
         "blending": {"neural_weight": neural_weight, "baseline_name": baseline_name,
                      "validation_grid": blend_scores, "selection": "earlier_validation_MAE_only",
@@ -386,6 +468,7 @@ def train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict
         "metrics": {
             "model": model_metrics, "baseline": {"name": baseline_name, **baseline_metrics},
             "neural": metrics(target, test_neural),
+            "uncalibrated_model": metrics(target, raw_test),
             "operational": _operational_metrics(data, partitions["test"], target, test_pred, baseline,
                                                   partitions["train"].targets),
             "baselines": {name: metrics(target, values) for name, values in baseline_preds.items()},
@@ -464,8 +547,21 @@ def forecast(model_dir: Path, dataset_dir: Path, horizon: int | None = None, sce
     windows = WindowSet({}, np.zeros_like(neural), np.full(len(data.zone_ids), len(data.times)),
                         np.arange(len(data.zone_ids)))
     blending = metadata["blending"]
-    baseline = _baseline(raw_inputs, blending["baseline_name"], data, windows, periods)
+    baseline = _baseline(inputs, blending["baseline_name"], data, windows, periods, metadata["rate_profile"])
     predicted = _blend(neural, baseline, blending["neural_weight"])[:, :horizon]
+    adaptation = metadata["adaptation"]
+    adaptation_factors = np.ones(len(data.zone_ids), dtype=np.float32)
+    if adaptation["strength"]:
+        width = max(1, int(pd.Timedelta(hours=adaptation["window_hours"]) / data.step))
+        start = max(lookback, len(data.times) - width)
+        if start < len(data.times):
+            past_neural, past_baseline = _hindcasts(data, model, metadata["preprocessor"], lookback,
+                trained_horizon, start, len(data.times), blending["baseline_name"], periods, metadata["rate_profile"])
+            past_expected = _blend(past_neural, past_baseline, blending["neural_weight"])
+            adaptation_factors = causal_level_factors(data.values["demand"][start:], past_expected,
+                np.array([len(data.times) - start]), window_steps=width, strength=adaptation["strength"],
+                prior_count=adaptation["prior_count"])[0]
+            predicted *= adaptation_factors[:, None]
     radius = np.asarray(metadata["metrics"]["interval"]["per_horizon_radius"], dtype=float)[:horizon]
     multiplier = float(scenario.get("demand_multiplier", 1))
     lower, upper = np.maximum(0, predicted - radius) * multiplier, (predicted + radius) * multiplier
@@ -487,5 +583,6 @@ def forecast(model_dir: Path, dataset_dir: Path, horizon: int | None = None, sce
                      "coverage_is_not_guaranteed": True},
         "exogenous_assumption": metadata["exogenous_assumption"], "scenario": scenario,
         "architecture": metadata["architecture"], "blending": blending,
+        "adaptation": {**adaptation, "current_factors": dict(zip(data.zone_ids, adaptation_factors.astype(float).tolist()))},
         "scenario_note": "Overrides are caller-known assumptions; demand_multiplier is an explicit post-model scaling assumption, not an estimated causal effect.",
     }

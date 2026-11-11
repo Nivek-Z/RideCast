@@ -120,9 +120,32 @@ def test_fixed_partition_and_calibration_cut_are_audited_without_training():
                 "bucket_minutes": 60, "zone_count": 2}
     checks = quality.validate_run_contract(old, new, rows, manifest)
     assert checks["test_unit_count"] == 960
+    new["adaptation"] = {"window_hours": 12, "strength": .5, "prior_count": 20,
+                         "ratio_clip": [.5, 2.0], "selection": "earlier_validation_MAE_only"}
+    quality.validate_run_contract(old, new, rows, manifest, "round2")
+    new["adaptation"]["window_hours"] = 6
+    with pytest.raises(ValueError, match="recent-level"):
+        quality.validate_run_contract(old, new, rows, manifest, "round2")
     new["validation_subsplit"]["calibration_windows"] += 2
     with pytest.raises(ValueError, match="calibration"):
         quality.validate_run_contract(old, new, rows, manifest)
+
+
+def test_served_formula_keeps_neural_blend_and_recent_level_effects_separate():
+    rows = predictions()
+    rows["neural_demand"] = [10, 20]
+    rows["baseline_demand"] = [14, 16]
+    rows["uncalibrated_demand"] = [12, 18]
+    rows["adaptation_factor"] = [.75, 1.1]
+    rows["predicted_demand"] = rows["uncalibrated_demand"] * rows["adaptation_factor"]
+    metadata = {"blending": {"neural_weight": .5}, "adaptation": {"strength": 1}}
+    quality.validate_served_formula(quality.validate_predictions(rows), metadata, "round2")
+    rows.loc[0, "predicted_demand"] = 12
+    with pytest.raises(ValueError, match="causal level"):
+        quality.validate_served_formula(rows, metadata, "round2")
+    rows.loc[0, "adaptation_factor"] = 0
+    with pytest.raises(ValueError, match="strictly positive"):
+        quality.validate_predictions(rows)
 
 
 def test_baselines_do_not_see_target_data_even_when_horizon_exceeds_daily_period():

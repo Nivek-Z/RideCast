@@ -17,20 +17,23 @@ from ridecast.legacy_features import (  # noqa: F401 -- public compatibility sur
 )
 from ridecast.seasonal import SEASONAL_FEATURES, seasonal_context
 
-FEATURE_VERSION = "origin-aware-seasonal-v2"
+FEATURE_VERSION = "origin-aware-profile-v3"
 KINDS = ["residential", "business", "commercial", "transport", "leisure", "mixed"]
-HARMONICS = [f"hour_{kind}_{order}" for order in (2, 3, 4) for kind in ("sin", "cos")]
+HARMONICS = [f"hour_{kind}_{order}" for order in (2, 3, 4, 5, 6) for kind in ("sin", "cos")]
 HISTORY_FEATURES = v1.HISTORY_FEATURES + ["hour_sin", "hour_cos", *HARMONICS, "holiday", "log_event"]
 FUTURE_FEATURES = v1.FUTURE_FEATURES + HARMONICS + ["log_scheduled_event", "lead_days"] + SEASONAL_FEATURES
 STATIC_FEATURES = v1.STATIC_FEATURES + [f"kind_{kind}" for kind in KINDS]
 REQUIRED_PANEL = v1.REQUIRED_PANEL
 SCENARIO_KEYS = v1.SCENARIO_KEYS
+PROFILE_FEATURES = ["hour_sin", "hour_cos", *HARMONICS, "weekday_sin", "weekday_cos",
+                    "holiday", "log_scheduled_event", "log_precipitation_persistence",
+                    "log_recent_mean_24h", "log_recent_mean_168h", "recent_level_ratio", "lead_days"]
 
 
 def _cycles(times):
     hour = np.asarray(times.hour + times.minute / 60, dtype=float)
     return np.column_stack([fn(2 * np.pi * order * hour / 24)
-                            for order in (1, 2, 3, 4) for fn in (np.sin, np.cos)]).astype(np.float32)
+                            for order in (1, 2, 3, 4, 5, 6) for fn in (np.sin, np.cos)]).astype(np.float32)
 
 
 def load_panel(dataset_dir):
@@ -64,7 +67,9 @@ def model_inputs(data, origin, lookback, horizon, scenario=None):
     anchor_index = FUTURE_FEATURES.index("log_seasonal_anchor")
     anchor = np.maximum(0.25, np.expm1(future[:, :, anchor_index:anchor_index + 1]))
     return {"history": data.history[origin - lookback:origin].transpose(1, 0, 2),
-            "future": future, "static": data.static, "anchor": anchor.astype(np.float32)}
+            "future": future, "static": data.static, "anchor": anchor.astype(np.float32),
+            "profile": future[..., [FUTURE_FEATURES.index(name) for name in PROFILE_FEATURES]],
+            "region": np.eye(len(data.zone_ids), dtype=np.float32)}
 
 
 def make_windows(data, start, end, lookback, horizon):
@@ -83,9 +88,11 @@ def make_windows(data, start, end, lookback, horizon):
 
 
 def fit_preprocessor(inputs):
-    result = v1.fit_preprocessor({k: v for k, v in inputs.items() if k != "anchor"})
-    if "anchor" in inputs:
-        result["anchor"] = {"mean": [0.0], "std": [1.0], "identity": True}
+    result = v1.fit_preprocessor({k: v for k, v in inputs.items() if k not in {"anchor", "region"}})
+    for name in ("anchor", "region"):
+        if name in inputs:
+            width = inputs[name].shape[-1]
+            result[name] = {"mean": [0.0] * width, "std": [1.0] * width, "identity": True}
     return result
 
 

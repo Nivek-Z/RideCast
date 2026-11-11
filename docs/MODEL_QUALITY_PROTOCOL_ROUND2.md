@@ -25,6 +25,10 @@
 
 v2验证前65%用于epoch、季节基线和融合权重选择，后35%独立校准残差带；跨该界线的多步标签窗口排除。本轮45天数据必须独立校准，不能启用小样本复用验证的fallback。神经融合权重仍限0/0.25/0.5/0.75/1；透明报告纯神经、实际服务、所选基线及每case部署类型，纯季节回退不能被称为纯神经改善。
 
+第二轮增加严格因果的近期水平校准，修正持续的总量偏差。它只把预测起点以前最近12或24小时已经发生的真实需求，与同一冻结模型按各自过去起点特征得到的h1回推作比较，因子为 `clip((Σpast y+20)/(Σpast μ+20),0.5,2)^strength`。策略网格预先固定为禁用（window_hours=0,strength=0），或window_hours为12/24、strength为0.5/1，prior_count恒20。策略与神经权重联合只在前段验证MAE选择，后段校准和测试不再改策略；每个新起点按固定策略只汇总其自身以前的数据，不把未来what-if情景改写到过去h1回推。此滚动因子不是重新拟合神经网络，也不能把它带来的效果称为纯神经改善。
+
+测试明细保留 `neural_demand`（原神经输出）、`baseline_demand`、`uncalibrated_demand`（权重融合）、`adaptation_factor` 和实际 `predicted_demand=uncalibrated_demand×adaptation_factor`；metadata.adaptation记录选中参数与信息来源。runner检查因子有限、为正、在预定裁剪策略范围内，同起点/区域跨预测步一致，以及完整服务公式。纯神经、校准前融合及最终服务指标分别报告。
+
 主朴素基线仍从legacy v1验证MAE在最近值、前日同期和前周同期中选择；测试同时报告全部朴素基线，测试后最优基线只能作为诊断。所有特征与缩放严格遵守起点信息边界；预测单元必须完整一致，不取交集删样本。runner检查实际配置、时间边界、完整测试范围与选择/校准窗口数。
 
 ## 门槛保持不变
@@ -40,7 +44,7 @@ v2验证前65%用于epoch、季节基线和融合权重选择，后35%独立校�
 
 完整指标与第一轮相同：MAE/RMSE/WAPE/sMAPE、bias/bias_percent、逐区/逐步、高峰07:00–10:00与17:00–21:00、非高峰、按同起点/目标/步长汇总区域的城市误差、区间覆盖/宽度、冷启动和3次热forecast时延。WAPE和bias%已乘100，分母为0返回null。保留纯神经与实际融合预测，绝不把多个起点的重叠目标求和为独立订单。
 
-runner的 `--protocol round1` 保留原case和默认payload；原报告SHA不因runner后续参数化而伪造更新。`--protocol round2` 使用本矩阵并保存独立protocol_sha256，冻结范围包括生成器/data、legacy/new特征与模型、seasonal.py、runner及两份协议文档。正式新代码会产生新source hashes，必须与第一轮各自真实版本区分。
+runner的 `--protocol round1` 保留原case和默认payload；原报告SHA不因runner后续参数化而伪造更新。`--protocol round2` 使用本矩阵并保存独立protocol_sha256，冻结范围包括生成器/data、legacy/new特征与模型、seasonal.py、rate_profile.py、adaptation.py、runner及两份协议文档。正式新代码会产生新source hashes，必须与第一轮各自真实版本区分。
 
 以下命令只列出协议，不访问数据：
 
@@ -55,3 +59,5 @@ python scripts/evaluate_quality.py --protocol round2 --run --output var/quality/
 ```
 
 完整产物进入忽略的var目录，小体量最终报告另存reports/model-quality-round2.json/md。草案转为正式执行记录时应记录冻结提交及摘要；不在未执行前填写通过数字。
+
+第二轮候选加入训练集内拟合的正则Poisson条件率层，再由GRU学习残差；其参数只来自训练窗口，不使用验证/测试标签初始化。最大30轮指神经训练预算相等，条件率拟合另有最多30次Newton迭代，因此并非总计算预算或参数量完全相等；必须另报拟合迭代、实际训练耗时和完整预测时延。日历、区域、历史水平及天气输入仍遵守预测起点的信息边界。

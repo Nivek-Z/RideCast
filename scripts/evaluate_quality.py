@@ -67,11 +67,21 @@ def final_cases(protocol: str = "round1") -> list[dict]:
 
 
 def protocol_payload(protocol: str = "round1") -> dict:
-    return {"protocol_version": _definition(protocol)["version"], "config": copy.deepcopy(CONFIG),
-            "v2_overrides": dict(V2_OVERRIDES), "quality_targets": dict(QUALITY_TARGETS),
-            "v2_validation_policy": {"selection_fraction": 0.65, "calibration_fraction": 0.35,
-                                     "neural_weights": [0, 0.25, 0.5, 0.75, 1]},
-            "cases": final_cases(protocol)}
+    payload = {"protocol_version": _definition(protocol)["version"], "config": copy.deepcopy(CONFIG),
+               "v2_overrides": dict(V2_OVERRIDES), "quality_targets": dict(QUALITY_TARGETS),
+               "v2_validation_policy": {"selection_fraction": 0.65, "calibration_fraction": 0.35,
+                                        "neural_weights": [0, 0.25, 0.5, 0.75, 1]},
+               "cases": final_cases(protocol)}
+    if protocol == "round2":
+        payload["v2_validation_policy"]["adaptation"] = {
+            "prior_count": 20, "ratio_clip": [0.5, 2.0],
+            "policies": [{"window_hours": 0, "strength": 0}] +
+                        [{"window_hours": hours, "strength": strength}
+                         for hours in (12, 24) for strength in (0.5, 1)],
+            "selection": "earlier_validation_MAE_only",
+            "history": "strictly past h1 hindcasts and observed demand; no future what-if overrides",
+        }
+    return payload
 
 
 def protocol_hash(protocol: str = "round1") -> str:
@@ -107,7 +117,8 @@ def validate_predictions(frame: pd.DataFrame) -> pd.DataFrame:
     if frame.empty or frame[KEYS].isna().any().any() or frame.duplicated(KEYS).any():
         raise ValueError("Prediction keys must be nonempty, unique and nonnull")
     numeric = ["actual_demand", "predicted_demand", "lower", "upper", "horizon"]
-    numeric += [column for column in ("neural_demand", "baseline_demand") if column in frame]
+    numeric += [column for column in ("neural_demand", "baseline_demand", "uncalibrated_demand", "adaptation_factor")
+                if column in frame]
     for column in numeric:
         frame[column] = pd.to_numeric(frame[column], errors="raise")
         if not np.isfinite(frame[column]).all() or (frame[column] < 0).any():
@@ -118,6 +129,11 @@ def validate_predictions(frame: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Prediction interval must contain its point forecast")
     if (frame["timestamp"] < frame["forecast_origin"]).any():
         raise ValueError("Targets must not precede forecast origin")
+    if "adaptation_factor" in frame:
+        if (frame["adaptation_factor"] <= 0).any():
+            raise ValueError("adaptation_factor must be strictly positive")
+        if (frame.groupby(["forecast_origin", "zone_id"])["adaptation_factor"].nunique() > 1).any():
+            raise ValueError("Recent-level factor must be the same across horizons at an origin and zone")
     return frame.sort_values(KEYS).reset_index(drop=True)
 
 
@@ -130,7 +146,8 @@ def align_predictions(old: pd.DataFrame, new: pd.DataFrame) -> tuple[pd.DataFram
     return old, new
 
 
-def validate_run_contract(old_meta: dict, new_meta: dict, rows: pd.DataFrame, manifest: dict) -> dict:
+def validate_run_contract(old_meta: dict, new_meta: dict, rows: pd.DataFrame, manifest: dict,
+                          protocol: str = "round1") -> dict:
     """Audit fixed budget, chronological cuts and independent v2 calibration."""
     start, end = pd.Timestamp(manifest["observation_start"]), pd.Timestamp(manifest["observation_end"])
     step = pd.Timedelta(minutes=int(manifest["bucket_minutes"]))
@@ -168,10 +185,43 @@ def validate_run_contract(old_meta: dict, new_meta: dict, rows: pd.DataFrame, ma
     blending = new_meta["blending"]
     if blending["neural_weight"] not in (0, 0.25, 0.5, 0.75, 1):
         raise ValueError("v2 blend weight was not selected from the preregistered validation grid")
+    if protocol == "round2":
+        adaptation = new_meta.get("adaptation") or {}
+        allowed_policies = {(0, 0), (12, 0.5), (12, 1), (24, 0.5), (24, 1)}
+        policy = (adaptation.get("window_hours"), adaptation.get("strength"))
+        if (policy not in allowed_policies or adaptation.get("prior_count") != 20 or
+                adaptation.get("ratio_clip") != [0.5, 2.0] or
+                adaptation.get("selection") != "earlier_validation_MAE_only"):
+            raise ValueError("v2 recent-level policy differs from preregistered validation-only grid")
     return {"same_core_budget": True, "same_target_cuts": True, "test_unit_count": expected_units,
             "calibration_start": (start + calibration_start * step).isoformat(),
             "selection_windows": selection_origins * zones,
             "calibration_windows": calibration_origins * zones, "independent_calibration": True}
+
+
+def validate_served_formula(rows: pd.DataFrame, metadata: dict, protocol: str = "round1") -> None:
+    if not {"neural_demand", "baseline_demand"}.issubset(rows.columns):
+        raise ValueError("v2 must expose pure neural and baseline predictions separately")
+    weight = metadata["blending"]["neural_weight"]
+    uncalibrated = weight * rows["neural_demand"] + (1 - weight) * rows["baseline_demand"]
+    if "uncalibrated_demand" in rows and not np.allclose(rows["uncalibrated_demand"], uncalibrated, rtol=1e-6, atol=1e-6):
+        raise ValueError("Uncalibrated predictions do not match the recorded neural/seasonal blend")
+    factors = np.ones(len(rows))
+    if "adaptation_factor" in rows:
+        factors = rows["adaptation_factor"].to_numpy(dtype=float)
+        adaptation = metadata.get("adaptation") or {}
+        strength = float(adaptation.get("strength", 0))
+        if not np.isfinite(strength) or not 0 <= strength <= 1:
+            raise ValueError("Adaptation strength is invalid")
+        if (not np.isfinite(factors).all() or (factors <= 0).any() or
+                (factors < 0.5**strength - 1e-6).any() or (factors > 2**strength + 1e-6).any()):
+            raise ValueError("Adaptation factors exceed the recorded clipped policy")
+    elif protocol == "round2":
+        raise ValueError("round2 must expose recent-level factors and uncalibrated predictions")
+    if protocol == "round2" and "uncalibrated_demand" not in rows:
+        raise ValueError("round2 must expose uncalibrated predictions")
+    if not np.allclose(rows["predicted_demand"], uncalibrated * factors, rtol=1e-6, atol=1e-6):
+        raise ValueError("Served predictions do not match the recorded blend and causal level factor")
 
 
 def naive_predictions(rows: pd.DataFrame, panel: pd.DataFrame, bucket_minutes: int) -> dict[str, np.ndarray]:
@@ -258,12 +308,22 @@ def summarize_cases(cases: list[dict], expected_count: int = 10) -> dict:
              "frozen_sources_unchanged": all(case.get("source_unchanged", False) for case in cases) and complete}
     neural_metrics = [case["evaluation"]["v2_neural"]["overall"] for case in successful
                       if "v2_neural" in case["evaluation"]]
+    uncalibrated_metrics = [case["evaluation"]["v2_uncalibrated"]["overall"] for case in successful
+                            if "v2_uncalibrated" in case["evaluation"]]
     deployments = [case.get("models", {}).get("v2", {}).get("blending", {}) for case in successful]
+    adaptation_labels = []
+    for case in successful:
+        adaptation = case.get("models", {}).get("v2", {}).get("adaptation") or {}
+        label = (f"{adaptation['window_hours']}h_strength_{adaptation['strength']}"
+                 if adaptation.get("strength") else "disabled")
+        adaptation_labels.append(label)
     return {"case_count": len(cases), "expected_case_count": expected_count, "succeeded": len(successful),
             "failed": len(cases) - len(successful), "equal_weight_case_means": means,
             "mean_mae_improvement_vs_v1_percent": improvement, "cases_beating_selected_baseline": wins,
             "worst_case_mae_regression_percent": worst_regression, "gates": gates,
             "v2_pure_neural_mean_mae": statistics.fmean(row["mae"] for row in neural_metrics) if neural_metrics else None,
+            "v2_uncalibrated_mean_mae": statistics.fmean(row["mae"] for row in uncalibrated_metrics) if uncalibrated_metrics else None,
+            "adaptation_policy_counts": {label: adaptation_labels.count(label) for label in sorted(set(adaptation_labels))},
             "deployment_counts": {name: sum(item.get("deployment") == name for item in deployments)
                                   for name in ("neural", "neural_seasonal_blend", "seasonal_fallback")},
             "neural_weights": [{"case_id": case["case_id"],
@@ -275,7 +335,8 @@ def summarize_cases(cases: list[dict], expected_count: int = 10) -> dict:
 def _fingerprints() -> dict[str, str]:
     root = Path(__file__).resolve().parents[1]
     paths = [root / "src" / "ridecast" / name for name in (
-        "simulation.py", "data.py", "features.py", "ml.py", "legacy_features.py", "legacy_ml.py", "seasonal.py")]
+        "simulation.py", "data.py", "features.py", "ml.py", "legacy_features.py", "legacy_ml.py", "seasonal.py",
+        "rate_profile.py", "adaptation.py")]
     paths += [Path(__file__).resolve(), root / "docs" / "MODEL_QUALITY_PROTOCOL.md",
               root / "docs" / "MODEL_QUALITY_PROTOCOL_ROUND2.md"]
     return {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -300,7 +361,7 @@ def render_markdown(report: dict) -> str:
     lines = ["# 模型质量升级：独立预登记验收", "", f"协议 `{report['protocol_version']}`；运行时间 {report['created_at']}。",
              "", "所有case使用同一原始面板、同预测单元和相等最大30轮预算；每世界分别重训。"
              "结果是合成世界的时间留出评价，不是实际城市精度或零样本迁移保证。", "",
-             "v2指实际服务的验证集选定神经/季节融合结果；纯神经网络指标单列，权重0时明确标为季节回退。", "",
+             "v2指实际服务的验证集选定神经/季节融合及因果水平校准结果；纯神经网络指标单列，权重0时明确标为季节回退。", "",
              "| case | v1 MAE | v2服务 MAE | v2纯神经 MAE | 神经权重 | 验证选定基线 MAE | v2 WAPE | 状态 |",
              "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |"]
 
@@ -323,6 +384,8 @@ def render_markdown(report: dict) -> str:
               f"最差case相对v1误差变化：{number(summary['worst_case_mae_regression_percent'])}%。",
               f"纯神经网络等权平均MAE：{number(summary['v2_pure_neural_mean_mae'])}；"
               f"服务部署形式：{summary['deployment_counts']}。",
+              f"水平校准前服务融合MAE：{number(summary.get('v2_uncalibrated_mean_mae'))}；"
+              f"因果水平策略：{summary.get('adaptation_policy_counts', {})}。",
               "", "| 预登记目标 | 结果 |", "| --- | --- |"]
     lines += [f"| {name} | {'通过' if passed else '未通过'} |" for name, passed in summary["gates"].items()]
     lines += ["", f"质量目标整体：**{'通过' if summary['quality_target_passed'] else '未通过'}**。"
@@ -375,13 +438,8 @@ def run(output: Path, protocol: str = "round1") -> dict:
                 metadata[version] = module.train_model(dataset_dir, root / version, model_id, config)
             old, new = align_predictions(pd.read_parquet(root / "v1" / "test_predictions.parquet"),
                                          pd.read_parquet(root / "v2" / "test_predictions.parquet"))
-            contract_checks = validate_run_contract(metadata["v1"], metadata["v2"], old, manifest)
-            if "neural_demand" not in new:
-                raise ValueError("v2 must expose pure neural predictions separately from served blend")
-            weight = metadata["v2"]["blending"]["neural_weight"]
-            expected_served = weight * new["neural_demand"] + (1 - weight) * new["baseline_demand"]
-            if not np.allclose(new["predicted_demand"], expected_served, rtol=1e-6, atol=1e-6):
-                raise ValueError("Served predictions do not match the recorded neural/seasonal blend")
+            contract_checks = validate_run_contract(metadata["v1"], metadata["v2"], old, manifest, protocol)
+            validate_served_formula(new, metadata["v2"], protocol)
             baselines = naive_predictions(old, panel, world["bucket_minutes"])
             val_scores = metadata["v1"]["metrics"]["validation"]["baselines"]
             selected = min(BASELINES, key=lambda name: val_scores[name]["mae"])
@@ -389,6 +447,8 @@ def run(output: Path, protocol: str = "round1") -> dict:
                           "v2": evaluation_groups(new, new["predicted_demand"], world["timezone"]),
                           "v2_neural": evaluation_groups(new, new["neural_demand"], world["timezone"]),
                           "v2_served_baseline": evaluation_groups(new, new["baseline_demand"], world["timezone"])}
+            if "uncalibrated_demand" in new:
+                evaluation["v2_uncalibrated"] = evaluation_groups(new, new["uncalibrated_demand"], world["timezone"])
             evaluation.update({name: evaluation_groups(old, values, world["timezone"])
                                for name, values in baselines.items()})
             evaluation["selected_baseline"] = evaluation[selected]
@@ -406,7 +466,8 @@ def run(output: Path, protocol: str = "round1") -> dict:
                          "models": {version: {key: value.get(key) for key in (
                              "model_id", "architecture", "feature_schema", "config", "duration_seconds", "split",
                              "selected_candidate", "candidates", "dependencies", "model_sha256", "blending",
-                             "validation_subsplit", "validation_selection", "output_transform", "metrics")}
+                             "validation_subsplit", "validation_selection", "output_transform", "rate_profile", "metrics",
+                             "adaptation")}
                                     for version, value in metadata.items()}})
         except Exception as error:
             case.update(status="failed", error=f"{type(error).__name__}: {error}")

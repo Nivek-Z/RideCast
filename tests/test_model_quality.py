@@ -17,7 +17,7 @@ def test_complete_v2_inputs_do_not_read_future_observations(tmp_path):
         values[origin:] = np.nan
     data.history[origin:] = np.nan
     after = features.model_inputs(data, origin, lookback, horizon)
-    assert before.keys() == after.keys() == {"history", "future", "static", "anchor"}
+    assert before.keys() == after.keys() == {"history", "future", "static", "anchor", "profile", "region"}
     for key in before:
         np.testing.assert_array_equal(before[key], after[key], err_msg=key)
         assert np.isfinite(after[key]).all()
