@@ -27,7 +27,15 @@ ridecast serve
 ridecast worker
 ```
 
-访问 [交互式 API 文档](http://127.0.0.1:8000/docs)、[健康检查](http://127.0.0.1:8000/health)。本项目交付后端，前端可根据 OpenAPI 开发仪表盘。
+访问 [交互式 API 文档](http://127.0.0.1:8000/docs)、[健康检查](http://127.0.0.1:8000/health)。
+
+仪表盘前端位于 `web/`（需要 Node.js 18+），在第三个终端启动后打开 <http://127.0.0.1:5173>，说明见 [web/README.md](web/README.md)：
+
+```bash
+cd web
+npm install
+npm run dev
+```
 
 可选 Docker 单机部署：`docker compose up --build`，API 与 worker 共享命名卷；当前交付环境未启动 Docker daemon，容器启动不作为已验证结果。
 
