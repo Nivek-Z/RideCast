@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, CalendarDays, Check, CloudRain, Database, PartyPopper, Thermometer, Wind, ScanLine } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CalendarDays, CarFront, Check, CheckCircle2, CircleSlash, CloudRain, Database, MousePointer2, PartyPopper, Thermometer, Wind, ScanLine, Zap } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { api, type Any } from '../api';
 import { CityMap, TipRows } from '../components/CityMap';
@@ -10,10 +10,10 @@ import { useApp, useQuery } from '../store';
 export function Onboarding() {
   const app = useApp();
   const steps = [
-    { title: '创建虚拟城市', desc: '种子决定街区、用地、人口与岗位分布。', done: app.worlds.length > 0, action: () => app.openDialog('world'), label: '新建城市' },
-    { title: '生成或导入数据', desc: '把一段演化物化为订单数据集，或上传真实订单 CSV。', done: app.datasets.length > 0, action: () => app.openDialog('simulate'), label: '生成数据集' },
-    { title: '训练预测模型', desc: 'GRU 多步预测，按时间顺序留出验证与测试。', done: app.models.length > 0, action: () => app.openDialog('train'), label: '发起训练' },
-    { title: '预测与调配建议', desc: '查看未来需求、区间与启发式司机调配。', done: false, action: () => app.go('forecast'), label: '去预测' },
+    { title: '创建虚拟城市', done: app.worlds.length > 0, action: () => app.openDialog('world'), label: '新建城市' },
+    { title: '生成或导入数据', done: app.datasets.length > 0, action: () => app.openDialog('simulate'), label: '生成数据集' },
+    { title: '训练预测模型', done: app.models.length > 0, action: () => app.openDialog('train'), label: '发起训练' },
+    { title: '预测与调配建议', done: false, action: () => app.go('forecast'), label: '去预测' },
   ];
   const current = steps.findIndex((s) => !s.done);
   return (
@@ -22,9 +22,6 @@ export function Onboarding() {
         <div key={s.title} className={`card step ${s.done ? 'done' : ''}`}>
           <span className="n">{s.done ? <Check size={13} /> : i + 1}</span>
           <div style={{ fontWeight: 600 }}>{s.title}</div>
-          <div className="small dim" style={{ flex: 1 }}>
-            {s.desc}
-          </div>
           <div>
             <button className={`btn sm ${i === current ? 'primary' : ''}`} onClick={s.action} disabled={i > current && i > 0 && !steps[i - 1].done}>
               {s.label}
@@ -64,9 +61,7 @@ export function DashboardPage() {
     return (
       <div className="page">
         <Card>
-          <Empty title={world ? `「${world.name}」还没有数据集` : '欢迎使用 RideCast'}>
-            RideCast 在种子确定的虚拟城市里演化网约车供需，并训练时空需求预测模型。按下面四步走通整条链路。
-          </Empty>
+          <Empty title={world ? `「${world.name}」暂无数据集` : '暂无数据'} />
         </Card>
         <Onboarding />
       </div>
@@ -93,11 +88,11 @@ export function DashboardPage() {
 
       <div className="card metrics-card">
         <div className="stat-strip">
-          <Stat k={ov.target_semantics === 'requests' ? '发起请求' : '完成行程'} v={compact(k.demand)} d={`乘客 ${compact(k.passengers)} 人`} />
-          <Stat k="完成率" v={ratio(k.completion_rate)} d={outcomes ? `完成 ${compact(k.completed)} 单` : '该口径无法观察取消'} />
-          <Stat k="取消率" v={ratio(k.cancellation_rate, 2)} d={outcomes ? `取消 ${int(k.cancelled)} 单` : '未知，不按 0 绘制'} />
-          <Stat k="峰值桶需求" v={int(k.peak_bucket_demand)} unit="单/桶" d={`均值 ${fix1(k.mean_bucket_demand)} 单/桶`} />
-          <Stat k="最新可用司机" v={supplyKnown ? int(k.latest_available_drivers) : '未知'} d={supplyKnown ? `桶均 ${fix1(k.mean_available_drivers_per_bucket)} · 快照非去重人数` : '导入数据未提供供给'} />
+          <Stat k={ov.target_semantics === 'requests' ? '发起请求' : '完成行程'} icon={<MousePointer2 size={14} />} v={compact(k.demand)} d={`乘客 ${compact(k.passengers)} 人`} />
+          <Stat k="完成率" icon={<CheckCircle2 size={14} />} v={ratio(k.completion_rate)} d={outcomes ? `完成 ${compact(k.completed)} 单` : '该口径无法观察取消'} />
+          <Stat k="取消率" icon={<CircleSlash size={14} />} v={ratio(k.cancellation_rate, 2)} d={outcomes ? `取消 ${int(k.cancelled)} 单` : '未知，不按 0 绘制'} />
+          <Stat k="峰值桶需求" icon={<Zap size={14} />} v={int(k.peak_bucket_demand)} unit="单/桶" d={`均值 ${fix1(k.mean_bucket_demand)} 单/桶`} />
+          <Stat k="最新可用司机" icon={<CarFront size={14} />} v={supplyKnown ? int(k.latest_available_drivers) : '未知'} d={supplyKnown ? `桶均 ${fix1(k.mean_available_drivers_per_bucket)} · 快照非去重人数` : '导入数据未提供供给'} />
         </div>
       </div>
 
@@ -131,7 +126,7 @@ export function DashboardPage() {
               series={[
                 { name: ov.target_semantics === 'requests' ? '发起请求' : '完成行程', color: 'var(--accent)', area: true, width: 1.8, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.demand })) },
                 ...(supplyKnown ? [{ name: '可用司机', color: 'var(--text-3)', width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.available_drivers })) }] : []),
-                ...(outcomes ? [{ name: '取消', color: 'var(--red)', width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.cancelled })) }] : []),
+                ...(outcomes ? [{ name: '取消', color: 'var(--red)', dashed: true, width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.cancelled })) }] : []),
               ]}
             />
           )}
@@ -174,11 +169,10 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      <div className="section-label">需求分布</div>
-
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         <Card title="小时分布" sub="每桶全城平均需求">
           <BarChart
+            color="var(--bar)"
             name="平均需求"
             labelEvery={3}
             data={ov.distributions.hour.map((h: Any) => ({ label: String(h.hour).padStart(2, '0'), value: h.mean_city_demand_per_bucket, tip: `${String(h.hour).padStart(2, '0')}:00 · ${h.bucket_count} 个桶` }))}
@@ -186,6 +180,7 @@ export function DashboardPage() {
         </Card>
         <Card title="周内分布" sub="每桶全城平均需求">
           <BarChart
+            color="var(--bar)"
             name="平均需求"
             data={ov.distributions.weekday.map((w: Any) => ({ label: WEEKDAYS[w.weekday], value: w.mean_city_demand_per_bucket, tip: `${WEEKDAYS[w.weekday]} · ${w.bucket_count} 个桶` }))}
           />

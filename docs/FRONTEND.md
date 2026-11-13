@@ -1,6 +1,6 @@
 # 视觉仪表盘前端接口交接
 
-本地控制台位于 `web/`，启动与视觉交互约定见 [前端 README](../web/README.md)。顶部导航切换七个页面，内容上方选择城市与数据集；总览地图点击区域会联动当前时间窗口的需求曲线。2026-11-13 的界面重构只调整前端布局、交互与呈现，以下 HTTP 契约不变。
+本地控制台位于 `web/`，启动与视觉交互约定见 [前端 README](../web/README.md)。当前暗色候选以侧栏切换七个页面，顶部选择城市与数据集；总览地图点击区域会联动当前时间窗口的需求曲线。2026-11-13 的两版界面候选只调整前端布局、交互与呈现，以下 HTTP 契约不变。
 
 Base URL：`http://127.0.0.1:8000/api/v1`。交互文档 `/docs`；可用 `ridecast export-openapi` 导出 `docs/openapi.json` 生成请求客户端。持久时间和常规响应时间采用 ISO8601 UTC，演化状态另有 `local_time`；展示时按 world.timezone 转换，所有请求时间建议显式携带时区。时间过滤 `[start,end)`。经纬度为 WGS84，数组顺序 `[longitude,latitude]`。地图为 GeoJSON，前端可选 MapLibre、Leaflet、deck.gl 等；底图可由本地道路/区域直接绘制，不依赖外部地图密钥。
 

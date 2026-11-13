@@ -37,7 +37,7 @@ export function ModelsPage() {
 
   return (
     <div className="page">
-      <div className="grid model-layout" style={{ gridTemplateColumns: '300px minmax(0, 1fr)', alignItems: 'start' }}>
+      <div className="grid model-layout" style={{ gridTemplateColumns: '240px minmax(0, 1fr)', alignItems: 'start' }}>
         <Card title="模型版本" sub={`${worldModels.length} 个`} flush>
           {worldModels.map((m) => {
             const mt = m.metadata.metrics;
@@ -49,7 +49,7 @@ export function ModelsPage() {
                     {active.data?.model_id === m.id && <Badge tone="blue">已启用</Badge>}
                   </div>
                   <div className="small muted">
-                    MAE {fix2(mt?.model?.mae)} · 基线 {fix2(mt?.baseline?.mae)} · {ago(m.created_at)}
+                    MAE {fix2(mt?.model?.mae)} · {ago(m.created_at)}
                   </div>
                 </div>
                 <span className="small" style={{ color: (mt?.model_mae_improvement_percent ?? 0) > 0 ? 'var(--green)' : 'var(--red)', fontWeight: 600 }}>
@@ -92,7 +92,7 @@ function ModelDetail(props: { model: Resource; tab: Tab; setTab: (t: Tab) => voi
       <div className="card">
         <div className="row" style={{ padding: '12px 14px 0', flexWrap: 'wrap' }}>
           <h3 className="mono" style={{ fontSize: 14 }}>{model.id}</h3>
-          <Badge>{md.architecture ?? 'GRU'}</Badge>
+          <Badge>{md.architecture?.toLowerCase().includes('gru') ? 'GRU' : md.architecture ?? 'GRU'}</Badge>
           <Badge>{md.source === 'synthetic' ? '合成数据训练' : '导入数据训练'}</Badge>
           <Improvement value={mt?.model_mae_improvement_percent} />
           <span className="grow" />

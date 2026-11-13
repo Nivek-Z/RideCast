@@ -32,10 +32,10 @@ export function Card(props: {
   );
 }
 
-export function Stat(props: { k: ReactNode; v: ReactNode; unit?: string; d?: ReactNode; tone?: string }) {
+export function Stat(props: { k: ReactNode; v: ReactNode; unit?: string; d?: ReactNode; tone?: string; icon?: ReactNode }) {
   return (
     <div className="stat">
-      <span className="k">{props.k}</span>
+      <span className="k">{props.k}{props.icon && <span className="stat-icon">{props.icon}</span>}</span>
       <span className="v" style={props.tone ? { color: `var(--${props.tone})` } : undefined}>
         {props.v}
         {props.unit && <small>{props.unit}</small>}

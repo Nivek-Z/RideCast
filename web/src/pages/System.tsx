@@ -1,9 +1,9 @@
-import { Monitor, Moon, RefreshCw, Sun } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { connection } from '../api';
-import { Badge, Card, Empty, Field, KV, Note, Seg, Stat } from '../components/ui';
+import { Badge, Card, Empty, Field, KV, Note, Stat } from '../components/ui';
 import { ago, int, time } from '../format';
-import { useApp, type ThemeMode } from '../store';
+import { useApp } from '../store';
 
 const CAPABILITY: Record<string, string> = {
   geojson_layers: 'GeoJSON 图层', scenario_simulation: '场景仿真', csv_import: 'CSV 导入', quality_report: '质量报告', heatmap: '热力',
@@ -14,7 +14,7 @@ const UNIT: Record<string, string> = {
   available_drivers: '可用司机', distance: '距离', travel_minutes: '行程时长',
 };
 
-export function SystemPage(props: { theme: ThemeMode; setTheme: (m: ThemeMode) => void }) {
+export function SystemPage() {
   const app = useApp();
   const sys = app.system;
   const [base, setBase] = useState(connection.base);
@@ -34,21 +34,6 @@ export function SystemPage(props: { theme: ThemeMode; setTheme: (m: ThemeMode) =
       </div>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))' }}>
-        <Card title="外观">
-          <div className="col" style={{ gap: 12 }}>
-            <Seg
-              value={props.theme}
-              onChange={props.setTheme}
-              options={[
-                { value: 'auto', label: <><Monitor size={13} /> 跟随系统</> },
-                { value: 'light', label: <><Sun size={13} /> 浅色</> },
-                { value: 'dark', label: <><Moon size={13} /> 深色</> },
-              ]}
-            />
-            <div className="small muted">主题保存在本机浏览器，地图与图表配色随主题切换。</div>
-          </div>
-        </Card>
-
         <Card title="连接">
           <div className="col" style={{ gap: 12 }}>
             <Field label="API 地址" hint="留空则通过开发服务器代理访问 127.0.0.1:8000（推荐）">

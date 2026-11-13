@@ -88,24 +88,6 @@ export function useLocal<T>(key: string, initial: T): [T, (v: T) => void] {
   return [value, set];
 }
 
-/* ---------- 主题 ---------- */
-export type ThemeMode = 'auto' | 'light' | 'dark';
-export function useTheme(): [ThemeMode, (m: ThemeMode) => void] {
-  const [mode, setMode] = useState<ThemeMode>(() => (localStorage.getItem('rc.theme') as ThemeMode) || 'auto');
-  useEffect(() => {
-    const media = matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => {
-      const dark = mode === 'dark' || (mode === 'auto' && media.matches);
-      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    };
-    apply();
-    localStorage.setItem('rc.theme', mode);
-    media.addEventListener('change', apply);
-    return () => media.removeEventListener('change', apply);
-  }, [mode]);
-  return [mode, setMode];
-}
-
 /* ---------- 全局应用状态 ---------- */
 export type Route = 'dashboard' | 'map' | 'orders' | 'models' | 'forecast' | 'jobs' | 'system';
 export type Dialog = null | 'world' | 'simulate' | 'import' | 'train';

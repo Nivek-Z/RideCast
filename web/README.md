@@ -1,16 +1,16 @@
 # RideCast Console · 前端仪表盘
 
-Vite + React + TypeScript。地图与图表均为本地 SVG 自绘，不依赖外部底图、地图密钥或图表库；支持浅色 / 深色 / 跟随系统三种主题。
+Vite + React + TypeScript。地图与图表均为本地 SVG 自绘，不依赖外部底图、地图密钥或图表库；本候选仅提供暗色界面。
 
 ## 界面与交互
 
-采用 [Vercel 风格参考](https://styles.refero.design/style/f24daf3a-d43f-4dec-85a9-8ac1d5148a03) 的近白底、黑白层级、细边框和 6px 圆角。借鉴 [Aceternity UI](https://ui.aceternity.com/) 的标签切换、网格背景与悬停高光，以本地 React/CSS 实现；未引入 Tailwind、Motion 或玻璃效果依赖。
+采用 [Warp 风格参考](https://styles.refero.design/style/d4c51049-58eb-404a-9fcb-f195928b1c99) 的黑色底、暖白文字、灰色分层、圆角面板和胶囊按钮。紫色仅用于图标、图表、选中状态和链接，主按钮保持中性灰。借鉴 [Aceternity UI](https://ui.aceternity.com/) 的侧栏、标签切换与悬停高光，以本地 React/CSS 实现，无新增运行依赖。
 
-顶部常驻七个页面入口，城市与数据集在内容上方切换；页面仅展示简短标题。总览地图支持点击或键盘选择区域并联动需求曲线。模型回测中用不同灰度和虚线区分观测、预测与基线。窄屏自动改为单列，表格和长标签组可在各自容器内横向滚动。
+桌面侧栏支持收起；中等屏幕自动使用图标导航，手机改为横向导航。顶部切换城市与数据集；页面只展示简短标题。总览地图可点击或通过键盘选择区域，联动需求曲线。模型回测以紫色预测线、灰色观测线和虚线基线区分数据。
 
-标签组支持方向键、Home/End；弹窗和抽屉支持 Escape、焦点约束与焦点恢复；动画尊重 `prefers-reduced-motion`。数据口径、未知供给、历史回放和「未执行」调配标记继续保留。
+首帧即为暗色：不会读取旧的浅色偏好，也不跟随操作系统主题。标签支持方向键、Home/End，弹窗和抽屉支持 Escape 与焦点约束；动效尊重 `prefers-reduced-motion`。保留数据口径、未知供给、历史回放及「未执行」调配标记。
 
-本次演示和浏览器验收文件保存在忽略的 `var/frontend-redesign/`，交付摘要见 `reports/frontend-redesign.md`。
+本候选位于 `codex/frontend-warp-dark`；上一版 `codex/frontend-monochrome` 和原版 `main` 均保留。演示及浏览器验收文件位于忽略的 `var/frontend-warp/`，交付摘要见 `reports/frontend-warp.md`。
 
 ## 运行
 
@@ -43,7 +43,7 @@ npm run dev
 | 模型 | 模型与基线对比、回测叠图、学习曲线、时间划分、启用标记 | models、models/{id}/history、evaluation、activate |
 | 预测与调配 | 未来需求热力与经验区间、情景倍数、启发式调配建议 | forecasts、dispatch-suggestions |
 | 任务 | 持久任务列表、SSE 实时日志、训练中学习曲线、取消 | jobs、jobs/{id}/events、jobs/{id}/history |
-| 系统 | API/worker 状态、能力与限制、主题与连接设置、资源清单 | system、worlds、datasets |
+| 系统 | API/worker 状态、能力与限制、连接设置、资源清单 | system、worlds、datasets |
 
 「新建」菜单对应 `POST /worlds`、`/simulations`、`/datasets/import`、`/training-jobs`。
 
