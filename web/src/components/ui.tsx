@@ -12,13 +12,7 @@ export function Card(props: {
   className?: string;
 }) {
   return (
-    <section className={`card ${props.className ?? ''}`} style={props.style}
-      onPointerMove={(e) => {
-        if (e.pointerType === 'touch') return;
-        const rect = e.currentTarget.getBoundingClientRect();
-        e.currentTarget.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-        e.currentTarget.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
-      }}>
+    <section className={`card ${props.className ?? ''}`} style={props.style}>
       {(props.title || props.actions) && (
         <header className="card-head">
           <h3>{props.title}</h3>

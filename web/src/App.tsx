@@ -1,7 +1,6 @@
 import {
-  Activity, ArrowUpRight, BrainCircuit, Building2, ChevronRight, Database, FileUp,
-  LayoutDashboard, Map as MapIcon, PanelLeftClose, PanelLeftOpen, Plus,
-  ReceiptText, RefreshCw, Settings, TrendingUp,
+  Activity, ArrowUpRight, BrainCircuit, Building2, ChevronRight, Database,
+  FileUp, Plus, RefreshCw,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Dialogs } from './dialogs';
@@ -14,16 +13,16 @@ import { OrdersPage } from './pages/Orders';
 import { SystemPage } from './pages/System';
 import { Note } from './components/ui';
 import { time } from './format';
-import { useApp, useLocal, type Dialog, type Route } from './store';
+import { useApp, type Dialog, type Route } from './store';
 
-const NAV: { route: Route; label: string; icon: typeof Activity; section?: string }[] = [
-  { route: 'dashboard', label: '总览', icon: LayoutDashboard, section: '工作区' },
-  { route: 'map', label: '城市实况', icon: MapIcon },
-  { route: 'orders', label: '订单', icon: ReceiptText, section: '数据' },
-  { route: 'models', label: '模型', icon: BrainCircuit, section: '智能' },
-  { route: 'forecast', label: '预测与调配', icon: TrendingUp },
-  { route: 'jobs', label: '任务', icon: Activity },
-  { route: 'system', label: '系统设置', icon: Settings },
+const NAV: { route: Route; label: string }[] = [
+  { route: 'dashboard', label: '总览' },
+  { route: 'map', label: '城市实况' },
+  { route: 'orders', label: '订单' },
+  { route: 'models', label: '模型' },
+  { route: 'forecast', label: '预测与调配' },
+  { route: 'jobs', label: '任务' },
+  { route: 'system', label: '系统设置' },
 ];
 
 function Logo() {
@@ -62,7 +61,7 @@ function CreateMenu() {
   ];
   return (
     <div style={{ position: 'relative' }} ref={ref}>
-      <button className="btn primary" aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button className={app.route === 'dashboard' || app.route === 'jobs' ? 'btn primary' : 'btn'} aria-expanded={open} onClick={() => setOpen(!open)}>
         <Plus size={15} />
         新建资源
       </button>
@@ -88,7 +87,6 @@ function CreateMenu() {
 
 export function App() {
   const app = useApp();
-  const [collapsed, setCollapsed] = useLocal('rc.sidebarCollapsed', false);
   const active = app.jobs.filter((j) => ['queued', 'running', 'cancelling'].includes(j.state)).length;
   const title = NAV.find((n) => n.route === app.route)?.label;
 
@@ -97,44 +95,38 @@ export function App() {
   }, [app.route]);
 
   return (
-    <div className={`shell ${collapsed ? 'compact' : ''}`}>
-      <aside className="rail">
+    <div className="shell">
+      <header className="topbar">
         <button className="brand" onClick={() => app.go('dashboard')} aria-label="RideCast 首页">
-          <Logo /><span className="brand-text">RideCast</span>
+          <Logo /><span>RideCast</span>
         </button>
-        <nav className="rail-links" aria-label="主导航">
+        <nav className="topnav" aria-label="主导航">
           {NAV.map((n) => (
-            <div key={n.route} className={`nav-entry ${n.route === 'system' ? 'nav-settings' : ''}`}>
-              {n.section && <span className="rail-label">{n.section}</span>}
-              <button className={`rail-btn ${app.route === n.route ? 'active' : ''}`}
-                onClick={() => app.go(n.route)} aria-label={n.route === 'system' ? '系统' : n.label}
-                aria-current={app.route === n.route ? 'page' : undefined} title={n.label}>
-                <n.icon size={18} strokeWidth={1.6} />
-                <span className="nav-text">{n.label}</span>
-                {n.route === 'jobs' && active > 0 && <span className="nav-count">{active}</span>}
-                {app.route === n.route && <span className="nav-active-mark" />}
-              </button>
-            </div>
+            <button key={n.route} className={`nav-link ${app.route === n.route ? 'active' : ''}`}
+              onClick={() => app.go(n.route)} aria-label={n.route === 'system' ? '系统' : n.label}
+              aria-current={app.route === n.route ? 'page' : undefined}>
+              {n.label}
+              {n.route === 'jobs' && active > 0 && <span className="nav-count">{active}</span>}
+            </button>
           ))}
         </nav>
-        <button className="runtime-status" onClick={() => app.go('system')} aria-label="连接状态">
-          <span><i className={`dot ${app.online ? 'green' : 'red'}`} /><span className="runtime-label">API</span><span className="runtime-value">{app.online ? '在线' : '离线'}</span></span>
-          <span><i className={`dot ${app.system?.worker_online ? 'green' : 'amber'}`} /><span className="runtime-label">Worker</span><span className="runtime-value">{app.system?.worker_online ? '在线' : '离线'}</span></span>
-        </button>
-        <button className="sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? '展开导航' : '收起导航'} aria-expanded={!collapsed}>
-          {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}<span className="nav-text">收起导航</span>
-        </button>
-      </aside>
+        <div className="header-actions">
+          <button className="connection-state" onClick={() => app.go('system')} aria-label="连接状态">
+            <i className={`dot ${app.online ? 'green' : 'red'}`} /><span>API {app.online ? '在线' : '离线'}</span>
+          </button>
+          <button className="btn ghost icon" onClick={app.refresh} aria-label="刷新资源" title="刷新资源"><RefreshCw size={15} strokeWidth={1.6} /></button>
+        </div>
+      </header>
 
-      <header className="workspace-bar">
-        <div className="site"><Building2 size={15} className="context-icon" />
+      <div className="contextbar">
+        <div className="site"><Building2 size={14} className="context-icon" />
           {app.worlds.length > 0 ? (
             <select className="select bare" value={app.world?.id ?? ''} onChange={(e) => app.setWorld(e.target.value)} aria-label="城市">
               {app.worlds.map((w) => <option key={w.id} value={w.id}>{w.name} · {w.metadata?.zones?.features?.length ?? 0} 区</option>)}
             </select>
           ) : <span className="muted small">尚无城市</span>}
         </div>
-        <ChevronRight size={13} className="context-separator" />
+        <ChevronRight size={12} className="context-separator" />
         {app.worldDatasets.length > 0 && (
           <select className="select bare minor" value={app.dataset?.id ?? ''} onChange={(e) => app.setDataset(e.target.value)} aria-label="数据集">
             {app.worldDatasets.map((d) => <option key={d.id} value={d.id}>{d.metadata?.source === 'imported' ? '导入' : '仿真'} · {d.id.slice(2, 10)} · {time.date(d.metadata?.observation_start, app.tz)}</option>)}
@@ -142,8 +134,8 @@ export function App() {
         )}
         <span className="grow" />
         <span className="context-hint hide-narrow">{app.tz} <span>·</span> {app.bucketMinutes} min</span>
-        <button className="btn ghost icon" onClick={app.refresh} aria-label="刷新资源" title="刷新资源"><RefreshCw size={16} strokeWidth={1.6} /></button>
-      </header>
+        <span className="worker-state hide-mobile"><i className={`dot ${app.system?.worker_online ? 'green' : 'amber'}`} />Worker {app.system?.worker_online ? '在线' : '离线'}</span>
+      </div>
 
       <main className={`main route-${app.route}`} id="main-content">
         <div className="page-intro">

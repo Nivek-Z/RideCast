@@ -2,7 +2,7 @@ import { ArrowRight, ArrowUpRight, CalendarDays, CarFront, Check, CheckCircle2, 
 import { useMemo, useState } from 'react';
 import { api, type Any } from '../api';
 import { CityMap, TipRows } from '../components/CityMap';
-import { BarChart, LineChart, Ring } from '../components/charts';
+import { BarChart, LineChart } from '../components/charts';
 import { Badge, Card, Empty, ErrorNote, KV, Loading, Note, Seg, Stat } from '../components/ui';
 import { compact, fix1, int, KIND_LABEL, ratio, signed, time, WEEKDAYS } from '../format';
 import { useApp, useQuery } from '../store';
@@ -39,6 +39,7 @@ export function DashboardPage() {
   const { dataset, world, tz } = app;
   const [range, setRange] = useState<'2d' | '7d' | 'all'>('7d');
   const [zone, setZone] = useState('');
+  const [distribution, setDistribution] = useState<'hour' | 'weekday'>('hour');
 
   const overview = useQuery(dataset ? `overview:${dataset.id}` : null, () => api.overview(dataset!.id));
   const map = useQuery(world ? `map:${world.id}` : null, () => api.worldMap(world!.id));
@@ -126,7 +127,7 @@ export function DashboardPage() {
               series={[
                 { name: ov.target_semantics === 'requests' ? '发起请求' : '完成行程', color: 'var(--accent)', area: true, width: 1.8, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.demand })) },
                 ...(supplyKnown ? [{ name: '可用司机', color: 'var(--text-3)', width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.available_drivers })) }] : []),
-                ...(outcomes ? [{ name: '取消', color: 'var(--red)', dashed: true, width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.cancelled })) }] : []),
+                ...(outcomes ? [{ name: '取消', color: 'var(--text-3)', dashed: true, width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.cancelled })) }] : []),
               ]}
             />
           )}
@@ -169,39 +170,24 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-        <Card title="小时分布" sub="每桶全城平均需求">
-          <BarChart
-            color="var(--bar)"
-            name="平均需求"
-            labelEvery={3}
-            data={ov.distributions.hour.map((h: Any) => ({ label: String(h.hour).padStart(2, '0'), value: h.mean_city_demand_per_bucket, tip: `${String(h.hour).padStart(2, '0')}:00 · ${h.bucket_count} 个桶` }))}
+      <div className="grid dashboard-detail-grid">
+        <Card title="需求分布" sub="每桶全城均值" className="distribution-card"
+          actions={<Seg value={distribution} onChange={setDistribution} options={[{ value: 'hour', label: '小时' }, { value: 'weekday', label: '星期' }]} />}>
+          <BarChart height={180} color="var(--bar)" name="平均需求" labelEvery={distribution === 'hour' ? 3 : 1}
+            data={distribution === 'hour'
+              ? ov.distributions.hour.map((h: Any) => ({ label: String(h.hour).padStart(2, '0'), value: h.mean_city_demand_per_bucket, tip: `${String(h.hour).padStart(2, '0')}:00 · ${h.bucket_count} 个桶` }))
+              : ov.distributions.weekday.map((w: Any) => ({ label: WEEKDAYS[w.weekday], value: w.mean_city_demand_per_bucket, tip: `${WEEKDAYS[w.weekday]} · ${w.bucket_count} 个桶` }))}
           />
         </Card>
-        <Card title="周内分布" sub="每桶全城平均需求">
-          <BarChart
-            color="var(--bar)"
-            name="平均需求"
-            data={ov.distributions.weekday.map((w: Any) => ({ label: WEEKDAYS[w.weekday], value: w.mean_city_demand_per_bucket, tip: `${WEEKDAYS[w.weekday]} · ${w.bucket_count} 个桶` }))}
-          />
-        </Card>
-        <Card title="最新桶环境" sub={time.mdhm(ov.weather.timestamp, tz)}>
-          <div className="row" style={{ gap: 16, alignItems: 'flex-start' }}>
-            <Ring value={outcomes ? k.completion_rate : null} color="var(--accent)" label={outcomes ? `${(k.completion_rate * 100).toFixed(0)}%` : '—'} size={76} />
-            <div className="grow">
-              <KV
-                items={[
-                  [<span className="row"><Thermometer size={13} />气温</span>, `${fix1(ov.weather.temperature)} °C`],
-                  [<span className="row"><CloudRain size={13} />降水</span>, `${fix1(ov.weather.precipitation)} mm/h · ${ov.weather.raining_zones} 区有雨`],
-                  [<span className="row"><Wind size={13} />风速</span>, `${fix1(ov.weather.wind_speed)} m/s`],
-                  ['路况指数', fix1(ov.weather.traffic_index)],
-                  [<span className="row"><PartyPopper size={13} />活动</span>, `${ov.weather.event_zones} 区`],
-                  ['节假日', ov.weather.holiday ? '是' : '否'],
-                ]}
-              />
-            </div>
-          </div>
-          <div className="small muted" style={{ marginTop: 8 }}>环形为全期完成率；天气为各区简单均值。</div>
+        <Card title="最新桶环境" sub={`区域均值 · ${time.mdhm(ov.weather.timestamp, tz)}`}>
+          <KV items={[
+            [<span className="row"><Thermometer size={13} />气温</span>, `${fix1(ov.weather.temperature)} °C`],
+            [<span className="row"><CloudRain size={13} />降水</span>, `${fix1(ov.weather.precipitation)} mm/h · ${ov.weather.raining_zones} 区有雨`],
+            [<span className="row"><Wind size={13} />风速</span>, `${fix1(ov.weather.wind_speed)} m/s`],
+            ['路况指数', fix1(ov.weather.traffic_index)],
+            [<span className="row"><PartyPopper size={13} />活动</span>, `${ov.weather.event_zones} 区`],
+            ['节假日', ov.weather.holiday ? '是' : '否'],
+          ]} />
         </Card>
       </div>
 

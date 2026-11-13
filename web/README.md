@@ -4,13 +4,13 @@ Vite + React + TypeScript。地图与图表均为本地 SVG 自绘，不依赖�
 
 ## 界面与交互
 
-采用 [Warp 风格参考](https://styles.refero.design/style/d4c51049-58eb-404a-9fcb-f195928b1c99) 的黑色底、暖白文字、灰色分层、圆角面板和胶囊按钮。紫色仅用于图标、图表、选中状态和链接，主按钮保持中性灰。借鉴 [Aceternity UI](https://ui.aceternity.com/) 的侧栏、标签切换与悬停高光，以本地 React/CSS 实现，无新增运行依赖。
+采用 [Linear 风格参考](https://styles.refero.design/style/90ce5883-bb24-4466-93f7-801cd617b0d1) 的近黑画布、细边框、12px 面板圆角和 6px 按钮圆角。界面采用顶部导航，黄绿色用于主要操作和当前导航标记；数据图表使用中性灰白配色，无装饰高光或宣传标语。无新增运行依赖。
 
-桌面侧栏支持收起；中等屏幕自动使用图标导航，手机改为横向导航。顶部切换城市与数据集；页面只展示简短标题。总览地图可点击或通过键盘选择区域，联动需求曲线。模型回测以紫色预测线、灰色观测线和虚线基线区分数据。
+仅提供暗色界面，不读取旧的浅色偏好，也不跟随操作系统主题。总览 KPI 合并为分隔栏，小时和星期分布按标签切换；环境区保留区域均值与时间标记。地图联动、订单筛选、回放、模型、预测、任务和系统连接继续使用原接口。
 
-首帧即为暗色：不会读取旧的浅色偏好，也不跟随操作系统主题。标签支持方向键、Home/End，弹窗和抽屉支持 Escape 与焦点约束；动效尊重 `prefers-reduced-motion`。保留数据口径、未知供给、历史回放及「未执行」调配标记。
+标签支持方向键、Home/End，地图可由键盘选择，弹窗和抽屉支持 Escape 与焦点约束。窄屏使用可横向滚动的导航和内部表格容器。保留数据口径、未知供给、历史回放、经验区间及「未执行」调配标记。
 
-本候选位于 `codex/frontend-warp-dark`；上一版 `codex/frontend-monochrome` 和原版 `main` 均保留。演示及浏览器验收文件位于忽略的 `var/frontend-warp/`，交付摘要见 `reports/frontend-warp.md`。
+当前候选在 `codex/frontend-linear-dark`。保留的候选为 `codex/frontend-warp-dark` 和 `codex/frontend-monochrome`，原版为 `main`。逐页比较文件位于忽略的 `var/frontend-linear/comparison/`，交付摘要见 `reports/frontend-linear.md`。
 
 ## 运行
 
