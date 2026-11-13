@@ -168,6 +168,15 @@ export function CityMap(props: {
                 style={props.compact ? { strokeWidth: 3 } : undefined}
                 fill={props.values ? heatColor(t, scale) : 'var(--heat-lo)'}
                 fillRule="evenodd"
+                role={props.onSelect ? 'button' : undefined}
+                tabIndex={props.onSelect ? 0 : undefined}
+                aria-label={props.onSelect ? `选择${z.name}` : undefined}
+                aria-pressed={props.onSelect ? props.selected === z.id : undefined}
+                onKeyDown={(e) => {
+                  if (!props.onSelect || (e.key !== 'Enter' && e.key !== ' ')) return;
+                  e.preventDefault();
+                  props.onSelect(props.selected === z.id ? null : z.id);
+                }}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.ownerSVGElement!.getBoundingClientRect();
                   setHover({ id: z.id, x: e.clientX - rect.left, y: e.clientY - rect.top });
@@ -222,6 +231,12 @@ export function CityMap(props: {
                 </g>
               );
             })}
+          {props.compact && shapes.zones.length <= 16 && shapes.zones.map((z: Any) => (
+            <g key={z.id} pointerEvents="none">
+              <text className="compact-zone-id" x={z.center[0]} y={z.center[1] - 5}>{z.name.match(/\d+$/)?.[0] ?? z.id.slice(-3)}</text>
+              <text className="compact-zone-value" x={z.center[0]} y={z.center[1] + 12}>{props.values?.[z.id] == null ? '—' : Math.round(props.values[z.id] as number)}</text>
+            </g>
+          ))}
           {props.dispatch?.map((f) => {
             if (!f.label || props.compact) return null;
             const [x1, y1] = projection(f.from);

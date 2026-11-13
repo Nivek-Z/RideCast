@@ -48,7 +48,7 @@ function Scrubber(props: { start: number; end: number; cursor: number; onChange:
           <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 4, borderRadius: 2, background: `linear-gradient(90deg, color-mix(in srgb, var(--accent) 38%, var(--panel)) ${progress * 100}%, var(--tile) ${progress * 100}%)` }} />
         )}
         <div className="cursor" style={{ left: `${progress * 100}%` }}>
-          <span className="pill">{time.mdhm(props.cursor, props.tz)}</span>
+          <span className="pill" style={{ left: 0, transform: `translateX(-${progress * 100}%)` }}>{time.mdhm(props.cursor, props.tz)}</span>
         </div>
       </div>
       <div className="row small muted" style={{ justifyContent: 'space-between' }}>

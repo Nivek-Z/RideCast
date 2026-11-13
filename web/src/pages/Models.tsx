@@ -37,7 +37,7 @@ export function ModelsPage() {
 
   return (
     <div className="page">
-      <div className="grid" style={{ gridTemplateColumns: '300px minmax(0, 1fr)', alignItems: 'start' }}>
+      <div className="grid model-layout" style={{ gridTemplateColumns: '300px minmax(0, 1fr)', alignItems: 'start' }}>
         <Card title="模型版本" sub={`${worldModels.length} 个`} flush>
           {worldModels.map((m) => {
             const mt = m.metadata.metrics;
@@ -241,7 +241,7 @@ function Backtest({ model, tz }: { model: Resource; tz: string }) {
         valueFormat={(v) => v.toFixed(1)}
         band={zone ? { name: '经验区间', color: 'var(--accent)', points: chart.map(([x, v]) => ({ x, lo: v.lo, hi: v.hi })) } : undefined}
         series={[
-          { name: '真实需求', color: 'var(--text)', points: chart.map(([x, v]) => ({ x, y: v.actual })), width: 1.4 },
+          { name: '真实需求', color: 'var(--bar)', points: chart.map(([x, v]) => ({ x, y: v.actual })), width: 1.4 },
           { name: '模型预测', color: 'var(--accent)', points: chart.map(([x, v]) => ({ x, y: v.predicted })) },
           { name: '基线', color: 'var(--text-3)', dashed: true, points: chart.map(([x, v]) => ({ x, y: v.baseline })), width: 1.2 },
         ]}

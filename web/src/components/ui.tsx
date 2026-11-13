@@ -1,5 +1,5 @@
 import { AlertTriangle, Info, Loader2, X } from 'lucide-react';
-import { useEffect, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { ApiError } from '../api';
 
 export function Card(props: {
@@ -12,7 +12,13 @@ export function Card(props: {
   className?: string;
 }) {
   return (
-    <section className={`card ${props.className ?? ''}`} style={props.style}>
+    <section className={`card ${props.className ?? ''}`} style={props.style}
+      onPointerMove={(e) => {
+        if (e.pointerType === 'touch') return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+        e.currentTarget.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+      }}>
       {(props.title || props.actions) && (
         <header className="card-head">
           <h3>{props.title}</h3>
@@ -51,6 +57,15 @@ export function Seg<T extends string | number>(props: {
           key={String(o.value)}
           role="tab"
           aria-selected={o.value === props.value}
+          tabIndex={o.value === props.value ? 0 : -1}
+          onKeyDown={(e) => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            e.preventDefault();
+            const i = props.options.findIndex((item) => item.value === props.value);
+            const next = e.key === 'Home' ? 0 : e.key === 'End' ? props.options.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + props.options.length) % props.options.length;
+            props.onChange(props.options[next].value);
+            (e.currentTarget.parentElement?.children[next] as HTMLButtonElement)?.focus();
+          }}
           className={o.value === props.value ? 'on' : ''}
           onClick={() => props.onChange(o.value)}
         >
@@ -163,11 +178,32 @@ function useEscape(onClose: () => void) {
   }, [onClose]);
 }
 
+function useDialogFocus() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    const el = ref.current;
+    const selector = 'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]';
+    (el?.querySelector<HTMLElement>('input:not(:disabled), select:not(:disabled), textarea:not(:disabled)') ?? el?.querySelector<HTMLElement>(selector))?.focus();
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !el) return;
+      const items = [...el.querySelectorAll<HTMLElement>(selector)].filter((item) => item.getClientRects().length > 0);
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    };
+    el?.addEventListener('keydown', trap);
+    return () => { el?.removeEventListener('keydown', trap); if (previous?.isConnected) previous.focus(); };
+  }, []);
+  return ref;
+}
+
 export function Modal(props: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; width?: number }) {
   useEscape(props.onClose);
+  const ref = useDialogFocus();
   return (
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && props.onClose()}>
-      <div className="modal" role="dialog" aria-modal="true" style={props.width ? { width: props.width } : undefined}>
+      <div ref={ref} className="modal" role="dialog" aria-modal="true" aria-label={typeof props.title === 'string' ? props.title : undefined} style={props.width ? { width: props.width } : undefined}>
         <header className="modal-head">
           <h2>{props.title}</h2>
           <button className="btn ghost icon sm" onClick={props.onClose} aria-label="关闭">
@@ -183,10 +219,11 @@ export function Modal(props: { title: ReactNode; onClose: () => void; children: 
 
 export function Drawer(props: { title: ReactNode; onClose: () => void; children: ReactNode; actions?: ReactNode }) {
   useEscape(props.onClose);
+  const ref = useDialogFocus();
   return (
     <>
       <div className="overlay" style={{ background: 'transparent' }} onMouseDown={props.onClose} />
-      <aside className="drawer" role="dialog">
+      <aside ref={ref} className="drawer" role="dialog" aria-modal="true" aria-label={typeof props.title === 'string' ? props.title : undefined}>
         <header className="modal-head">
           <h2 className="ellipsis">{props.title}</h2>
           {props.actions}

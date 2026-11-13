@@ -2,6 +2,16 @@
 
 Vite + React + TypeScript。地图与图表均为本地 SVG 自绘，不依赖外部底图、地图密钥或图表库；支持浅色 / 深色 / 跟随系统三种主题。
 
+## 界面与交互
+
+采用 [Vercel 风格参考](https://styles.refero.design/style/f24daf3a-d43f-4dec-85a9-8ac1d5148a03) 的近白底、黑白层级、细边框和 6px 圆角。借鉴 [Aceternity UI](https://ui.aceternity.com/) 的标签切换、网格背景与悬停高光，以本地 React/CSS 实现；未引入 Tailwind、Motion 或玻璃效果依赖。
+
+顶部常驻七个页面入口，城市与数据集在内容上方切换；页面仅展示简短标题。总览地图支持点击或键盘选择区域并联动需求曲线。模型回测中用不同灰度和虚线区分观测、预测与基线。窄屏自动改为单列，表格和长标签组可在各自容器内横向滚动。
+
+标签组支持方向键、Home/End；弹窗和抽屉支持 Escape、焦点约束与焦点恢复；动画尊重 `prefers-reduced-motion`。数据口径、未知供给、历史回放和「未执行」调配标记继续保留。
+
+本次演示和浏览器验收文件保存在忽略的 `var/frontend-redesign/`，交付摘要见 `reports/frontend-redesign.md`。
+
 ## 运行
 
 先在仓库根目录启动后端（两个终端，同一虚拟环境）：

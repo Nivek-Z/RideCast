@@ -1,4 +1,4 @@
-import { ArrowRight, Check, CloudRain, PartyPopper, Thermometer, Wind } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CalendarDays, Check, CloudRain, Database, PartyPopper, Thermometer, Wind, ScanLine } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { api, type Any } from '../api';
 import { CityMap, TipRows } from '../components/CityMap';
@@ -85,18 +85,15 @@ export function DashboardPage() {
   const xf = (x: number) => (range === '2d' ? time.hm(x, tz) : time.md(x, tz));
 
   return (
-    <div className="page">
-      <div className="row" style={{ flexWrap: 'wrap' }}>
-        <Badge>{ov.source === 'synthetic' ? '合成数据' : '导入数据'}</Badge>
-        <Badge>{ov.target_semantics === 'requests' ? '口径 · 发起订单' : '口径 · 完成行程'}</Badge>
-        <span className="dim small">
-          {time.full(ov.range.start, tz)} — {time.full(ov.range.end, tz)}（不含） · {fix1(days)} 天 · {ov.range.zone_count} 区 · {ov.bucket_minutes} 分钟桶 · {tz}
-        </span>
+    <div className="page dashboard-page">
+      <div className="dataset-caption">
+        <div className="row"><Database size={14} /><span>数据概况</span><Badge>{ov.source === 'synthetic' ? '合成数据' : '导入数据'}</Badge><Badge>{ov.target_semantics === 'requests' ? '发起请求' : '完成行程'}</Badge></div>
+        <span className="row"><CalendarDays size={13} />{time.date(ov.range.start, tz)} — {time.date(ov.range.end, tz)}（不含）<span className="caption-divider" />{fix1(days)} 天</span>
       </div>
 
-      <div className="card">
+      <div className="card metrics-card">
         <div className="stat-strip">
-          <Stat k="需求订单" v={compact(k.demand)} d={`乘客 ${compact(k.passengers)} 人`} />
+          <Stat k={ov.target_semantics === 'requests' ? '发起请求' : '完成行程'} v={compact(k.demand)} d={`乘客 ${compact(k.passengers)} 人`} />
           <Stat k="完成率" v={ratio(k.completion_rate)} d={outcomes ? `完成 ${compact(k.completed)} 单` : '该口径无法观察取消'} />
           <Stat k="取消率" v={ratio(k.cancellation_rate, 2)} d={outcomes ? `取消 ${int(k.cancelled)} 单` : '未知，不按 0 绘制'} />
           <Stat k="峰值桶需求" v={int(k.peak_bucket_demand)} unit="单/桶" d={`均值 ${fix1(k.mean_bucket_demand)} 单/桶`} />
@@ -104,13 +101,13 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'minmax(0, 1.7fr) minmax(280px, 1fr)' }}>
+      <div className="grid dashboard-main-grid">
         <Card
-          title="需求曲线"
-          sub={zone ? app.zoneName(zone) : '全城'}
+          title="需求趋势"
+          className="demand-card"
           actions={
             <>
-              <select className="select" style={{ width: 130, height: 28 }} value={zone} onChange={(e) => setZone(e.target.value)}>
+              <select className="select" style={{ width: 114, height: 28 }} value={zone} onChange={(e) => setZone(e.target.value)} aria-label="需求区域">
                 <option value="">全城</option>
                 {ov.zones.map((z: Any) => (
                   <option key={z.zone_id} value={z.zone_id}>
@@ -122,16 +119,17 @@ export function DashboardPage() {
             </>
           }
         >
+          <div className="chart-summary"><span className="chart-total">{series.loading ? '—' : int(rows.reduce((n, r) => n + r.demand, 0))}</span><span className="dim small">{zone ? app.zoneName(zone) : '全城'} · 当前窗口{ov.target_semantics === 'requests' ? '请求量' : '完成行程'}</span><span className="grow" /><span className="mono muted small">{ov.bucket_minutes} min / 桶</span></div>
           {series.error ? (
             <ErrorNote error={series.error} />
           ) : (
             <LineChart
-              height={250}
+              height={236}
               xFormat={xf}
               tipFormat={(x) => `${time.mdhm(x, tz)} ${time.weekday(x, tz)}`}
               valueFormat={(v) => int(v)}
               series={[
-                { name: '需求', color: 'var(--accent)', area: true, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.demand })) },
+                { name: ov.target_semantics === 'requests' ? '发起请求' : '完成行程', color: 'var(--accent)', area: true, width: 1.8, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.demand })) },
                 ...(supplyKnown ? [{ name: '可用司机', color: 'var(--text-3)', width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.available_drivers })) }] : []),
                 ...(outcomes ? [{ name: '取消', color: 'var(--red)', width: 1.2, points: rows.map((r) => ({ x: Date.parse(r.timestamp), y: r.cancelled })) }] : []),
               ]}
@@ -141,20 +139,23 @@ export function DashboardPage() {
         </Card>
 
         <Card
-          title="最新桶热力"
-          sub={heat.data ? time.mdhm(heat.data.timestamp, tz) : ''}
+          title={<span className="row"><ScanLine size={14} />区域需求</span>}
+          className="overview-map-card"
           actions={
             <button className="btn ghost sm" onClick={() => app.go('map')}>
-              城市实况 <ArrowRight size={13} />
+              探索城市 <ArrowUpRight size={13} />
             </button>
           }
           flush
         >
-          <div style={{ height: 262, padding: '0 8px 8px' }}>
-            <div style={{ height: '100%', borderRadius: 6, overflow: 'hidden' }}>
+          <div className="overview-map-frame">
+            <div className="map-grid-label mono">{world?.name} · {ov.range.zone_count} 区</div>
+            <div className="overview-map-canvas">
               <CityMap
                 map={map.data}
                 compact
+                selected={zone}
+                onSelect={(id) => setZone(id ?? '')}
                 values={Object.fromEntries(Object.values(heatRows).map((r) => [r.zone_id, r.demand]))}
                 tooltip={(id) => {
                   const r = heatRows[id];
@@ -168,9 +169,12 @@ export function DashboardPage() {
                 }}
               />
             </div>
+            <div className="overview-map-footer"><span className="row"><i className="dot green" />最新观测桶</span><span className="mono">{heat.data ? time.mdhm(heat.data.timestamp, tz) : '加载中'}</span></div>
           </div>
         </Card>
       </div>
+
+      <div className="section-label">需求分布</div>
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         <Card title="小时分布" sub="每桶全城平均需求">
@@ -206,7 +210,7 @@ export function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: 'minmax(0, 1.7fr) minmax(280px, 1fr)' }}>
+      <div className="grid dashboard-main-grid">
         <Card title="区域" sub={`${ov.zones.length} 个`} flush>
           <div className="table-wrap">
             <table className="table">
