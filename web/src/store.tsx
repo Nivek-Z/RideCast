@@ -89,7 +89,7 @@ export function useLocal<T>(key: string, initial: T): [T, (v: T) => void] {
 }
 
 /* ---------- 全局应用状态 ---------- */
-export type Route = 'dashboard' | 'map' | 'orders' | 'models' | 'forecast' | 'jobs' | 'system';
+export type Route = 'compare' | 'data' | 'stability' | 'records' | 'dashboard' | 'map' | 'orders' | 'models' | 'forecast' | 'jobs' | 'system';
 export type Dialog = null | 'world' | 'simulate' | 'import' | 'train';
 interface Toast {
   id: number;
@@ -126,10 +126,10 @@ interface AppState {
 const Ctx = createContext<AppState>(null as unknown as AppState);
 export const useApp = () => useContext(Ctx);
 
-const ROUTES: Route[] = ['dashboard', 'map', 'orders', 'models', 'forecast', 'jobs', 'system'];
+const ROUTES: Route[] = ['compare', 'data', 'stability', 'records', 'dashboard', 'map', 'orders', 'models', 'forecast', 'jobs', 'system'];
 function parseHash(): { route: Route; arg?: string } {
   const [, route, arg] = location.hash.split('/');
-  return { route: ROUTES.includes(route as Route) ? (route as Route) : 'dashboard', arg };
+  return { route: ROUTES.includes(route as Route) ? (route as Route) : 'compare', arg };
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -212,7 +212,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
     return {
       system: system.data,
-      online: !system.error,
+      online: !!system.data && !system.error,
       worlds: allWorlds,
       datasets: allDatasets,
       models: allModels,

@@ -1,5 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { syncResearch, researchSources, repositoryRoot } from './scripts/sync-research.mjs';
+import { resolve } from 'node:path';
 
 // 开发与预览均把 /api、/health 代理到本机后端，浏览器同源访问，无需改动后端 CORS。
 const target = process.env.RIDECAST_API ?? 'http://127.0.0.1:8000';
@@ -9,7 +11,20 @@ const proxy = {
 };
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), {
+    name: 'ridecast-research-snapshot',
+    async buildStart() { await syncResearch(); },
+    configureServer(server) {
+      const files = researchSources.map((file) => resolve(repositoryRoot, file));
+      server.watcher.add(files);
+      server.watcher.on('change', async (file) => {
+        if (!files.includes(file)) return;
+        try { await syncResearch(); server.ws.send({ type: 'full-reload' }); }
+        catch (error) { server.config.logger.error(String(error)); }
+      });
+    },
+  }],
   server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy },
   preview: { host: '127.0.0.1', port: 5173, strictPort: true, proxy },
+  build: { rollupOptions: { output: { manualChunks: { material: ['@mui/material'], react: ['react', 'react-dom'] } } } },
 });

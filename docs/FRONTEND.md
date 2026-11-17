@@ -1,6 +1,16 @@
-# 视觉仪表盘前端接口交接
+# 研究工作台与时序工具前端交接
 
-本地控制台位于 `web/`，启动与视觉交互约定见 [前端 README](../web/README.md)。当前 Linear 暗色候选使用顶部导航，在上方选择城市与数据集；总览地图联动需求曲线，小时和星期分布按标签切换。2026-11-13 的三个界面候选只调整前端布局、交互与呈现，以下 HTTP 契约不变。
+本地前端位于 `web/`，启动与视觉交互约定见 [前端 README](../web/README.md)。2026-11-17 改为 MD3 浅色研究工作台，默认进入实验对比；数据划分、规则稳定性和实验记录是主导航。原有地图、仿真、订单、GRU、预测、任务及连接保留在「时序工具」，以下 HTTP 契约不变。
+
+## 静态研究报告入口
+
+Vite 启动和构建时，`web/scripts/sync-research.mjs` 从两份已提交报告生成同源 `/research/snapshot.json`（`schemaVersion=1`）。快照包含 `date/digest/dataset/studies/stability/limits`；每个 study 提供阶段对应的 `split/protocol/methods`，每个 method 的 `test/development` 指标为数值或 `null`。原始报告与协议位于 `/research/reports/`。这属于前端构建资源，不是新增 REST 接口，不写入 OpenAPI。
+
+四个阶段来自同一静态文件的连续探索；TV 是区域份额差异（百分数），Spearman 是排序相关。交叉验证使用逐折均值，尚未最终评价的候选显示「—」。真实标签参与教师和生成器校准、学生只用生成标签拟合等边界在详情中说明。无时间戳、反复查看对照区及未来漂移未经验证等局限随报告展示。
+
+「实验记录 → 研究报告」只读已有结果；「计算任务」使用下列真实 jobs 接口并可提交 GRU。API 不可达时，研究报告仍可查看，任务标签显示连接状态。静态研究结果不会自动注册或激活成 API 时序模型。
+
+## 时序工具 HTTP 契约
 
 Base URL：`http://127.0.0.1:8000/api/v1`。交互文档 `/docs`；可用 `ridecast export-openapi` 导出 `docs/openapi.json` 生成请求客户端。持久时间和常规响应时间采用 ISO8601 UTC，演化状态另有 `local_time`；展示时按 world.timezone 转换，所有请求时间建议显式携带时区。时间过滤 `[start,end)`。经纬度为 WGS84，数组顺序 `[longitude,latitude]`。地图为 GeoJSON，前端可选 MapLibre、Leaflet、deck.gl 等；底图可由本地道路/区域直接绘制，不依赖外部地图密钥。
 

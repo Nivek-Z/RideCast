@@ -29,7 +29,7 @@ ridecast worker
 
 访问 [交互式 API 文档](http://127.0.0.1:8000/docs)、[健康检查](http://127.0.0.1:8000/health)。
 
-仪表盘前端位于 `web/`（需要 Node.js 18+），在第三个终端启动后打开 <http://127.0.0.1:5173>，说明见 [web/README.md](web/README.md)：
+研究工作台位于 `web/`（需要 Node.js 18+）：默认展示实验对比、数据划分、规则稳定性和实验记录；地图与 GRU 等功能在「时序工具」。在第三个终端启动后打开 <http://127.0.0.1:5173>，说明见 [web/README.md](web/README.md)：
 
 ```bash
 cd web
@@ -50,7 +50,7 @@ npm run dev
 ## 交付入口
 
 * [后端交接与部署](docs/HANDOFF.md)：模块、启动、配置、任务状态、恢复、Git 阶段。
-* [前端仪表盘接入](docs/FRONTEND.md)：图层/热力/流向/回放/训练状态接口与示例。
+* [研究工作台与前端接入](docs/FRONTEND.md)：静态报告快照、图层/热力/流向/回放/训练状态接口与示例。
 * [真实数据导入](docs/DATA_IMPORT.md)：GeoJSON、CSV、时区、覆盖声明、质量检查。
 * [建模与实验说明](docs/MODELING.md)：特征、GRU、时序分区、基线、区间与结果边界。
 * [老师数据实验](docs/TEACHER_DATA.md)：纯合成训练、真实区域验证/测试、静态热度迁移的适用范围与复现。

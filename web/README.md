@@ -1,20 +1,27 @@
-# RideCast Console · 前端仪表盘
+# RideCast · 研究工作台
 
-Vite + React + TypeScript。地图与图表均为本地 SVG 自绘，不依赖外部底图、地图密钥或图表库；本候选仅提供暗色界面。
+Vite + React + TypeScript，使用 MUI 7 与 Emotion。默认入口是研究对比，地图、仿真、GRU 和任务工具保留在「时序工具」。
 
-## 界面与交互
+## 设计与导航
 
-采用 [Linear 风格参考](https://styles.refero.design/style/90ce5883-bb24-4466-93f7-801cd617b0d1) 的近黑画布、细边框、12px 面板圆角和 6px 按钮圆角。界面采用顶部导航，黄绿色用于主要操作和当前导航标记；数据图表使用中性灰白配色，无装饰高光或宣传标语。无新增运行依赖。
+浅色界面按 Material Design 3 的色彩角色、色调表面、圆角、字级和导航方式定制。MUI 默认样式不是 MD3，具体覆盖见 `src/theme.ts` 与 `src/research.css`。参考 [MD3 色彩角色](https://m3.material.io/styles/color/roles)、[导航栏](https://m3.material.io/components/navigation-rail/overview)。
 
-仅提供暗色界面，不读取旧的浅色偏好，也不跟随操作系统主题。总览 KPI 合并为分隔栏，小时和星期分布按标签切换；环境区保留区域均值与时间标记。地图联动、订单筛选、回放、模型、预测、任务和系统连接继续使用原接口。
+桌面使用窄侧栏，手机使用底部导航。低饱和蓝色表示选择与主要操作；图表保留统一尺度，布局优先容纳比较与阅读。Roboto 字体随构建产物提供，中文使用本机字体。地图与科研图表使用本地 SVG，不依赖外部底图或字体服务。
 
-标签支持方向键、Home/End，地图可由键盘选择，弹窗和抽屉支持 Escape 与焦点约束。窄屏使用可横向滚动的导航和内部表格容器。保留数据口径、未知供给、历史回放、经验区间及「未执行」调配标记。
+| 页面 | 功能 | 来源 |
+| --- | --- | --- |
+| 实验对比 | 四个研究阶段；来源筛选、搜索、排序、最多八项比较、方案详情、CSV 与报告下载 | 仓库内实际实验报告 |
+| 数据划分 | 文件范围、阶段对应的空间分区、输入与排除项、生成数据谱系 | 实验报告与协议 |
+| 规则稳定性 | 重采样、生成样本扩充、规模检查；早期规则单独展示 | 对应阶段的敏感性检查 |
+| 实验记录 | 已完成报告与本机计算任务两个标签 | 报告快照 / 实时 API |
 
-当前候选在 `codex/frontend-linear-dark`。保留的候选为 `codex/frontend-warp-dark` 和 `codex/frontend-monochrome`，原版为 `main`。逐页比较文件位于忽略的 `var/frontend-linear/comparison/`，交付摘要见 `reports/frontend-linear.md`。
+「时序工具」包含数据总览、城市演化与回放、订单、GRU 模型与回测、预测与调配、计算任务、连接与资源。原有 HTTP 契约及资源创建流程保持不变。
+
+标签、选择器支持键盘操作；弹窗与抽屉支持 Escape 和焦点约束。提供跳到主要内容的链接，窄屏表格在容器内横向滚动。减少动态效果的系统偏好会关闭过渡动画。
 
 ## 运行
 
-先在仓库根目录启动后端（两个终端，同一虚拟环境）：
+需要 Node.js 18+。先在仓库根目录的同一 Python 环境中启动 API 和 worker（各一个终端）：
 
 ```bash
 ridecast serve
@@ -25,33 +32,37 @@ ridecast worker
 
 ```bash
 cd web
-npm install
+npm ci
 npm run dev
 ```
 
-打开 <http://127.0.0.1:5173>。开发服务器把 `/api`、`/health` 代理到 `http://127.0.0.1:8000`，浏览器同源访问，无需修改后端 CORS。后端在其他地址时设置环境变量 `RIDECAST_API`，或在「系统 → 连接」里填写 API 地址（此时需把前端来源加入 `RIDECAST_CORS_ORIGINS`）。配置了 `RIDECAST_API_KEY` 时在同一处填写密钥，密钥只保存在本机浏览器并通过 `X-API-Key` 发送。
+打开 <http://127.0.0.1:5173>。开发服务器把 `/api`、`/health` 代理到 `http://127.0.0.1:8000`。后端地址不同可设置 `RIDECAST_API`，或从「时序工具 → 连接与资源」填写 API 地址；直接跨域访问时需在后端允许前端来源。密钥仅保存在本机浏览器，通过 `X-API-Key` 发送。
 
-`npm run build` 做类型检查并产出 `dist/`；`npm run preview` 以同样的代理预览构建结果。
+```bash
+npm test
+npm run build
+npm run preview
+```
 
-## 页面与接口
+`build` 先检查 TypeScript，再输出 `dist/`。`preview` 使用同样的 API 代理。API 不可达时仍可阅读研究报告，计算任务显示连接状态，不能提交 GRU 训练。
 
-| 页面 | 内容 | 主要接口 |
-| --- | --- | --- |
-| 总览 | KPI、需求曲线、最新桶热力、小时/周内分布、区域表、数据质量 | overview、timeseries、heatmap、worlds/{id}/map |
-| 城市实况 | 历史回放（订单脉冲、在途车辆、OD 流向）与世界演化（任意时刻单桶状态） | replay、flows、worlds/{id}/state |
-| 订单 | 按上车区域与状态筛选的分页列表 | orders |
-| 模型 | 模型与基线对比、回测叠图、学习曲线、时间划分、启用标记 | models、models/{id}/history、evaluation、activate |
-| 预测与调配 | 未来需求热力与经验区间、情景倍数、启发式调配建议 | forecasts、dispatch-suggestions |
-| 任务 | 持久任务列表、SSE 实时日志、训练中学习曲线、取消 | jobs、jobs/{id}/events、jobs/{id}/history |
-| 系统 | API/worker 状态、能力与限制、连接设置、资源清单 | system、worlds、datasets |
+## 报告快照与指标
 
-「新建」菜单对应 `POST /worlds`、`/simulations`、`/datasets/import`、`/training-jobs`。
+`scripts/sync-research.mjs` 在开发启动与生产构建时，从 `reports/calibrated-world.json` 和 `reports/teacher-data-transfer.json` 生成 `public/research/snapshot.json`，并复制允许下载的 Markdown、JSON 和实验协议。该目录是忽略的生成物，不读取 `var/` 原始数据或模型。修改这两份 JSON 会刷新开发页面；修改 Markdown 后重启开发服务器即可同步。
 
-## 实现约定
+快照记录源内容摘要、报告日期、阶段划分与指标。原始数值用于导出；显示层只做格式化。未评价的指标为 `null`，显示「—」；空间交叉验证使用逐折均值，不能替换成合并区域的指标。四个阶段来自同一文件的连续探索，不是四次独立复现。
 
-* 时间：后端一律 UTC，界面按 `world.timezone` 显示；提交的时间带显式偏移。
-* 任务事件用 fetch 读取 SSE（可带 `X-API-Key`），`payload` 作为局部补丁合并，收到 `done` 后主动关闭并重新 GET 任务。
-* 回放车辆位置在客户端按后端同一假设（行程自 `requested_at` 开始、起终点直线插值）逐帧计算，不是 GPS 轨迹。
-* `supply_observed=false`、`outcomes_observed=false` 或值为 null 时显示「未知」，不按 0 绘制；`supply_gap` 标注为计数差，不等同未满足请求。
-* WAPE/sMAPE/改进率是已乘 100 的百分数；完成率、取消率、区间覆盖率是 0–1 比例。
-* 调配建议始终标注「启发式建议 · 未执行」。
+TV 是区域份额的分布差异，已按百分数记录；它不是小时订单量误差率，不能转换为准确率。Spearman 为 −1 到 1 的排序相关。样本增长图的纵轴是相对全量学生的分布变化（pp），不是精度；对照区已被查看过、文件无时间戳等限制在页面中保留。
+
+静态空间报告只读展示已有离线结果，不能从此界面启动或排队重跑研究脚本。计算任务标签提交的是真实 API GRU 任务，任务状态、日志与学习曲线仍来自持久化接口。
+
+## 时序工具约定
+
+* 后端使用 UTC，界面按 `world.timezone` 显示；请求携带显式时区。
+* SSE 任务事件作为补丁合并，收到 `done` 后关闭连接并重新 GET 完整任务。
+* 车辆回放是起终点直线插值，不是 GPS 轨迹。
+* 未观测的供给与结果显示「未知」，不把缺失占位值当作零。
+* WAPE / sMAPE 是百分数；完成率、取消率、区间覆盖率是 0–1 比例。训练损失是 log1p 需求的均方误差。
+* 调配建议保持「启发式建议 · 未执行」标记。
+
+本机验收结果见 [交付记录](../reports/frontend-research-md3.md)。
