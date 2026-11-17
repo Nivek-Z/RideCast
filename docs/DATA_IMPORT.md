@@ -4,6 +4,8 @@
 
 只有区域累计量、没有时间戳的 GeoJSON 不能直接导入为订单时间序列。老师提供的 Chicago 汇总数据采用独立离线空间迁移实验，见 [老师数据实验协议](TEACHER_DATA.md)，不据此声明真实小时预测精度。
 
+用户授权真实训练数据校准后的静态区域生成与预测见[后续校准协议](CALIBRATED_WORLD.md)。静态模型和生成区域样本不冒充订单导入、GRU模型或有观测依据的小时面板。
+
 ## 地图
 
 用 `GET /api/v1/worlds/{id}` 导出完整世界 JSON 作为结构样例，替换 name/timezone/zones/roads/calendar/events 后提交 `POST /api/v1/worlds/import`。导入会生成新 world_id；不要覆盖已有世界。zones 为 FeatureCollection，geometry 是有效非空 Polygon/MultiPolygon，区域面积不能重叠，允许共享边界。zone_id 为唯一非空字符串，最多64字符，最多100个区域；坐标须为WGS84经度[-180,180]、纬度[-85,85]，投影坐标应先转换。

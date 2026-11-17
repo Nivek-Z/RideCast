@@ -54,6 +54,7 @@ npm run dev
 * [真实数据导入](docs/DATA_IMPORT.md)：GeoJSON、CSV、时区、覆盖声明、质量检查。
 * [建模与实验说明](docs/MODELING.md)：特征、GRU、时序分区、基线、区间与结果边界。
 * [老师数据实验](docs/TEACHER_DATA.md)：纯合成训练、真实区域验证/测试、静态热度迁移的适用范围与复现。
+* [数据校准的虚拟世界](docs/CALIBRATED_WORLD.md)：真实开发区提取平滑规则、空间交叉验证、稳定性与合成训练；[文献笔记](docs/RESEARCH_CALIBRATION.md)。
 * [架构决策](docs/ARCHITECTURE.md)、[一手资料调研](docs/research-notes.md)、[内部数据契约](docs/CONTRACT.md)。
 * `docs/openapi.json`：导出的 HTTP 契约；重新生成：`ridecast export-openapi`。
 * `reports/`：实际运行的演示、随机世界实验与验证报告。大数据/模型位于 `var/`，不进入 Git。

@@ -16,6 +16,7 @@ httpcore==1.0.9
 httpx==0.28.1
 idna==3.20
 iniconfig==2.3.1
+joblib==1.5.2
 keras==3.11.3
 libclang==18.1.1
 Markdown==3.11.3
@@ -44,6 +45,8 @@ pytz==2026.6
 requests==2.34.2
 rich==15.0.0
 ruff==0.12.10
+scikit-learn==1.7.2
+scipy==1.16.3
 setuptools==84.2.1
 shapely==2.1.1
 six==1.17.0
@@ -52,6 +55,7 @@ tensorboard==2.19.0
 tensorboard-data-server==0.7.2
 tensorflow==2.19.1
 termcolor==3.3.0
+threadpoolctl==3.6.0
 typing-inspection==0.4.5
 typing_extensions==4.16.0
 tzdata==2026.6

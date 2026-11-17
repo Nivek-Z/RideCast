@@ -176,7 +176,7 @@ def train_synthetic(output, geod):
                       "validation_log_relative_mse": selected["synthetic_validation_mse"]}
 
 
-def teacher_smoke(features, frame, scores, output, transformer):
+def teacher_smoke(features, frame, scores, output, transformer, adapter_metadata=None):
     # Selection is by tract ID order, independent of real trip labels.
     indices = np.linspace(0, len(features) - 1, 9, dtype=int)
     rates = relative(scores[indices]) * 10  # Arbitrary demo scale: period/exposure is unknown.
@@ -187,7 +187,8 @@ def teacher_smoke(features, frame, scores, output, transformer):
                       "properties": {"zone_id": str(int(frame.iloc[i]["GEO_ID"])), "kind": "mixed",
                                      "population": int(frame.iloc[i]["total_population"]), "jobs": 0,
                                      "base_demand": float(rate), "attractiveness": 1}})
-    identity = hashlib.sha256(json.dumps(zones, sort_keys=True).encode()).hexdigest()[:16]
+    identity_input = zones if adapter_metadata is None else {"zones": zones, "adapter_metadata": adapter_metadata}
+    identity = hashlib.sha256(json.dumps(identity_input, sort_keys=True).encode()).hexdigest()[:16]
     world = validate_world({"name": "Chicago geometry / synthetic dynamics demonstration", "seed": 42,
                             "world_id": f"w_{identity}", "timezone": "America/Chicago", "bucket_minutes": 60,
                             "zones": {"type": "FeatureCollection", "features": zones},
@@ -198,7 +199,8 @@ def teacher_smoke(features, frame, scores, output, transformer):
                                          "source_crs_status": "assumed_not_confirmed",
                                          "description": "Real tract geometry; all dynamics, supply and OD are synthetic.",
                                          "jobs_observed": False, "land_use_observed": False,
-                                         "demand_rate_scale": "arbitrary mean 10 per hour; not a real estimate"}})
+                                         "demand_rate_scale": "arbitrary mean 10 per hour; not a real estimate",
+                                         **(adapter_metadata or {})}})
     start = PROTOCOL["start"]
     panel, orders, metadata = simulate(world, start, 2, 42)
     write_dataset(output / "teacher-geometry-demo", world, panel, orders, metadata, "d_teacher_geometry_demo")
@@ -213,7 +215,8 @@ def teacher_smoke(features, frame, scores, output, transformer):
             "half_supply_synthetic_completed": int(stress.completed.sum()),
             "overlap_panel_exact": True, "overlap_orders_exact": True,
             "real_supply_or_cancellation_validation": False,
-            "rates_use_real_tripcount": False}
+            "rates_use_real_tripcount": False,
+            "rates_fit_real_training_labels": bool((adapter_metadata or {}).get("rates_fit_real_training_labels", False))}
 
 
 def run(args):

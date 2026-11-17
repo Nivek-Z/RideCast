@@ -94,3 +94,9 @@ HTTP 每文件32MiB；数据集最多150,000个区域时间桶、500,000订单�
 多世界报告为 `reports/world-benchmark.md` 与同名JSON，原始数据/模型位于 `var/benchmarks/world-holdout/`。最终v2世界种子7/42/99，每世界28天、9区域、相同5轮小模型配置；模型平均MAE为3.4736，基线平均MAE为3.3265，1/3世界模型优于基线。报告保留模型不及基线的结果。每个世界均独立重训并在各自时间留出集评价，不能将其称为单模型跨城市迁移，更不能据合成结果宣称真实业务精度。
 
 远程仓库：[Nivek-Z/RideCast](https://github.com/Nivek-Z/RideCast)。主分支 `main`，开发分支 `codex/ridecast-backend`，验收版本标签 `v0.1.0`。阶段 M0 调研与契约、M1 仿真与导入、M2 ML、M3 仪表盘与队列、M4 文档及验收。执行 `git log --oneline --decorate` 查看具体提交。Git 包含代码、交接文档和小体量合成实验报告；不包含虚拟环境、用户敏感订单、大体积生成数据或模型，克隆后运行 demo 重新生成。
+
+## 2026-11-17 离线研究补充
+
+用户先要求纯仿真训练，再授权从老师静态数据学习较稳定的生成规则，并继续比较其他方案。新增可选 `[research]` 依赖与离线静态区域模型，协议见[数据校准说明](CALIBRATED_WORLD.md)，全部阶段及负面结果见[后续报告](../reports/calibrated-world.md)。没有时间戳，不能将区域份额评价作为GRU小时预测验收；同文件已被查看多次，仍属探索性。原宏观演化、HTTP契约和GRU生命周期未改。
+
+生成器/静态模型、原始数据、逐区预测与服务验证目录在忽略的 `var/teacher-data/`。默认不自动激活静态模型为API时序模型。文献阅读范围与未复现部分见[文献笔记](RESEARCH_CALIBRATION.md)。研究分支为 `codex/teacher-data-evaluation`，通过SSH同步代码及小体量报告，原始数据和模型不进Git。
