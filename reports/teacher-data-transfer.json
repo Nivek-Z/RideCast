@@ -1,0 +1,435 @@
+{
+  "protocol": {
+    "version": "teacher-spatial-transfer-v1",
+    "task": "relative spatial completed-trip volume; NOT temporal demand forecasting",
+    "synthetic_seeds": [
+      1000,
+      1001,
+      1002,
+      1003,
+      1004,
+      1005,
+      1006,
+      1007,
+      1008,
+      1009,
+      1010,
+      1011,
+      1012,
+      1013,
+      1014,
+      1015,
+      1016,
+      1017,
+      1018,
+      1019,
+      1020,
+      1021,
+      1022,
+      1023
+    ],
+    "synthetic_validation_seeds": [
+      1018,
+      1019,
+      1020,
+      1021,
+      1022,
+      1023
+    ],
+    "synthetic_days": 3,
+    "start": "2026-01-06T00:00:00Z",
+    "real_split_seed": 42,
+    "real_spatial_grid": 4,
+    "alpha_candidates": [
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "synthetic_selection_metric": "log_relative_volume_mse",
+    "real_selection_metric": "total_variation_percent",
+    "real_label_use": "validation selects a fixed candidate; test evaluated once after selection",
+    "candidates": [
+      "synthetic_ridge",
+      "uniform",
+      "population",
+      "employment_density",
+      "employment_mass_proxy",
+      "population_density"
+    ],
+    "excluded_real_inputs": [
+      "TripCount",
+      "FALSE",
+      "TRUE",
+      "pct_share",
+      "TripsSeconds_mean",
+      "TripMiles_mean",
+      "Fare_mean",
+      "TripTotal_mean",
+      "GEO_ID",
+      "Pickup Census Tract"
+    ]
+  },
+  "source": {
+    "file_sha256": "1016525c53ea54e608fee0a6d6fc7cd6f0599bdcabc08622688be615bae569e0",
+    "archive_sha256": "d06b5cbc43bef9e2aac66b164ba0f7d1cb630ef310cff13985cda3d1ba68202c",
+    "declared_crs": null,
+    "feature_count": 795,
+    "property_count": 39,
+    "missing_cells": 0,
+    "trip_total": 71167111,
+    "false_plus_true_equals_tripcount": true,
+    "observation_period": null,
+    "timestamps_available": false
+  },
+  "projection": {
+    "source_crs": "EPSG:3435",
+    "status": "assumed_not_confirmed",
+    "transformed_wgs84_bounds": [
+      -87.92084200001446,
+      41.64428600001169,
+      -87.52366100000572,
+      42.0239239999703
+    ]
+  },
+  "split": {
+    "validation_tracts": 364,
+    "test_tracts": 431,
+    "validation_blocks": [
+      0,
+      3,
+      6,
+      7,
+      9,
+      10,
+      11,
+      15
+    ],
+    "test_blocks": [
+      1,
+      2,
+      4,
+      5,
+      8,
+      12,
+      13,
+      14
+    ],
+    "assignment_sha256": "e03d4a480f410e03d12c99242b6ba1bd1020f6ae6c7097b2b1ec0dd6a9246dde"
+  },
+  "synthetic_training": {
+    "worlds": 24,
+    "train_zones": 162,
+    "validation_zones": 54,
+    "world_summaries": [
+      {
+        "seed": 1000,
+        "zone_count": 9,
+        "requests": 4322,
+        "completed": 4296,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1001,
+        "zone_count": 9,
+        "requests": 5148,
+        "completed": 5066,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1002,
+        "zone_count": 9,
+        "requests": 3451,
+        "completed": 3389,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1003,
+        "zone_count": 9,
+        "requests": 4821,
+        "completed": 4752,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1004,
+        "zone_count": 9,
+        "requests": 5146,
+        "completed": 5058,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1005,
+        "zone_count": 9,
+        "requests": 6006,
+        "completed": 5945,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1006,
+        "zone_count": 9,
+        "requests": 4867,
+        "completed": 4691,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1007,
+        "zone_count": 9,
+        "requests": 4455,
+        "completed": 4385,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1008,
+        "zone_count": 9,
+        "requests": 4531,
+        "completed": 4375,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1009,
+        "zone_count": 9,
+        "requests": 5127,
+        "completed": 5020,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1010,
+        "zone_count": 9,
+        "requests": 5811,
+        "completed": 5711,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1011,
+        "zone_count": 9,
+        "requests": 4418,
+        "completed": 4360,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1012,
+        "zone_count": 9,
+        "requests": 6826,
+        "completed": 6675,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1013,
+        "zone_count": 9,
+        "requests": 4617,
+        "completed": 4565,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1014,
+        "zone_count": 9,
+        "requests": 6783,
+        "completed": 6696,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1015,
+        "zone_count": 9,
+        "requests": 7637,
+        "completed": 7473,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1016,
+        "zone_count": 9,
+        "requests": 4492,
+        "completed": 4475,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1017,
+        "zone_count": 9,
+        "requests": 4916,
+        "completed": 4823,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1018,
+        "zone_count": 9,
+        "requests": 4603,
+        "completed": 4569,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1019,
+        "zone_count": 9,
+        "requests": 5820,
+        "completed": 5689,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1020,
+        "zone_count": 9,
+        "requests": 6414,
+        "completed": 6341,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1021,
+        "zone_count": 9,
+        "requests": 4706,
+        "completed": 4620,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1022,
+        "zone_count": 9,
+        "requests": 4937,
+        "completed": 4878,
+        "panel_rows": 648
+      },
+      {
+        "seed": 1023,
+        "zone_count": 9,
+        "requests": 5280,
+        "completed": 5233,
+        "panel_rows": 648
+      }
+    ],
+    "selected_alpha": 10.0,
+    "validation_log_relative_mse": 0.11014170902733439
+  },
+  "validation": {
+    "synthetic_ridge": {
+      "total_variation_percent": 63.66621184599648,
+      "relative_volume_mae": 1.2733242369199294,
+      "spearman": -0.034030975251398664
+    },
+    "uniform": {
+      "total_variation_percent": 63.503379717961494,
+      "relative_volume_mae": 1.2700675943592297,
+      "spearman": null
+    },
+    "population": {
+      "total_variation_percent": 54.140242709599384,
+      "relative_volume_mae": 1.0828048541919877,
+      "spearman": 0.3914111202615916
+    },
+    "employment_density": {
+      "total_variation_percent": 34.79323007483449,
+      "relative_volume_mae": 0.6958646014966898,
+      "spearman": 0.7754342792948024
+    },
+    "employment_mass_proxy": {
+      "total_variation_percent": 43.227764515400736,
+      "relative_volume_mae": 0.8645552903080146,
+      "spearman": 0.6581498202917878
+    },
+    "population_density": {
+      "total_variation_percent": 56.338176332058,
+      "relative_volume_mae": 1.12676352664116,
+      "spearman": 0.4581505667433438
+    }
+  },
+  "selected_using_validation": "employment_density",
+  "test": {
+    "synthetic_ridge": {
+      "total_variation_percent": 51.33556856024808,
+      "relative_volume_mae": 1.0267113712049618,
+      "spearman": 0.012159991342769638
+    },
+    "uniform": {
+      "total_variation_percent": 51.62254233858617,
+      "relative_volume_mae": 1.0324508467717235,
+      "spearman": null
+    },
+    "population": {
+      "total_variation_percent": 52.2169285947353,
+      "relative_volume_mae": 1.044338571894706,
+      "spearman": 0.31583318819679457
+    },
+    "employment_density": {
+      "total_variation_percent": 38.75422104861482,
+      "relative_volume_mae": 0.7750844209722965,
+      "spearman": 0.6268222984684344
+    },
+    "employment_mass_proxy": {
+      "total_variation_percent": 48.60568013949302,
+      "relative_volume_mae": 0.9721136027898603,
+      "spearman": 0.45719041923679793
+    },
+    "population_density": {
+      "total_variation_percent": 48.356422103714195,
+      "relative_volume_mae": 0.9671284420742841,
+      "spearman": 0.5141287206203023
+    }
+  },
+  "simulation_smoke": {
+    "zones": 9,
+    "panel_rows": 432,
+    "synthetic_requests": 4452,
+    "baseline_synthetic_completed": 4396,
+    "half_supply_synthetic_completed": 3844,
+    "overlap_panel_exact": true,
+    "overlap_orders_exact": true,
+    "real_supply_or_cancellation_validation": false,
+    "rates_use_real_tripcount": false
+  },
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.1.3",
+    "pandas": "2.3.2",
+    "pyproj": "3.7.2"
+  },
+  "limitations": [
+    "Before the user clarified validation/test-only use, the initial audit inspected full-file descriptive statistics and target correlations. This may influence candidate design. No real labels fitted model coefficients, but this is not a pristine independent test; confirmation requires new data.",
+    "No timestamps or observation period: cannot validate temporal GRU, hourly counts or real MAE.",
+    "TripCount is treated as realized trips, pending source confirmation; requests/cancellations are unobserved.",
+    "Synthetic model is a static log-relative-volume ridge, not the application's temporal GRU.",
+    "All fitted coefficients and standardization use synthetic training worlds only; real labels select candidates.",
+    "Common features: population, dimensionless employment density and area; density definitions may differ.",
+    "Per-world covariate normalization uses unlabeled features of the complete target city (transductive).",
+    "Synthetic training cities are fictional, narrow in scale and geography; covariate/concept shift is substantial.",
+    "EPSG:3435 is an explicit hypothesis; missing source CRS prevents confirmed positional accuracy.",
+    "One spatial split in one city; adjacent blocks remain dependent; no temporal or cross-city generalization claim.",
+    "Share metrics remove unknown exposure/total volume; they do not evaluate absolute counts.",
+    "Alternative proxies use real covariates, no real training labels; validation choice is not zero-shot transfer.",
+    "Synthetic supply/OD/weather/passengers/land use are assumptions; stress results are not real causal effects.",
+    "Only nine tracts are smoke-tested on real geometry, under the existing 100-zone limit."
+  ],
+  "created_at": "2026-11-17T12:48:32.338621+00:00",
+  "duration_seconds": 10.724,
+  "script_sha256": "66ca34bd23f486545ccb23c7edd296c1b0bf4a94d978c39003a79d89df7123d7",
+  "evidence_status": "exploratory_spatial_holdout_not_pristine_blind_test",
+  "exploration_disclosure": "Before the user clarified validation/test-only use, the initial audit inspected full-file descriptive statistics and target correlations. This may influence candidate design. No real labels fitted model coefficients, but this is not a pristine independent test; confirmation requires new data.",
+  "numerical_crosscheck": {
+    "finite": true,
+    "max_abs_log_prediction_difference": 0.0,
+    "saved_score_max_abs_difference": 2.220446049250313e-16,
+    "initial_warning": "NumPy matmul raised divide/overflow/invalid warnings despite finite, small inputs and finite outputs; independently checked with explicit elementwise sum; no parameters or selection changed"
+  },
+  "reproduction_script_sha256": "07558b262c7748c8a534bef5c3424e519dfd8befbe4c5f81c4afbfaf19b3b566",
+  "source_fingerprints": {
+    "src/ridecast/simulation.py": "4742183085edfc4e46a1d288ae18769318f99b3ef1209640ebf0fe664ac7ec31",
+    "src/ridecast/data.py": "f69c5709a4c0ab755232af20f27d861ff2213fb32cdb3236924da384f15c0d60"
+  },
+  "verification": {
+    "pytest": "93 passed (19 upstream deprecation warnings)",
+    "post_numerical_fix_focused_tests": "3 passed",
+    "ruff": "passed",
+    "pip_check": "No broken requirements found",
+    "http": {
+      "status": "passed",
+      "duration_seconds": 6.805,
+      "checks_passed": 68,
+      "checks_total": 68
+    },
+    "teacher_geometry_http": {
+      "status": "passed",
+      "zones": 9,
+      "panel_rows": 432,
+      "synthetic_orders": 4452,
+      "source": "synthetic",
+      "worker": "separate process",
+      "transport": "real TCP HTTP"
+    },
+    "docker": "not run",
+    "remote_ci": "not run"
+  },
+  "published_date": "2026-11-17"
+}

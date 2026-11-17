@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 ml = ["tensorflow==2.19.1", "keras==3.11.3", "protobuf==5.29.5"]
 dev = ["pytest==8.4.1", "httpx==0.28.1", "ruff==0.12.10"]
+research = ["pyproj==3.7.2"]
 
 [project.scripts]
 ridecast = "ridecast.cli:main"

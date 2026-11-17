@@ -2,6 +2,8 @@
 
 系统以统一的区域×时间桶面板连接仿真和真实数据。真实接入路径为：准备 WGS84 区域 GeoJSON → 导入世界 → 准备订单 CSV 和可选上下文 CSV → 明确观测覆盖及标签口径 → 提交导入任务 → 检查质量报告 → 训练。当前HTTP上传CSV；Parquet等来源应先离线转换，不伪造缺失字段。
 
+只有区域累计量、没有时间戳的 GeoJSON 不能直接导入为订单时间序列。老师提供的 Chicago 汇总数据采用独立离线空间迁移实验，见 [老师数据实验协议](TEACHER_DATA.md)，不据此声明真实小时预测精度。
+
 ## 地图
 
 用 `GET /api/v1/worlds/{id}` 导出完整世界 JSON 作为结构样例，替换 name/timezone/zones/roads/calendar/events 后提交 `POST /api/v1/worlds/import`。导入会生成新 world_id；不要覆盖已有世界。zones 为 FeatureCollection，geometry 是有效非空 Polygon/MultiPolygon，区域面积不能重叠，允许共享边界。zone_id 为唯一非空字符串，最多64字符，最多100个区域；坐标须为WGS84经度[-180,180]、纬度[-85,85]，投影坐标应先转换。
