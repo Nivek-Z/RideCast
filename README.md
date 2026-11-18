@@ -1,71 +1,46 @@
-# RideCast · 网约车服务需求建模后端
+# RideCast
 
-Python + TensorFlow/Keras 的可运行课题系统：种子确定的演化城市、真实订单导入、时空需求预测、可视化仪表盘 API、持久任务与模型版本。
+RideCast 使用 Chicago TNP 汇总数据估计累计行程的区域份额，并对比校准生成训练、真实数据直接训练和统计基线。
 
-## 快速运行
+- **空间验证**展示历史对照、空间划分和实验流程。从老师的原始 ZIP 开始，一键重新校准、生成、训练、评分。
+- **参数对比**支持单组调参和批量运行。按开发区的 8 折空间交叉验证排名，并排查看得分、折间和种子间波动、逐区误差及用时。
+- **研究记录**记录数据用途、四轮研究结果和规则稳定性检查。
 
-需要 **Python 3.11 或 3.12**。建议为项目新建虚拟环境。
+历史 431 区对照中，未经校准的路线 TV 为 51.34%，就业密度基线为 38.75%，真实数据直接训练为 26.27%，校准后生成训练为 25.89%。TV 越低，估计份额越接近观测份额。与真实训练仅相差 0.38 个百分点，现有证据不足以证明额外收益。数据没有时间戳，且空间留出区此前已被查看。它支持探索性空间评价，验证逐时预测和跨城市泛化需要新数据。
+
+## 本地启动
+
+在仓库根目录运行。需要 Python 3.11 或 3.12 和 Node.js。
 
 ```bash
-git clone https://github.com/Nivek-Z/RideCast.git
-cd RideCast
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -e '.[ml,dev]'
-ridecast init
-ridecast demo --days 45 --epochs 12 --tune --output reports/demo.json
+pip install -e '.[research]'
+npm --prefix web ci
+npm --prefix web run build
+ridecast setup-study --archive '/absolute/path/网约车选题 数据.zip'
+ridecast present
 ```
 
-演示命令实际生成城市和订单、训练 GRU、评估、保存预测样例；不会自动激活模型。依赖受网络环境影响；模型训练使用 CPU 即可。完整环境锁定见 `requirements.lock.txt`。
+打开 [本地研究工作台](http://127.0.0.1:8000)。`present` 启动 HTTP 服务和独立实验进程。老师数据、运行结果和模型细节都保存在 Git 忽略的 `var/` 下。首次成功复现后，首页可加载真实分区与逐区结果地图。前端的历史空间汇总可独立读取。
 
-启动两个终端，均在本目录并激活同一个虚拟环境：
-
-```bash
-# 终端一
-ridecast serve
-# 终端二
-ridecast worker
-```
-
-访问 [交互式 API 文档](http://127.0.0.1:8000/docs)、[健康检查](http://127.0.0.1:8000/health)。
-
-研究工作台位于 `web/`（需要 Node.js 18+）：默认展示实验对比、数据划分、规则稳定性和实验记录；地图与 GRU 等功能在「时序工具」。在第三个终端启动后打开 <http://127.0.0.1:5173>，说明见 [web/README.md](web/README.md)：
+## 验证
 
 ```bash
-cd web
-npm install
-npm run dev
-```
-
-可选 Docker 单机部署：`docker compose up --build`，API 与 worker 共享命名卷；当前交付环境未启动 Docker daemon，容器启动不作为已验证结果。
-
-## 虚拟世界如何演化
-
-种子确定地图的非均匀街区、土地用途、人口和岗位。演化以绝对 UTC 时间桶为锚点：平滑天气锋面与季节/昼夜周期、城市与区域需求状态、已公告活动、前桶实际需求引发的供给和拥堵反馈共同生成下一时段状态。订单随机流也绑定绝对时间，同一窗口重复提取及相邻分段拼接保持一致。
-
-静态城市版本为seeded-city-v2，演化规则为absolute-time-v2；至少5个区域时包含居住、商务、商贸、枢纽和文娱五类，布局与额外区域用途由种子决定。版本随世界及数据快照保存，城市静态版本也纳入自动world_id计算。
-
-`GET /api/v1/worlds/{id}/state?timestamp=...&seed=42` 可查询任意仿真时刻，无需生成整天订单。`/simulations` 将时间段物化为可训练数据，`/replay` 回放历史订单。世界种子、演化种子、场景、生成器版本与时间范围共同定义一次确定性实验。宏观供给和直线插值车辆标记有明确语义，不是逐车交通数字孪生。
-
-## 交付入口
-
-* [后端交接与部署](docs/HANDOFF.md)：模块、启动、配置、任务状态、恢复、Git 阶段。
-* [研究工作台与前端接入](docs/FRONTEND.md)：静态报告快照、图层/热力/流向/回放/训练状态接口与示例。
-* [真实数据导入](docs/DATA_IMPORT.md)：GeoJSON、CSV、时区、覆盖声明、质量检查。
-* [建模与实验说明](docs/MODELING.md)：特征、GRU、时序分区、基线、区间与结果边界。
-* [老师数据实验](docs/TEACHER_DATA.md)：纯合成训练、真实区域验证/测试、静态热度迁移的适用范围与复现。
-* [数据校准的虚拟世界](docs/CALIBRATED_WORLD.md)：真实开发区提取平滑规则、空间交叉验证、稳定性与合成训练；[文献笔记](docs/RESEARCH_CALIBRATION.md)。
-* [架构决策](docs/ARCHITECTURE.md)、[一手资料调研](docs/research-notes.md)、[内部数据契约](docs/CONTRACT.md)。
-* `docs/openapi.json`：导出的 HTTP 契约；重新生成：`ridecast export-openapi`。
-* `reports/`：实际运行的演示、随机世界实验与验证报告。大数据/模型位于 `var/`，不进入 Git。
-
-## 随机世界实验与检查
-
-```bash
-python scripts/benchmark_worlds.py --seeds 7 42 99 --days 28 --train --epochs 5 --output var/benchmarks/new-run
-pytest -q
+pip install -e '.[research,ml,dev]'
 ruff check .
+pytest -q
 pip check
+npm --prefix web test
+python scripts/verify_http.py
 ```
 
-基准在每个世界独立重训，衡量不同仿真世界中的建模稳定性；不声称一个模型零样本迁移到未见过的城市。合成数据效果不能代替真实业务验证。API 默认仅监听本机；跨机器部署时可配置 `RIDECAST_API_KEY` 并通过网关提供 TLS。
+HTTP 验证需要已启动的本地工作台及配置好的老师数据，会提交一次完整的空间复现和两组参数配置。运行说明、接口和建模协议见下方。
+
+- [本地运行与数据存放](docs/HANDOFF.md)
+- [接口与字段说明](docs/CONTRACT.md)
+- [建模、生成和留出区协议](docs/MODELING.md)
+- [前端使用说明](web/README.md)
+- [校准与稳定性报告](reports/calibrated-world.md)
+
+早期时序实验的生成器、训练代码和报告仍可用于复核历史工作，入口见 [交接文档](docs/HANDOFF.md)。

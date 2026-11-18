@@ -15,7 +15,7 @@ services:
       retries: 3
   worker:
     build: .
-    command: ["ridecast", "worker"]
+    command: ["ridecast", "worker", "--legacy"]
     volumes:
       - ridecast-data:/data
     restart: unless-stopped

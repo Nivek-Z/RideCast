@@ -1,68 +1,23 @@
-# RideCast · 研究工作台
+# RideCast 研究工作台
 
-Vite + React + TypeScript，使用 MUI 7 与 Emotion。默认入口是研究对比，地图、仿真、GRU 和任务工具保留在「时序工具」。
-
-## 设计与导航
-
-浅色界面按 Material Design 3 的色彩角色、色调表面、圆角、字级和导航方式定制。MUI 默认样式不是 MD3，具体覆盖见 `src/theme.ts` 与 `src/research.css`。参考 [MD3 色彩角色](https://m3.material.io/styles/color/roles)、[导航栏](https://m3.material.io/components/navigation-rail/overview)。
-
-桌面使用窄侧栏，手机使用底部导航。低饱和蓝色表示选择与主要操作；图表保留统一尺度，布局优先容纳比较与阅读。Roboto 字体随构建产物提供，中文使用本机字体。地图与科研图表使用本地 SVG，不依赖外部底图或字体服务。
-
-| 页面 | 功能 | 来源 |
-| --- | --- | --- |
-| 实验对比 | 四个研究阶段；来源筛选、搜索、排序、最多八项比较、方案详情、CSV 与报告下载 | 仓库内实际实验报告 |
-| 数据划分 | 文件范围、阶段对应的空间分区、输入与排除项、生成数据谱系 | 实验报告与协议 |
-| 规则稳定性 | 重采样、生成样本扩充、规模检查；早期规则单独展示 | 对应阶段的敏感性检查 |
-| 实验记录 | 已完成报告与本机计算任务两个标签 | 报告快照 / 实时 API |
-
-「时序工具」包含数据总览、城市演化与回放、订单、GRU 模型与回测、预测与调配、计算任务、连接与资源。原有 HTTP 契约及资源创建流程保持不变。
-
-标签、选择器支持键盘操作；弹窗与抽屉支持 Escape 和焦点约束。提供跳到主要内容的链接，窄屏表格在容器内横向滚动。减少动态效果的系统偏好会关闭过渡动画。
-
-## 运行
-
-需要 Node.js 18+。先在仓库根目录的同一 Python 环境中启动 API 和 worker（各一个终端）：
+React、TypeScript、Vite 和 MUI，使用 Material 3 风格，支持浅色和深色模式。页面支持手机布局和系统减少动态效果设置。真实几何、运行进度和评分来自本地研究 API。历史汇总由构建适配器从仓库自带的报告生成，构建时没有读取老师原始数据。
 
 ```bash
-ridecast serve
-ridecast worker
-```
-
-再启动前端：
-
-```bash
-cd web
 npm ci
-npm run dev
-```
-
-打开 <http://127.0.0.1:5173>。开发服务器把 `/api`、`/health` 代理到 `http://127.0.0.1:8000`。后端地址不同可设置 `RIDECAST_API`，或从「时序工具 → 连接与资源」填写 API 地址；直接跨域访问时需在后端允许前端来源。密钥仅保存在本机浏览器，通过 `X-API-Key` 发送。
-
-```bash
-npm test
 npm run build
-npm run preview
+npm test
 ```
 
-`build` 先检查 TypeScript，再输出 `dist/`。`preview` 使用同样的 API 代理。API 不可达时仍可阅读研究报告，计算任务显示连接状态，不能提交 GRU 训练。
+在项目根目录配置老师 ZIP 后，`ridecast present` 同时提供 Web 和实验进程。开发时从本目录运行 `npm run dev`，项目根目录另启 `ridecast serve` 与 `ridecast worker`。
 
-## 报告快照与指标
+- **空间验证**按 Chicago TNP 的累计行程量估计区域份额。可切换空间划分、观测份额、生成模型估计和份额差异，查看实际运行阶段、用时与评分。
+- **参数对比**可复制一条成绩的配置后单组运行，也可选择多个样本规模和正则强度做组合。按种子组查看排行，勾选最多三组对照同色阶误差地图，并查看逐折和种子得分。
+- **研究记录**包含数据划分、稳定性证据和四个实验阶段。历史结果与现场结果均以实际计算产物呈现。
 
-`scripts/sync-research.mjs` 在开发启动与生产构建时，从 `reports/calibrated-world.json` 和 `reports/teacher-data-transfer.json` 生成 `public/research/snapshot.json`，并复制允许下载的 Markdown、JSON 和实验协议。该目录是忽略的生成物，不读取 `var/` 原始数据或模型。修改这两份 JSON 会刷新开发页面；修改 Markdown 后重启开发服务器即可同步。
+接口、工作进程和数据文件见 [交接说明](../docs/HANDOFF.md)。
 
-快照记录源内容摘要、报告日期、阶段划分与指标。原始数值用于导出；显示层只做格式化。未评价的指标为 `null`，显示「—」；空间交叉验证使用逐折均值，不能替换成合并区域的指标。四个阶段来自同一文件的连续探索，不是四次独立复现。
+界面参考 Material 3 的角色配色、排版和布局规范，使用色调表面、桌面导航轨和移动端底部导航。 [颜色角色](https://m3.material.io/styles/color/the-color-system/) · [排版](https://m3.material.io/styles/typography/applying-type) · [布局](https://m3.material.io/foundations/layout/canonical-examples/overview)
 
-TV 是区域份额的分布差异，已按百分数记录；它不是小时订单量误差率，不能转换为准确率。Spearman 为 −1 到 1 的排序相关。样本增长图的纵轴是相对全量学生的分布变化（pp），不是精度；对照区已被查看过、文件无时间戳等限制在页面中保留。
+顶栏的色样可直接切换 Pixel 蓝、经典紫和青绿，浏览器会记住选择。默认配色使用 Android Material You 的后备蓝色种子。 [Android 动态色规范](https://source.android.com/docs/core/display/dynamic-color)
 
-静态空间报告只读展示已有离线结果，不能从此界面启动或排队重跑研究脚本。计算任务标签提交的是真实 API GRU 任务，任务状态、日志与学习曲线仍来自持久化接口。
-
-## 时序工具约定
-
-* 后端使用 UTC，界面按 `world.timezone` 显示；请求携带显式时区。
-* SSE 任务事件作为补丁合并，收到 `done` 后关闭连接并重新 GET 完整任务。
-* 车辆回放是起终点直线插值，不是 GPS 轨迹。
-* 未观测的供给与结果显示「未知」，不把缺失占位值当作零。
-* WAPE / sMAPE 是百分数；完成率、取消率、区间覆盖率是 0–1 比例。训练损失是 log1p 需求的均方误差。
-* 调配建议保持「启发式建议 · 未执行」标记。
-
-本机验收结果见 [交付记录](../reports/frontend-research-md3.md)。
+顶栏的月亮／太阳按钮切换深色或浅色模式。首次打开跟随系统，手动切换后由浏览器保存。三套配色、地图和图例均适配两种模式。

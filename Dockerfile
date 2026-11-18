@@ -6,4 +6,4 @@ COPY src ./src
 RUN pip install '.[ml]' && useradd --create-home --uid 10001 ridecast && mkdir /data && chown ridecast /data
 USER ridecast
 EXPOSE 8000
-CMD ["ridecast", "serve", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["ridecast", "serve-legacy", "--host", "0.0.0.0", "--port", "8000"]

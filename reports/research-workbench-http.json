@@ -1,0 +1,55 @@
+{
+  "checks": [
+    "archive and independent worker ready",
+    "duplicate seed rejected",
+    "different seed cohorts in a single batch rejected",
+    "recomputed historical TV",
+    "all five real execution stages persisted",
+    "student fitted on 9216 synthetic labels",
+    "formal artifact maps only held-out targets",
+    "map contains 795 geometries",
+    "observations and predictions each sum to one",
+    "single submission queues both configurations",
+    "both jobs share a batch identifier",
+    "configuration 1 ranks on development folds",
+    "configuration 1 exposes no holdout values",
+    "configuration 2 ranks on development folds",
+    "configuration 2 exposes no holdout values",
+    "retired temporal endpoint unavailable",
+    "research run list contains only spatial studies",
+    "completed results remain discoverable"
+  ],
+  "checks_passed": 18,
+  "environment": "local API + independent worker",
+  "formal_execution_seconds": 1.142,
+  "formal_tv": 25.891369193776843,
+  "arena": [
+    {
+      "config": {
+        "worlds_per_seed": 8,
+        "teacher_alpha": 0.1,
+        "seeds": [
+          7,
+          42
+        ]
+      },
+      "mean_tv": 25.971045183046073,
+      "seed_std": 2.1023844665887985,
+      "duration_seconds": 2.825
+    },
+    {
+      "config": {
+        "worlds_per_seed": 16,
+        "teacher_alpha": 1.0,
+        "seeds": [
+          7,
+          42
+        ]
+      },
+      "mean_tv": 26.56126074460728,
+      "seed_std": 1.4498125095649321,
+      "duration_seconds": 3.0
+    }
+  ],
+  "elapsed_seconds": 9.34
+}

@@ -1,35 +1,27 @@
-# 内部接口约定（v1）
+# RideCast 研究接口
 
-所有持久时间采用带时区 UTC；展示/日历特征按 world.timezone（默认 Asia/Shanghai）。桶左闭右开。需求标签 demand=每桶区域发起订单数，passengers 是人数，不作为同桶输入。
+研究接口由本机 HTTP 服务提供，OpenAPI 位于 `/openapi.json` 和仓库的 `docs/openapi.json`。当前前端与 API 默认同源。
 
-## world 字典
+| 方法与路径 | 用途 |
+| --- | --- |
+| `GET /api/research/status` | 本地数据配置、实验进程状态 |
+| `POST /api/research/reproduce` | 以固定的历史配置排队完整复现，返回 202 和任务 |
+| `POST /api/research/arena` | 一次提交 1–12 个参数组合，返回 202 和任务列表 |
+| `GET /api/research/runs` | 按时间倒序读取每次运行和结果摘要，支持 `limit`、`offset` |
+| `GET /api/research/runs/{id}` | 单次运行状态与结果摘要 |
+| `GET /api/research/runs/{id}/result` | 已发布的空间地图和诊断记录，未发布返回 409 |
+| `DELETE /api/research/runs/{id}` | 停止排队或运行中的任务 |
 
-`schema_version: "1.0", world_id: "w_<16hex>", name, timezone, bucket_minutes: 60, seed, zones: GeoJSON FeatureCollection, roads: GeoJSON FeatureCollection, calendar: {holiday_dates: [YYYY-MM-DD], working_dates: []}, events: [{name, zone_id, start: ISO, end: ISO, intensity: float}]`。
+单组竞技场请求体如下。批量将同一批种子的多个配置放在数组中。世界数取 8、16、32、64，校准正则取 0.1、0.3、1、3，种子为 1–5 个互异的非负整数。列表返回 `summary: null` 直到结果成功发布。
 
-zone properties 必有 `zone_id: str, name, kind, base_demand: float, population: float, jobs: float, attractiveness: float`。Geometry 为 WGS84 Polygon/MultiPolygon；不相交；zone_id 稳定有序。道路 LineString，properties 可含 road_id/speed_kph。地图为虚构城市，禁止表述为真实城市复刻。
+```json
+{
+  "configurations": [{"worlds_per_seed": 16, "teacher_alpha": 1.0, "seeds": [7, 42, 99]}]
+}
+```
 
-## dataset 目录与函数
+任务的 `state` 为 `queued`、`running`、`cancelling`、`succeeded`、`failed` 或 `cancelled`。用 `progress`（0–1）、`stage` 和 `message` 展示实际工作进度。成功后 `summary` 包含协议版本、数据内容校验值、配置、分区数、计算耗时和阶段记录。`metrics` 中的 TV 以百分数表示，波动使用百分点。
 
-`panel.parquet`: timestamp(UTC), zone_id(str), demand(int), passengers(int), completed(int), cancelled(int), temperature(float), precipitation(float), wind_speed(float), holiday(int), event_intensity(float), traffic_index(float), available_drivers(int)。每桶每区恰一行、均匀完整面板，无缺失。`orders.parquet`: order_id, requested_at(UTC), pickup_zone_id, dropoff_zone_id, passenger_count, status(completed/cancelled), pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, driver_id（空值表示未服务）, travel_minutes。真实导入允许可选字段为空。
+空间结果地图的 `ids`、`paths`、`development`、`blocks` 按同一个 795 区顺序。路径是已简化和缩放的 SVG 坐标，视框为 `0 0 440 500`。 `regions` 给出本次评分对应的区域索引，`actual`、`predicted`、`teacher` 按该列表排列，各占比数组总和为 100。正式复现为 431 区留出；竞技场汇总 364 区的区外预测。竞技场排名使用逐折归一化后形成的平均 TV。各折预测汇总后再次归一化供地图展示。
 
-`manifest.json`: schema_version, dataset_id(d_<16hex>), world_id, source(synthetic/imported), target_semantics(requests/completed_trips), observation_start, observation_end(exclusive), bucket_minutes, row_count, order_count, zone_count, seed, scenario, quality, files, created_at。另存 `world.json` 快照。
-
-函数（由 simulation/data 模块实现）：
-
-* `simulation.create_world(name="霁川市", rows=4, cols=4, seed=42, bucket_minutes=60, timezone="Asia/Shanghai", **kwargs) -> dict`
-* `simulation.validate_world(world: dict) -> dict`（校验并返回规范化对象，不写盘）。
-* `simulation.simulate(world, start: str, days: int, seed: int, scenario: dict | None=None, progress=None) -> (panel: DataFrame, orders: DataFrame, metadata: dict)`；progress(stage: str, fraction: float, message: str)。scenario 含 demand_multiplier/rain_multiplier/traffic_multiplier/supply_multiplier，可带 holiday_dates/working_dates/events。按地图区域实际采样坐标。
-* `data.write_dataset(output_dir: Path, world: dict, panel, orders, metadata: dict, dataset_id: str) -> manifest: dict`。
-* `data.import_orders(csv_path: Path, world: dict, output_dir: Path, dataset_id: str, options: dict, context_path: Path | None=None, progress=None) -> manifest: dict`。options 必有 observation_start/end、coverage_attested(true)、target_semantics；可含 column_map(canonical -> source)、timezone、invalid_policy(reject/drop)。必须校验去重，不能把重复订单数作需求；导入采用相同完整面板与契约。
-
-## ML 模块约定
-
-* `ml.train_model(dataset_dir: Path, output_dir: Path, model_id: str, config: dict, progress=None) -> metadata: dict`。config epochs/batch_size/lookback/horizon/units/learning_rate/seed/tune。读取 panel、world、manifest；写 model.keras、metadata.json、history.json、test_predictions.parquet。真实 TensorFlow/Keras GRU，不能用假训练。
-* `ml.forecast(model_dir: Path, dataset_dir: Path, horizon: int | None=None, scenario: dict | None=None) -> dict`。返回 forecast_origin、bucket_minutes、model_id、dataset_id、rows=[timestamp,zone_id,predicted_demand,lower,upper]、exogenous_assumption；默认严格从 dataset observation_end 向前预测，horizon 不超过训练头长度；scenario 为未来已知外因覆盖。
-* metadata 必有 model_id,dataset_id,world_id,config,metrics（模型与基线，MAE/RMSE/WAPE/sMAPE，分horizon和分zone）、split（完整时间边界）, feature_schema, status, created_at；验证集用于挑选超参和估计残差区间，测试仅最终评估；训练集拟合缩放，不能未来实测天气。自动模型晋升不默认执行。
-
-## 主进程与 worker
-
-主模块 store/settings/api/jobs/cli 由主代理实现。SQLite 保存资源元信息与 durable jobs/events；API 只排队，独立 `python -m ridecast.worker` 执行 simulate/import/train。任务返回 202/Location，状态 queued/running/succeeded/failed；progress 单调非递减，记录 stage/log/error/heartbeat。worker 可重启，孤立运行任务明确标记失败。
-
-仪表盘需：world GeoJSON、dataset overview/quality、timeseries、heatmap、flows、replay、orders分页，模型 metrics/history、资源及 jobs 列表、SSE 事件流、forecast、dispatch（启发式建议，不能声称已调度）。API OpenAPI 为对外契约。
+历史时序任务的数据和模型契约保留在 Git 的 `c93f122:docs/CONTRACT.md`。旧版 `target_semantics`、时间切窗和种子复现约定继续适用于历史实验。

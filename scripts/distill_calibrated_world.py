@@ -18,16 +18,14 @@ import joblib
 import numpy as np
 import pandas as pd
 from evaluate_teacher_data import load_geojson, save, share_metrics, spatial_split, teacher_smoke
-from explore_spatial_models import FEATURES
-from pyproj import Geod, Transformer
-from shapely.geometry import shape
-from shapely.ops import transform
+from pyproj import Transformer
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import PoissonRegressor
 from threadpoolctl import threadpool_limits
 
 from ridecast.spatial_calibration import fit_stable_rule, generate_regions
 from ridecast.spatial_models import joint_support_diagnostic, predict_candidate
+from ridecast.teacher_data import FEATURES, spatial_features
 
 PROTOCOL = {"version": "calibrated-gam-spatial-world-v1",
             "evidence_status": "exploratory follow-up; selected teacher uses development CV, previous test already viewed",
@@ -85,13 +83,8 @@ def run(args):
         raise ValueError("Input checksum changed")
     development, blocks = spatial_split(features)
     test = ~development
-    transformer, geod = Transformer.from_crs(args.source_crs, "EPSG:4326", always_xy=True), Geod(ellps="WGS84")
-    area = np.array([abs(geod.geometry_area_perimeter(transform(transformer.transform, shape(f["geometry"])))[0])
-                     for f in features])
-    raw = np.column_stack([frame.total_population, frame.empoloyment_den, area, frame.network_den,
-                           frame.median_household_income, frame.pct_no_vehicle, frame.pct_bachelorORhigher,
-                           frame.pct_18to34, frame.household_size_mean, frame.job_entropy, frame.dist_to_tran,
-                           frame.employed_near_tran, frame.freq_tran, frame.pct_unemployed_16, frame.work_commute_mean])
+    transformer = Transformer.from_crs(args.source_crs, "EPSG:4326", always_xy=True)
+    raw = spatial_features(features, frame, args.source_crs)
     counts = frame.TripCount.to_numpy(dtype=float)
     rule = fit_stable_rule(raw[development], counts[development], blocks[development], FEATURES, alpha=1., bootstraps=40)
     def mean_predictor(values):

@@ -12,7 +12,6 @@ import hashlib
 import json
 import platform
 import time
-import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -23,6 +22,14 @@ from shapely.ops import transform
 
 from ridecast.data import write_dataset
 from ridecast.simulation import create_world, simulate, validate_world
+from ridecast.teacher_data import (
+    SPATIAL_GRID,
+    SPLIT_SEED,
+    load_geojson,
+    relative,
+    share_metrics,
+    spatial_split,
+)
 
 FEATURES = ["relative_population", "relative_employment_density", "relative_area"]
 PROTOCOL = {
@@ -33,8 +40,8 @@ PROTOCOL = {
     "synthetic_validation_seeds": list(range(1018, 1024)),
     "synthetic_days": 3,
     "start": "2026-01-06T00:00:00Z",
-    "real_split_seed": 42,
-    "real_spatial_grid": 4,
+    "real_split_seed": SPLIT_SEED,
+    "real_spatial_grid": SPATIAL_GRID,
     "alpha_candidates": [0.1, 1.0, 10.0, 100.0],
     "synthetic_selection_metric": "log_relative_volume_mse",
     "real_selection_metric": "total_variation_percent",
@@ -52,79 +59,9 @@ def save(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
 
-def load_geojson(archive):
-    with zipfile.ZipFile(archive) as bundle:
-        members = [i for i in bundle.infolist() if Path(i.filename).name == "chicago_tnp.geojson"]
-        if len(members) != 1 or members[0].file_size > 32 * 1024**2:
-            raise ValueError("Expected one chicago_tnp.geojson no larger than 32 MiB")
-        raw = bundle.read(members[0])  # Read data only; no archive paths are extracted or executed.
-    obj = json.loads(raw)
-    if obj.get("type") != "FeatureCollection" or not obj.get("features"):
-        raise ValueError("Expected a nonempty GeoJSON FeatureCollection")
-    frame = pd.DataFrame([f["properties"] for f in obj["features"]])
-    required = ["GEO_ID", "Pickup Census Tract", "TripCount", "FALSE", "TRUE",
-                "total_population", "empoloyment_den"]  # Preserve source spelling.
-    values = frame[required].to_numpy(dtype=float)
-    if not np.isfinite(values).all() or (values < 0).any():
-        raise ValueError("Required properties must be finite and nonnegative")
-    if frame["GEO_ID"].duplicated().any() or not (frame["GEO_ID"] == frame["Pickup Census Tract"]).all():
-        raise ValueError("Tract identifiers must be unique and consistent")
-    if not np.equal(values[:, :5], np.floor(values[:, :5])).all():
-        raise ValueError("Tract identifiers and trip counts must be integers")
-    geometries = [shape(f["geometry"]) for f in obj["features"]]
-    if any(not g.is_valid or g.is_empty or g.geom_type not in {"Polygon", "MultiPolygon"}
-           for g in geometries):
-        raise ValueError("Invalid or unsupported tract geometry")
-    order = np.argsort(frame["GEO_ID"].to_numpy())
-    features = [obj["features"][i] for i in order]
-    frame = frame.iloc[order].reset_index(drop=True)
-    return features, frame, {"file_sha256": hashlib.sha256(raw).hexdigest(),
-                             "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
-                             "declared_crs": obj.get("crs"), "feature_count": len(features),
-                             "property_count": len(frame.columns),
-                             "missing_cells": int(frame.isna().sum().sum()),
-                             "trip_total": int(frame["TripCount"].sum()),
-                             "false_plus_true_equals_tripcount": bool(
-                                 (frame["FALSE"] + frame["TRUE"] == frame["TripCount"]).all()),
-                             "observation_period": None, "timestamps_available": False}
-
-
-def spatial_split(features):
-    """Assign entire coordinate blocks using geometry only, before reading targets."""
-    centres = np.array([[shape(f["geometry"]).centroid.x, shape(f["geometry"]).centroid.y]
-                        for f in features])
-    grid = PROTOCOL["real_spatial_grid"]
-    cells = np.zeros(len(features), dtype=int)
-    for axis in range(2):
-        edges = np.quantile(centres[:, axis], np.arange(1, grid) / grid)
-        cells += np.searchsorted(edges, centres[:, axis]) * grid**axis
-    blocks = np.unique(cells)
-    blocks = np.random.default_rng(PROTOCOL["real_split_seed"]).permutation(blocks)
-    validation = np.isin(cells, blocks[:len(blocks) // 2])
-    if min(validation.sum(), (~validation).sum()) < 10:
-        raise ValueError("Too few tracts for spatial validation/test")
-    return validation, cells
-
-
-def relative(values):
-    values = np.asarray(values, dtype=float)
-    if not np.isfinite(values).all() or (values < 0).any() or values.mean() <= 0:
-        raise ValueError("Expected finite nonnegative weights with positive mean")
-    return values / values.mean()
-
-
 def design(population, employment_density, area):
     return np.column_stack([np.log(np.maximum(relative(v), 0.001))
                             for v in (population, employment_density, area)])
-
-
-def share_metrics(actual, weights):
-    actual, weights = relative(actual), relative(weights)
-    p, q = actual / actual.sum(), weights / weights.sum()
-    return {"total_variation_percent": float(50 * np.abs(p - q).sum()),
-            "relative_volume_mae": float(np.abs(actual - weights).mean()),
-            "spearman": float(pd.Series(actual).rank().corr(pd.Series(weights).rank()))
-            if np.std(weights) > 1e-12 and np.std(actual) > 1e-12 else None}
 
 
 def fit_ridge(x, y, alpha):

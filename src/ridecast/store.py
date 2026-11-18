@@ -11,7 +11,7 @@ from datetime import UTC, datetime, timedelta
 from ridecast.settings import Settings
 
 TERMINAL = {"succeeded", "failed", "cancelled"}
-KINDS = {"world": "worlds", "dataset": "datasets", "model": "models"}
+KINDS = {"world": "worlds", "dataset": "datasets", "model": "models", "research": "research"}
 
 
 def now():
@@ -23,7 +23,7 @@ def identifier(prefix):
 
 
 def valid_id(value):
-    if not re.fullmatch(r"[wdmj]_[a-f0-9]{16}", value):
+    if not re.fullmatch(r"[wdmjr]_[a-f0-9]{16}", value):
         raise ValueError("Invalid resource identifier")
     return value
 
@@ -114,12 +114,18 @@ class Store:
                    (job_id, event_type, dump(payload), now()))
 
     def enqueue(self, kind, params):
-        job_id = identifier("j")
+        return self.enqueue_many(kind, [params])[0]
+
+    def enqueue_many(self, kind, configurations):
+        job_ids = []
         with self.connection() as db:
-            db.execute("INSERT INTO jobs(id,kind,state,params,created_at) VALUES (?,?,'queued',?,?)",
-                       (job_id, kind, dump(params), now()))
-            self._event(db, job_id, "state", {"state": "queued", "progress": 0, "stage": "queued"})
-        return self.job(job_id)
+            for params in configurations:
+                job_id = identifier("j")
+                db.execute("INSERT INTO jobs(id,kind,state,params,created_at) VALUES (?,?,'queued',?,?)",
+                           (job_id, kind, dump(params), now()))
+                self._event(db, job_id, "state", {"state": "queued", "progress": 0, "stage": "queued"})
+                job_ids.append(job_id)
+        return [self.job(job_id) for job_id in job_ids]
 
     @staticmethod
     def _job(row):
@@ -136,18 +142,29 @@ class Store:
             raise KeyError(f"job {job_id} not found")
         return self._job(row)
 
-    def jobs(self, state=None, limit=100, offset=0):
-        where, args = ("WHERE state=?", [state]) if state else ("", [])
+    def jobs(self, state=None, limit=100, offset=0, kind=None, modes=()):
+        filters = {column: value for column, value in (("state", state), ("kind", kind)) if value is not None}
+        clauses = [f"{column}=?" for column in filters]
+        args = list(filters.values())
+        if modes:
+            placeholders = ", ".join("?" for _ in modes)
+            clauses.append(f"json_extract(params, '$.mode') IN ({placeholders})")
+            args.extend(modes)
+        where = "WHERE " + " AND ".join(clauses) if clauses else ""
         with self.connection() as db:
             total = db.execute(f"SELECT COUNT(*) FROM jobs {where}", args).fetchone()[0]
             rows = db.execute(f"SELECT * FROM jobs {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
                               [*args, limit, offset]).fetchall()
         return {"items": [self._job(r) for r in rows], "total": total, "limit": limit, "offset": offset}
 
-    def claim(self, worker_id):
+    def claim(self, worker_id, kind=None):
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
-            row = db.execute("SELECT id FROM jobs WHERE state='queued' ORDER BY created_at LIMIT 1").fetchone()
+            query = "SELECT id FROM jobs WHERE state='queued'"
+            args = [kind] if kind else []
+            if kind:
+                query += " AND kind=?"
+            row = db.execute(query + " ORDER BY created_at, rowid LIMIT 1", args).fetchone()
             if row is None:
                 return None
             job_id = row[0]

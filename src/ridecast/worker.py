@@ -9,7 +9,7 @@ import time
 import traceback
 
 from ridecast.settings import Settings
-from ridecast.store import Store, identifier
+from ridecast.store import Store, dump, identifier
 
 log = logging.getLogger("ridecast.worker")
 
@@ -43,7 +43,19 @@ def execute_job(store: Store, job: dict):
         check_cancel()
         kind = job["kind"]
         resource_id = params["resource_id"]
-        if kind == "simulate":
+        if kind == "research":
+            from ridecast.research import run_research
+            from ridecast.research_schema import RESEARCH_MODES, ArenaConfig
+
+            mode = params["mode"]
+            if mode not in RESEARCH_MODES:
+                raise ValueError("此实验类型已停用")
+            config = ArenaConfig.model_validate(params["config"]) if mode == "arena" else None
+            payload, artifact = run_research(store.settings.teacher_archive, mode, config, progress)
+            progress("saving", .98, "保存本次实验结果")
+            (staging / "result.json").write_text(dump(artifact), encoding="utf-8")
+            resource_kind, name = "research", mode
+        elif kind == "simulate":
             from ridecast.data import write_dataset
             from ridecast.simulation import simulate
 
@@ -96,8 +108,9 @@ def execute_job(store: Store, job: dict):
 
 
 class Worker:
-    def __init__(self, store: Store):
+    def __init__(self, store: Store, kind=None):
         self.store = store
+        self.kind = kind
         self.worker_id = identifier("j")
         self.current = None
 
@@ -118,7 +131,7 @@ class Worker:
         thread.start()
         try:
             while True:
-                job = self.store.claim(self.worker_id)
+                job = self.store.claim(self.worker_id, self.kind)
                 if job:
                     self.current = job["id"]
                     self.store.worker_heartbeat(self.worker_id, self.current)
@@ -140,9 +153,10 @@ class Worker:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--once", action="store_true", help="Claim at most one job and exit")
+    parser.add_argument("--kind", choices=["research"], help="Restrict the queue to one job kind")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    worker = Worker(Store(Settings()))
+    worker = Worker(Store(Settings()), args.kind)
     if args.once:
         print(json.dumps({"processed": worker.run(once=True)}))
     else:

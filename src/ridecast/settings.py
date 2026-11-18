@@ -17,9 +17,14 @@ class Settings:
     stale_seconds: int = 120
 
     def initialize(self):
-        for name in ("worlds", "datasets", "models", "uploads", "jobs", ".staging"):
+        for name in ("worlds", "datasets", "models", "uploads", "jobs", "research", ".staging"):
             (self.home / name).mkdir(parents=True, exist_ok=True)
 
     @property
     def database(self):
         return self.home / "ridecast.sqlite3"
+
+    @property
+    def teacher_archive(self):
+        value = os.getenv("RIDECAST_TEACHER_ARCHIVE")
+        return Path(value).expanduser().resolve() if value else self.home / "teacher-data" / "teacher-data.zip"

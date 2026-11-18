@@ -18,17 +18,12 @@ import numpy as np
 import pandas as pd
 import sklearn
 from evaluate_teacher_data import load_geojson, save, share_metrics, spatial_split
-from pyproj import Geod, Transformer
-from shapely.geometry import shape
-from shapely.ops import transform
 from sklearn.exceptions import ConvergenceWarning
 from threadpoolctl import threadpool_limits
 
 from ridecast.spatial_models import candidate_configs, fit_candidate, predict_candidate
+from ridecast.teacher_data import FEATURES, spatial_features
 
-FEATURES = ["population", "employment_density", "area_m2", "network_density", "income", "no_vehicle_share",
-            "education_share", "young_adult_share", "household_size", "job_entropy", "transit_distance",
-            "employment_near_transit", "transit_frequency", "unemployment_percent", "commute_minutes"]
 PROTOCOL = {"version": "spatial-model-search-v1", "evidence_status": "exploratory; repeated use of previously viewed file",
             "development": "previous 364 validation regions; eight leave-one-spatial-block-out folds",
             "test": "previous 431 test regions; never used to rank new candidates",
@@ -73,13 +68,7 @@ def run(args):
     old_predictions = pd.read_csv(args.previous/"private-predictions.csv")
     if not np.array_equal(test, old_predictions.partition.to_numpy() == "test"):
         raise ValueError("Test partition changed")
-    transformer, geod = Transformer.from_crs(args.source_crs, "EPSG:4326", always_xy=True), Geod(ellps="WGS84")
-    geometries = [transform(transformer.transform, shape(f["geometry"])) for f in features]
-    area = np.array([abs(geod.geometry_area_perimeter(g)[0]) for g in geometries])
-    raw = np.column_stack([frame.total_population, frame.empoloyment_den, area, frame.network_den,
-                           frame.median_household_income, frame.pct_no_vehicle, frame.pct_bachelorORhigher,
-                           frame.pct_18to34, frame.household_size_mean, frame.job_entropy, frame.dist_to_tran,
-                           frame.employed_near_tran, frame.freq_tran, frame.pct_unemployed_16, frame.work_commute_mean])
+    raw = spatial_features(features, frame, args.source_crs)
     actual = frame.TripCount.to_numpy(dtype=float)
     x, y, blocks = raw[development], actual[development], groups[development]
     folds = np.unique(blocks)
