@@ -15,6 +15,9 @@ class Settings:
     ))
     max_upload_bytes: int = 32 * 1024 * 1024
     stale_seconds: int = 120
+    teacher_archive_override: Path | None = field(default_factory=lambda: (
+        Path(value).expanduser().resolve() if (value := os.getenv("RIDECAST_TEACHER_ARCHIVE")) else None
+    ))
 
     def initialize(self):
         for name in ("worlds", "datasets", "models", "uploads", "jobs", "research", ".staging"):
@@ -25,6 +28,12 @@ class Settings:
         return self.home / "ridecast.sqlite3"
 
     @property
+    def local_teacher_archive(self):
+        return self.teacher_archive_override or self.home / "teacher-data" / "teacher-data.zip"
+
+    @property
     def teacher_archive(self):
-        value = os.getenv("RIDECAST_TEACHER_ARCHIVE")
-        return Path(value).expanduser().resolve() if value else self.home / "teacher-data" / "teacher-data.zip"
+        archive = self.local_teacher_archive
+        if self.teacher_archive_override is not None or archive.is_file():
+            return archive
+        return Path("data/chicago_tnp.zip").resolve()

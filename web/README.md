@@ -8,7 +8,7 @@ npm run build
 npm test
 ```
 
-在项目根目录配置老师 ZIP 后，`ridecast present` 同时提供 Web 和实验进程。开发时从本目录运行 `npm run dev`，项目根目录另启 `ridecast serve` 与 `ridecast worker`。
+在项目根目录运行 `./scripts/start.sh` 以构建并启动 Web 和实验进程。原始 ZIP 随仓库提供。开发时从本目录运行 `npm run dev`，项目根目录另启 `ridecast serve` 与 `ridecast worker`。
 
 - **空间验证**按 Chicago TNP 的累计行程量估计区域份额。可切换空间划分、观测份额、生成模型估计和份额差异，查看实际运行阶段、用时与评分。
 - **参数对比**可复制一条成绩的配置后单组运行，也可选择多个样本规模和正则强度做组合。按种子组查看排行，勾选最多三组对照同色阶误差地图，并查看逐折和种子得分。

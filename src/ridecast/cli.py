@@ -98,7 +98,7 @@ def setup_study(archive, settings):
     from ridecast.research import Chicago
 
     data = Chicago.load(archive)
-    destination = settings.teacher_archive
+    destination = settings.local_teacher_archive
     destination.parent.mkdir(parents=True, exist_ok=True)
     if archive.resolve() != destination:
         with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as file:

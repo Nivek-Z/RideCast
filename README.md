@@ -10,19 +10,13 @@ RideCast 使用 Chicago TNP 汇总数据估计累计行程的区域份额，并�
 
 ## 本地启动
 
-在仓库根目录运行。需要 Python 3.11 或 3.12 和 Node.js。
+在 macOS 或 Linux 上，安装 Python 3.11/3.12 和带 npm 的 Node.js，然后在仓库根目录运行以下命令。
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[research]'
-npm --prefix web ci
-npm --prefix web run build
-ridecast setup-study --archive '/absolute/path/网约车选题 数据.zip'
-ridecast present
+./scripts/start.sh
 ```
 
-打开 [本地研究工作台](http://127.0.0.1:8000)。`present` 启动 HTTP 服务和独立实验进程。老师数据、运行结果和模型细节都保存在 Git 忽略的 `var/` 下。首次成功复现后，首页可加载真实分区与逐区结果地图。前端的历史空间汇总可独立读取。
+第一次运行会安装 Python 和前端依赖，构建页面并启动 HTTP 服务和实验进程。打开[本地工作台](http://127.0.0.1:8000)，点击「一键运行实验」即可复现。默认输入随仓库提供，见 [Chicago TNP 原始 ZIP](data/chicago_tnp.zip)。模型运行结果、逐区估计和实验记录写入 Git 忽略的 `var/`。
 
 ## 验证
 
@@ -35,7 +29,7 @@ npm --prefix web test
 python scripts/verify_http.py
 ```
 
-HTTP 验证需要已启动的本地工作台及配置好的老师数据，会提交一次完整的空间复现和两组参数配置。运行说明、接口和建模协议见下方。
+HTTP 验证需要已启动的本地工作台，会提交一次完整的空间复现和两组参数配置。运行说明、接口和建模协议见下方。
 
 - [本地运行与数据存放](docs/HANDOFF.md)
 - [接口与字段说明](docs/CONTRACT.md)

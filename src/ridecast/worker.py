@@ -44,12 +44,15 @@ def execute_job(store: Store, job: dict):
         kind = job["kind"]
         resource_id = params["resource_id"]
         if kind == "research":
-            from ridecast.research import run_research
             from ridecast.research_schema import RESEARCH_MODES, ArenaConfig
 
             mode = params["mode"]
             if mode not in RESEARCH_MODES:
                 raise ValueError("此实验类型已停用")
+            progress("initializing", .01, "正在加载实验计算库")
+
+            from ridecast.research import run_research
+
             config = ArenaConfig.model_validate(params["config"]) if mode == "arena" else None
             payload, artifact = run_research(store.settings.teacher_archive, mode, config, progress)
             progress("saving", .98, "保存本次实验结果")
